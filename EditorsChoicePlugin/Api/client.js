@@ -119,7 +119,7 @@ function setup() {
                             $(elem).prepend(container);
 
                             favourites.forEach((favourite, i) => {
-                                let communityRating = favourite.communityRating.toFixed(1);
+                                let communityRating = favourite.community_rating.toFixed(1);
                                 let editorsChoiceItemLogo = `<img class='editorsChoiceItemLogo' src='/Items/${favourite.id}/Images/Logo/0' alt='${favourite.name}'/>`;
                                 let editorsChoiceItemRating = `<div class='editorsChoiceItemRating starRatingContainer'><span class='material-icons starIcon star'></span>${communityRating}</div>`;
                                 let editorsChoiceItemOverview = `<p class='editorsChoiceItemOverview'>${favourite.overview}</p>`;
