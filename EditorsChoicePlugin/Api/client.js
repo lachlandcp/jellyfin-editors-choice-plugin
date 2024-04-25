@@ -119,8 +119,9 @@ function setup() {
                             $(elem).prepend(container);
 
                             favourites.forEach((favourite, i) => {
+                                let communityRating = favourite.communityRating.toFixed(1);
                                 let editorsChoiceItemLogo = `<img class='editorsChoiceItemLogo' src='/Items/${favourite.id}/Images/Logo/0' alt='${favourite.name}'/>`;
-                                let editorsChoiceItemRating = `<div class='editorsChoiceItemRating starRatingContainer'><span class='material-icons starIcon star'></span>${favourite.community_rating}</div>`;
+                                let editorsChoiceItemRating = `<div class='editorsChoiceItemRating starRatingContainer'><span class='material-icons starIcon star'></span>${communityRating}</div>`;
                                 let editorsChoiceItemOverview = `<p class='editorsChoiceItemOverview'>${favourite.overview}</p>`;
                                 let editorsChoiceItemButton = `<button is='emby-button' class='editorsChoiceItemButton raised button-submit block emby-button'> <span>Watch</span> </button>`
                                 let editorsChoiceItemBanner = `<div class='editorsChoiceItemBanner' data-index='${i}' style="background-image:url('/Items/${favourite.id}/Images/Backdrop/0');" onclick="window.location.href='${baseUrl}/index.html#!/details?id=${favourite.id}'; window.location.reload();"><div> ${editorsChoiceItemLogo} ${editorsChoiceItemRating} ${editorsChoiceItemOverview} ${editorsChoiceItemButton}</div></div>`;
