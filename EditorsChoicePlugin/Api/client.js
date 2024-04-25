@@ -105,7 +105,14 @@ document.addEventListener('viewshow', setup);
 $(document).ready(setup);
 
 function setup() {
-    if (Emby.Page.currentRouteInfo.path.includes("/home.html")) {
+    var path;
+    try {
+        path = Emby.Page.currentRouteInfo.path;
+    } catch {
+        path = window.location.href;
+    }
+
+    if (path.includes("/home.html")) {
         console.log("Attempting creation of editors choice slider.");
         setTimeout(() => {
             $('.homeSectionsContainer').each((index, elem) => {
