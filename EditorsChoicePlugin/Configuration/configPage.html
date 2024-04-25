@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Editors Choice Plugin</title>
+</head>
+<body>
+    <div data-role="page" class="page type-interior pluginConfigurationPage editorsChoiceConfigurationPage" data-require="emby-input,emby-button,emby-select,emby-checkbox,emby-linkbutton">
+
+        <div data-role="content">
+            <div class="content-primary">
+
+                <form class="editorsChoiceConfigurationForm">
+                    <br>
+
+                    <div class="selectContainer">
+                        <label class="selectLabel" for="EditorUserId">User's favourites list</label>
+                        <select is="emby-select" id="EditorUserId" name="EditorUserId" class="emby-select-withcolor emby-select">
+                            <option value="none">None</option>
+                        </select>
+                    </div>
+
+                    <div class="checkboxContainer">
+                        <label>
+                            <input is="emby-checkbox"  type="checkbox" id="DoScriptInject" name="Enable client script injection" label="Enable client script injection">
+                            <span>Enable client script injection</span>
+                        </label>
+                        <div class="fieldDescription">This will depend on web file permissions.</div>
+                    </div>
+
+                    <div>
+                        <button is="emby-button" type="submit" class="raised button-submit block emby-button"><span>Save</span></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <script type="text/javascript">
+           
+            (function () {
+
+                var pluginId = "70bb2ec1-f19e-46b5-b49a-942e6b96ebae";
+
+                $('.editorsChoiceConfigurationPage').on('pageshow', function (event) {
+
+                    var page = this;
+                    var selectedUserId;
+
+                    Dashboard.showLoadingMsg();
+
+                    ApiClient.getPluginConfiguration(pluginId).then(function (config) {
+
+                        console.log(config);
+                        selectedUserId = config.EditorUserId;
+                        //$('#EditorUserId').first().val(config.EditorUserId);
+                        $('#DoScriptInject').first().prop('checked', config.DoScriptInject);
+
+                        Dashboard.hideLoadingMsg();
+
+                        // populate users drop down
+                        ApiClient.getUsers().then(function (users) {
+                            console.log(users);
+
+                            $.each(users, function (i, user) {
+                                if (!user.Policy.IsDisabled) {
+                                    $('#EditorUserId').first().append($('<option>', {
+                                        value: user.Id,
+                                        text: user.Name
+                                    }));
+                                }
+                            });
+
+                            if (config.EditorUserId) {
+                                $('#EditorUserId').val(config.EditorUserId);
+                            } else {
+                                $('#EditorUserId').val("none");
+                            }
+                            
+                        });
+                    });
+                });
+
+                $('.editorsChoiceConfigurationForm').off('submit.plugin').on('submit.plugin', function (e) {
+
+                    Dashboard.showLoadingMsg();
+
+
+                    ApiClient.getPluginConfiguration(pluginId).then(function (config) {
+                        
+                        if (config.EditorUserId == "none") {
+                            config.EditorUserId = null;
+                        } else {
+                            config.EditorUserId = $('#EditorUserId').first().val();
+                        }
+                        
+                        config.DoScriptInject = $('#DoScriptInject').first().is(':checked');
+
+                        ApiClient.updatePluginConfiguration(pluginId, config).then(Dashboard.processPluginConfigurationUpdateResult);
+
+                        return true;
+                    });
+
+                    return false;
+                });
+
+            })();
+
+        </script>
+    </div>
+</body>
+</html>
