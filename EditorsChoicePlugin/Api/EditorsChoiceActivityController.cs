@@ -1,6 +1,7 @@
 using System.Net.Mime;
 using System.Reflection;
 using EditorsChoicePlugin.Configuration;
+using Jellyfin.Data.Enums;
 using MediaBrowser.Controller.Entities;
 using MediaBrowser.Controller.Library;
 using Microsoft.AspNetCore.Authorization;
@@ -64,14 +65,25 @@ public class EditorsChoiceActivityController : ControllerBase {
 
             InternalItemsQuery query = new InternalItemsQuery(user) {
                 IsFavorite = true,
-                IncludeItemsByName = true
+                IncludeItemsByName = true,
+                IncludeItemTypes = new[] {BaseItemKind.Series, BaseItemKind.Movie, BaseItemKind.Episode, BaseItemKind.Season}
             };
             List<BaseItem> result = _libraryManager.GetItemList(query);
 
             response = new Dictionary<string, object>();
             items = new List<object>();
 
-            foreach (BaseItem item in result) {
+            foreach (BaseItem i in result) {
+                BaseItem item = i;
+
+                if (item.GetBaseItemKind() == BaseItemKind.Episode || item.GetBaseItemKind() == BaseItemKind.Season) {
+                    item = item.GetParent();
+
+                    if (item.GetBaseItemKind() == BaseItemKind.Season) {
+                        item = item.GetParent();
+                    }
+                }
+
                 Dictionary<string, object> itemObject = new Dictionary<string, object>();
                 itemObject.Add("id", item.Id.ToString());
                 itemObject.Add("name", item.Name);
