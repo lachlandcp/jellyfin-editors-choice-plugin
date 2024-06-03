@@ -10,6 +10,14 @@ const container = `<div class="verticalSection section-1 emby-scroller-container
         padding-top: 0 !important;
     }
 
+    .homeSectionsContainer.editorsChoiceAdded .emby-scroller {
+        padding: 0 !important;
+        margin-left: 3.3%;
+        margin-left: max(env(safe-area-inset-left), 3.3%);
+        margin-right: 3.3%;
+        margin-right: max(env(safe-area-inset-right), 3.3%);
+    }
+
     .editorsChoiceItemsContainer {
         margin-bottom: 0.75em;
     }
