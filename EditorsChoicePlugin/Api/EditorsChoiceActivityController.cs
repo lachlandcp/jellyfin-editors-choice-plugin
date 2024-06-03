@@ -2,6 +2,7 @@ using System.Net.Mime;
 using System.Reflection;
 using EditorsChoicePlugin.Configuration;
 using Jellyfin.Data.Enums;
+using MediaBrowser.Common.Api;
 using MediaBrowser.Controller.Entities;
 using MediaBrowser.Controller.Library;
 using Microsoft.AspNetCore.Authorization;
@@ -48,7 +49,7 @@ public class EditorsChoiceActivityController : ControllerBase {
     }
 
     [HttpGet("favourites")]
-    [Authorize(Policy = "DefaultAuthorization")]
+    [Authorize(Policy = Policies.RequiresElevation)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [Produces(MediaTypeNames.Application.Json)]
