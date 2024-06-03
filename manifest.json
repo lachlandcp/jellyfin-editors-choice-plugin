@@ -22,6 +22,14 @@
                 "sourceUrl": "https://github.com/lachlandcp/jellyfin-editors-choice-plugin/releases/download/1.0.0.1/EditorsChoicePlugin-v.1.0.0.1.zip",
                 "checksum": "25a4a68e2c447d246963909ac14e6874",
                 "timestamp": "2024-04-25 16:49:00"
+            },
+            {
+                "version": "1.0.1.0",
+                "changelog": "Update for Jellyfin 10.9",
+                "targetAbi": "10.9.0.0",
+                "sourceUrl": "https://github.com/lachlandcp/jellyfin-editors-choice-plugin/archive/refs/tags/10.0.1.0.zip",
+                "checksum": "e71977391e3bd0af7ed5e50a60abcb3c",
+                "timestamp": "2024-06-03 17:53:00"
             }
         ]
     }
