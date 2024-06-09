@@ -9,6 +9,7 @@
   <ItemGroup>
     <PackageReference Include="Jellyfin.Controller" Version="10.9.0" />
     <PackageReference Include="Jellyfin.Model" Version="10.9.0" />
+    <PackageReference Include="Jellyfin.Common" Version="10.9.0" />
   </ItemGroup>
 
   <ItemGroup>
