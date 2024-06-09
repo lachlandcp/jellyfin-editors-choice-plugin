@@ -22,7 +22,7 @@
                 "sourceUrl": "https://github.com/lachlandcp/jellyfin-editors-choice-plugin/releases/download/1.0.0.1/EditorsChoicePlugin-v.1.0.0.1.zip",
                 "checksum": "25a4a68e2c447d246963909ac14e6874",
                 "timestamp": "2024-04-25 16:49:00"
-            }
+            },
             {
                 "version": "1.0.1.1",
                 "changelog": "Update for Jellyfin 10.9 and fix package versions for 10.9.1 to 10.9.3",
