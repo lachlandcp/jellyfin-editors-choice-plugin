@@ -113,10 +113,8 @@ document.addEventListener('viewshow', setup);
 $(document).ready(setup);
 
 function setup() {
-    var path;
-    try {
-        path = Emby.Page.currentRouteInfo.path;
-    } catch {
+    var path = Emby.Page.currentRouteInfo.path;
+    if (path == undefined) {
         path = window.location.href;
     }
 
