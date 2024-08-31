@@ -21,6 +21,14 @@
 
                     <div class="checkboxContainer">
                         <label>
+                            <input is="emby-checkbox"  type="checkbox" id="ShowRandomSelection" name="Show random selection" label="Show random selection">
+                            <span>Show random media</span>
+                        </label>
+                        <div class="fieldDescription">If enabled, this will show a random selection of media in the banner, instead of a selected user's favourites.</div>
+                    </div>
+
+                    <div class="checkboxContainer">
+                        <label>
                             <input is="emby-checkbox"  type="checkbox" id="DoScriptInject" name="Enable client script injection" label="Enable client script injection">
                             <span>Enable client script injection</span>
                         </label>
@@ -53,6 +61,7 @@
                         selectedUserId = config.EditorUserId;
                         //$('#EditorUserId').first().val(config.EditorUserId);
                         $('#DoScriptInject').first().prop('checked', config.DoScriptInject);
+                        $('#ShowRandomMedia').first().prop('checked', config.ShowRandomMedia);
 
                         Dashboard.hideLoadingMsg();
 
@@ -93,6 +102,7 @@
                         }
                         
                         config.DoScriptInject = $('#DoScriptInject').first().is(':checked');
+                        config.ShowRandomMedia = $('#ShowRandomMedia').first().is(':checked');
 
                         ApiClient.updatePluginConfiguration(pluginId, config).then(Dashboard.processPluginConfigurationUpdateResult);
 

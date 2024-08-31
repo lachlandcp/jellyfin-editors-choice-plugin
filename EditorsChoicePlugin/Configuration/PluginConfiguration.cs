@@ -9,4 +9,6 @@ public class PluginConfiguration : BasePluginConfiguration {
 
     public bool DoScriptInject {get; set;} = true;
 
+    public bool ShowRandomSelection {get; set; } = true;
+
 }
