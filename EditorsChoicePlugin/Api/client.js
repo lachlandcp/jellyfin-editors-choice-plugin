@@ -127,7 +127,6 @@ function setup() {
                     ApiClient.fetch({url: ApiClient.getUrl('/EditorsChoice/favourites'), type: 'GET'}).then(function(response) {
                         response.json().then(function(data) {
                             var favourites = shuffle(data.favourites);
-                            var baseUrl = Emby.Page.baseUrl();
                                 
                             $(elem).prepend(container);
 
@@ -136,8 +135,15 @@ function setup() {
                                 let editorsChoiceItemLogo = `<img class='editorsChoiceItemLogo' src='/Items/${favourite.id}/Images/Logo/0' alt='${favourite.name}'/>`;
                                 let editorsChoiceItemRating = `<div class='editorsChoiceItemRating starRatingContainer'><span class='material-icons starIcon star'></span>${communityRating}</div>`;
                                 let editorsChoiceItemOverview = `<p class='editorsChoiceItemOverview'>${favourite.overview}</p>`;
-                                let editorsChoiceItemButton = `<button is='emby-button' class='editorsChoiceItemButton raised button-submit block emby-button'> <span>Watch</span> </button>`
-                                let editorsChoiceItemBanner = `<div class='editorsChoiceItemBanner' data-index='${i}' style="background-image:url('/Items/${favourite.id}/Images/Backdrop/0');" onclick="window.location.href='${baseUrl}/index.html#/details?id=${favourite.id}'; window.location.reload();"><div> ${editorsChoiceItemLogo} ${editorsChoiceItemRating} ${editorsChoiceItemOverview} ${editorsChoiceItemButton}</div></div>`;
+                                let editorsChoiceItemButton = `<button is='emby-button' class='editorsChoiceItemButton raised button-submit block emby-button'> <span>Watch</span> </button>`;
+
+                                // Sometimes the path will be /web/index.html#/home.html, other times it will be /web/#/home.html
+                                var baseUrl = Emby.Page.baseUrl() + '/';
+                                if (window.location.href.includes('/index.html')) {
+                                    baseUrl += 'index.html';
+                                }
+
+                                let editorsChoiceItemBanner = `<div class='editorsChoiceItemBanner' data-index='${i}' style="background-image:url('/Items/${favourite.id}/Images/Backdrop/0');" onclick="window.location.href='${baseUrl}#/details?id=${favourite.id}';"><div> ${editorsChoiceItemLogo} ${editorsChoiceItemRating} ${editorsChoiceItemOverview} ${editorsChoiceItemButton}</div></div>`;
                                 $(".editorsChoiceItemsContainer").append(editorsChoiceItemBanner);
                             });
 
