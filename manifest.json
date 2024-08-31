@@ -62,6 +62,14 @@
                 "sourceUrl": "https://github.com/lachlandcp/jellyfin-editors-choice-plugin/releases/download/1.0.2.0/EditorsChoicePlugin-v1.0.2.0.zip",
                 "checksum": "5cc6dc035617c3e410f45560d2882a2a",
                 "timestamp": "2024-08-31 19:31:00"
+            },
+            {
+                "version": "1.0.2.1",
+                "changelog": "Add fallback title for items that are missing logo images, and exclude items that lack backdrop images.",
+                "targetAbi": "10.9.0.0",
+                "sourceUrl": "https://github.com/lachlandcp/jellyfin-editors-choice-plugin/releases/download/1.0.2.1/EditorsChoicePlugin-v1.0.2.1.zip",
+                "checksum": "aa39fd69c3b8ee1a135ebbed36f16b4e",
+                "timestamp": "2024-08-31 21:06:00"
             }
         ]
     }
