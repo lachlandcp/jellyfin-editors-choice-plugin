@@ -11,4 +11,6 @@ public class PluginConfiguration : BasePluginConfiguration {
 
     public bool ShowRandomMedia {get; set; } = true;
 
+    public int RandomMediaCount {get; set; } = 5;
+
 }

@@ -94,13 +94,12 @@ public class EditorsChoiceActivityController : ControllerBase {
                 List<BaseItem> initialResult = _libraryManager.GetItemList(query);
 
                 var random = new Random();
+                int max = initialResult.Count;
 
-                for (int i = 0; i < 5; i++) {
-                    if (i < initialResult.Count) { // cover edge case if there are less than 5 items in the library
-                        BaseItem shiftItem = initialResult[random.Next(initialResult.Count)];
-                        result.Add(shiftItem);
-                        initialResult.Remove(shiftItem);
-                    }
+                for (int i = 0; i < _config.RandomMediaCount && i < max; i++) {
+                    BaseItem shiftItem = initialResult[random.Next(initialResult.Count)];
+                    result.Add(shiftItem);
+                    initialResult.Remove(shiftItem);
                 }
             }
 

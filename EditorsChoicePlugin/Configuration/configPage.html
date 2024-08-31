@@ -27,6 +27,11 @@
                         <div class="fieldDescription">If enabled, this will show a random selection of media in the banner, instead of a selected user's favourites.</div>
                     </div>
 
+                    <div class="inputContainer">
+                        <input is="emby-input" type="number" id="RandomMediaCount" name="Random media count" label="Number of random items" min="1">
+                        <div class="fieldDescription">If random media is enabled, this sets how many items to show in the banner.</div>
+                    </div>
+
                     <div class="checkboxContainer">
                         <label>
                             <input is="emby-checkbox"  type="checkbox" id="DoScriptInject" name="Enable client script injection" label="Enable client script injection">
@@ -62,6 +67,8 @@
                         //$('#EditorUserId').first().val(config.EditorUserId);
                         $('#DoScriptInject').first().prop('checked', config.DoScriptInject);
                         $('#ShowRandomMedia').first().prop('checked', config.ShowRandomMedia);
+                        $('#RandomMediaCount').val(config.RandomMediaCount);
+                            
 
                         Dashboard.hideLoadingMsg();
 
@@ -95,7 +102,7 @@
 
                     ApiClient.getPluginConfiguration(pluginId).then(function (config) {
                         
-                        if (config.EditorUserId == "none") {
+                        if ($('#EditorUserId').first().val() == "none") {
                             config.EditorUserId = null;
                         } else {
                             config.EditorUserId = $('#EditorUserId').first().val();
@@ -103,6 +110,13 @@
                         
                         config.DoScriptInject = $('#DoScriptInject').first().is(':checked');
                         config.ShowRandomMedia = $('#ShowRandomMedia').first().is(':checked');
+                        
+                        let randomMediaCount = $('#RandomMediaCount').first().val();
+                        if (randomMediaCount < 1 || randomMediaCount == '') {
+                            config.RandomMediaCount = 5;
+                        } else {
+                            config.RandomMediaCount = randomMediaCount;
+                        }
 
                         ApiClient.updatePluginConfiguration(pluginId, config).then(Dashboard.processPluginConfigurationUpdateResult);
 
