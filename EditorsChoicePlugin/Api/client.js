@@ -46,6 +46,14 @@ const container = `<div class="verticalSection section-1 emby-scroller-container
         max-height: calc(50% - 45px);
     }
 
+    .editorsChoiceItemTitle {
+        max-width: 100%;
+        margin: 0 60px 0 0;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
     .editorsChoiceItemOverview {
         white-space: normal;
         width: 650px;
