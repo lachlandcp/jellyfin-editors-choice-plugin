@@ -66,8 +66,8 @@ public class EditorsChoiceActivityController : ControllerBase {
 
             // If not showing random media, collect the editor user's favourited items
             if (!_config.ShowRandomMedia) {
-                // Fail if no editor ID set
-                if (_config.EditorUserId == "" || _config.EditorUserId.Length < 16) return StatusCode(503);
+                // Use random fallback if no editor ID set
+                editorsFavouritesEmpty = _config.EditorUserId == "" || _config.EditorUserId.Length < 16;
 
                 Jellyfin.Data.Entities.User? editorUser = _userManager.GetUserById(Guid.Parse(_config.EditorUserId));
 
