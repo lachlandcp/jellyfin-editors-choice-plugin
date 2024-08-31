@@ -1,3 +1,4 @@
+using System.Net;
 using System.Net.Mime;
 using System.Reflection;
 using EditorsChoicePlugin.Configuration;
@@ -59,17 +60,46 @@ public class EditorsChoiceActivityController : ControllerBase {
 
             Dictionary<string, object> response;
             List<object> items;
+            InternalItemsQuery query;
+            List<BaseItem> result;
 
-            if (_config.EditorUserId == "" || _config.EditorUserId.Length < 16) return StatusCode(503);
+            // If showing random media is enabled, collect a random selection from the entire library
+            if (_config.ShowRandomMedia) {
+                // Get all shows and movies
+                // TODO: exclude items from libraries that active user does not have access to. This assumes users have access to ALL libraries.
+                query = new InternalItemsQuery() {
+                    IncludeItemTypes = [BaseItemKind.Series, BaseItemKind.Movie]
+                };
 
-            Jellyfin.Data.Entities.User? user = _userManager.GetUserById(Guid.Parse(_config.EditorUserId));
+                List<BaseItem> initialResult = _libraryManager.GetItemList(query);
+                result = [];
 
-            InternalItemsQuery query = new InternalItemsQuery(user) {
-                IsFavorite = true,
-                IncludeItemsByName = true,
-                IncludeItemTypes = new[] {BaseItemKind.Series, BaseItemKind.Movie, BaseItemKind.Episode, BaseItemKind.Season}
-            };
-            List<BaseItem> result = _libraryManager.GetItemList(query);
+                var random = new Random();
+
+                for (int i = 0; i < 5; i++) {
+                    if (i < initialResult.Count) { // cover edge case if there are less than 5 items in the library
+                        BaseItem shiftItem = initialResult[random.Next(initialResult.Count)];
+                        result.Add(shiftItem);
+                        initialResult.Remove(shiftItem);
+                    }
+                }
+                
+            // Otherwise, just collect the editor user's favourited items
+            } else {
+                // Fail if no editor ID set
+                if (_config.EditorUserId == "" || _config.EditorUserId.Length < 16) return StatusCode(503);
+
+                Jellyfin.Data.Entities.User? editorUser = _userManager.GetUserById(Guid.Parse(_config.EditorUserId));
+
+                // TODO: exclude items from libraries that active user does not have access to. This assumes users have access to ALL libraries.
+                query = new InternalItemsQuery(editorUser) {
+                    IsFavorite = true,
+                    IncludeItemsByName = true,
+                    IncludeItemTypes = [BaseItemKind.Series, BaseItemKind.Movie, BaseItemKind.Episode, BaseItemKind.Season] // Editor may have favourited individual episodes or seasons - we will handle this later
+                };
+
+                result = _libraryManager.GetItemList(query);
+            }
 
             response = new Dictionary<string, object>();
             items = new List<object>();
@@ -77,14 +107,17 @@ public class EditorsChoiceActivityController : ControllerBase {
             foreach (BaseItem i in result) {
                 BaseItem item = i;
 
+                // If it's an episode or a season, then we'll get the parent season or show
                 if (item.GetBaseItemKind() == BaseItemKind.Episode || item.GetBaseItemKind() == BaseItemKind.Season) {
                     item = item.GetParent();
 
+                    // If the parent is a season (i.e. the favourited item was an episode) then we need to get the season's parent show
                     if (item.GetBaseItemKind() == BaseItemKind.Season) {
                         item = item.GetParent();
                     }
                 }
 
+                // Narrow down properties that are strictly necessary to pass through to frontend
                 Dictionary<string, object> itemObject = new Dictionary<string, object>();
                 itemObject.Add("id", item.Id.ToString());
                 itemObject.Add("name", item.Name);
@@ -101,6 +134,7 @@ public class EditorsChoiceActivityController : ControllerBase {
 
                 items.Add(itemObject);
             }
+
             response.Add("favourites", items);
 
             return Ok(response);
