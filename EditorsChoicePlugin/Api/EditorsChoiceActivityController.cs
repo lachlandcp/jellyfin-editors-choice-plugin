@@ -119,6 +119,9 @@ public class EditorsChoiceActivityController : ControllerBase {
                     }
                 }
 
+                // Skip this item if it lacks a backdrop image
+                if (!item.HasImage(MediaBrowser.Model.Entities.ImageType.Backdrop)) break;
+
                 // Narrow down properties that are strictly necessary to pass through to frontend
                 Dictionary<string, object> itemObject = new Dictionary<string, object>
                 {
@@ -127,8 +130,7 @@ public class EditorsChoiceActivityController : ControllerBase {
                     { "tagline", item.Tagline },
                     { "overview", item.Overview },
                     { "official_rating", item.OfficialRating },
-                    { "hasLogo", item.HasImage(MediaBrowser.Model.Entities.ImageType.Logo) },
-                    { "hasBackdrop", item.HasImage(MediaBrowser.Model.Entities.ImageType.Backdrop) }
+                    { "hasLogo", item.HasImage(MediaBrowser.Model.Entities.ImageType.Logo) }
                 };
 
                 
