@@ -61,31 +61,11 @@ public class EditorsChoiceActivityController : ControllerBase {
             Dictionary<string, object> response;
             List<object> items;
             InternalItemsQuery query;
-            List<BaseItem> result;
+            List<BaseItem> result = [];
+            bool editorsFavouritesEmpty = false;
 
-            // If showing random media is enabled, collect a random selection from the entire library
-            if (_config.ShowRandomMedia) {
-                // Get all shows and movies
-                // TODO: exclude items from libraries that active user does not have access to. This assumes users have access to ALL libraries.
-                query = new InternalItemsQuery() {
-                    IncludeItemTypes = [BaseItemKind.Series, BaseItemKind.Movie]
-                };
-
-                List<BaseItem> initialResult = _libraryManager.GetItemList(query);
-                result = [];
-
-                var random = new Random();
-
-                for (int i = 0; i < 5; i++) {
-                    if (i < initialResult.Count) { // cover edge case if there are less than 5 items in the library
-                        BaseItem shiftItem = initialResult[random.Next(initialResult.Count)];
-                        result.Add(shiftItem);
-                        initialResult.Remove(shiftItem);
-                    }
-                }
-                
-            // Otherwise, just collect the editor user's favourited items
-            } else {
+            // If not showing random media, collect the editor user's favourited items
+            if (!_config.ShowRandomMedia) {
                 // Fail if no editor ID set
                 if (_config.EditorUserId == "" || _config.EditorUserId.Length < 16) return StatusCode(503);
 
@@ -99,6 +79,29 @@ public class EditorsChoiceActivityController : ControllerBase {
                 };
 
                 result = _libraryManager.GetItemList(query);
+
+                editorsFavouritesEmpty = result.Count == 0;
+            }
+
+            // If showing random media is enabled OR the editor's favourites list is currently empty, collect a random selection from the entire library
+            if (_config.ShowRandomMedia || editorsFavouritesEmpty) {
+                // Get all shows and movies
+                // TODO: exclude items from libraries that active user does not have access to. This assumes users have access to ALL libraries.
+                query = new InternalItemsQuery() {
+                    IncludeItemTypes = [BaseItemKind.Series, BaseItemKind.Movie]
+                };
+
+                List<BaseItem> initialResult = _libraryManager.GetItemList(query);
+
+                var random = new Random();
+
+                for (int i = 0; i < 5; i++) {
+                    if (i < initialResult.Count) { // cover edge case if there are less than 5 items in the library
+                        BaseItem shiftItem = initialResult[random.Next(initialResult.Count)];
+                        result.Add(shiftItem);
+                        initialResult.Remove(shiftItem);
+                    }
+                }
             }
 
             response = new Dictionary<string, object>();
