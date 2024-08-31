@@ -175,7 +175,7 @@ $(document).ready(function () {
         if (!$(this).hasClass('ratingbutton-withrating')) {
             ApiClient.getPluginConfiguration(GUID).then(function (data) {
                 if (ApiClient.getCurrentUserId() == data.EditorUserId) {
-                    Dashboard.alert("You are the featured items editor! Your favourites will be displayed on the home page for all users.");
+                    Dashboard.confirm("You are the featured items editor! Your favourites will be displayed on the home page for all users, if enabled.");
                 }
             });
         }
