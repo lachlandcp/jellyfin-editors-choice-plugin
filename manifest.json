@@ -54,6 +54,14 @@
                 "sourceUrl": "https://github.com/lachlandcp/jellyfin-editors-choice-plugin/releases/download/1.0.1.4/EditorsChoicePlugin-v1.0.1.4.zip",
                 "checksum": "ed79e024493118e3738cc693da45acaa",
                 "timestamp": "2024-08-31 18:13:00"
+            },
+            {
+                "version": "1.0.2.0",
+                "changelog": "Add new 'random' banner option",
+                "targetAbi": "10.9.0.0",
+                "sourceUrl": "https://github.com/lachlandcp/jellyfin-editors-choice-plugin/releases/download/1.0.2.0/EditorsChoicePlugin-v1.0.2.0.zip",
+                "checksum": "5cc6dc035617c3e410f45560d2882a2a",
+                "timestamp": "2024-08-31 19:31:00"
             }
         ]
     }
