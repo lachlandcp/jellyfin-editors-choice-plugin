@@ -120,13 +120,18 @@ public class EditorsChoiceActivityController : ControllerBase {
                 }
 
                 // Narrow down properties that are strictly necessary to pass through to frontend
-                Dictionary<string, object> itemObject = new Dictionary<string, object>();
-                itemObject.Add("id", item.Id.ToString());
-                itemObject.Add("name", item.Name);
-                itemObject.Add("tagline", item.Tagline);
-                itemObject.Add("overview", item.Overview);
-                itemObject.Add("official_rating", item.OfficialRating);
+                Dictionary<string, object> itemObject = new Dictionary<string, object>
+                {
+                    { "id", item.Id.ToString() },
+                    { "name", item.Name },
+                    { "tagline", item.Tagline },
+                    { "overview", item.Overview },
+                    { "official_rating", item.OfficialRating },
+                    { "hasLogo", item.HasImage(MediaBrowser.Model.Entities.ImageType.Logo) },
+                    { "hasBackdrop", item.HasImage(MediaBrowser.Model.Entities.ImageType.Backdrop) }
+                };
 
+                
                 if (item.CriticRating.HasValue) {
                     itemObject.Add("critic_rating", item.CriticRating);
                 }
