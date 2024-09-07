@@ -18,6 +18,10 @@ const container = `<div class="verticalSection section-1 emby-scroller-container
         margin-right: max(env(safe-area-inset-right), 3.3%);
     }
 
+    .homeSectionsContainer.editorsChoiceAdded .emby-scrollbuttons {
+        mix-blend-mode: difference;
+    }
+
     .editorsChoiceItemsContainer {
         margin-bottom: 0.75em;
     }
