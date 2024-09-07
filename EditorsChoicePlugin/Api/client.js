@@ -146,7 +146,14 @@ function setup() {
                                 if (!favourite.hasLogo) {
                                     editorsChoiceItemLogo = `<h1 class="editorsChoiceItemTitle">${favourite.name}</h1>`;
                                 }
+
                                 let editorsChoiceItemRating = `<div class='editorsChoiceItemRating starRatingContainer'><span class='material-icons starIcon star'></span>${communityRating}</div>`;
+                                
+                                // Skip rating if it is 0 - a perfect zero means the metadata provider has no score so is misrepresentative
+                                if (favourite.communityRating == 0) {
+                                    editorsChoiceItemRating = "";
+                                }
+
                                 let editorsChoiceItemOverview = `<p class='editorsChoiceItemOverview'>${favourite.overview}</p>`;
                                 let editorsChoiceItemButton = `<button is='emby-button' class='editorsChoiceItemButton raised button-submit block emby-button'> <span>Watch</span> </button>`;
 
