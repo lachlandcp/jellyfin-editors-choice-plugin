@@ -50,7 +50,7 @@ public class EditorsChoiceActivityController : ControllerBase {
     }
 
     [HttpGet("favourites")]
-    [Authorize(Policy = Policies.RequiresElevation)]
+    [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [Produces(MediaTypeNames.Application.Json)]
