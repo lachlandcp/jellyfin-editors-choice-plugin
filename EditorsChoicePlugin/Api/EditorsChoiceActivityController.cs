@@ -60,6 +60,7 @@ public class EditorsChoiceActivityController : ControllerBase {
             Dictionary<string, object> response;
             List<object> items;
             InternalItemsQuery query;
+            List<BaseItem> initialResult = [];
             List<BaseItem> result = [];
             bool editorsFavouritesEmpty = false;  
 
@@ -89,11 +90,11 @@ public class EditorsChoiceActivityController : ControllerBase {
                         IncludeItemsByName = true,
                         IncludeItemTypes = [BaseItemKind.Series, BaseItemKind.Movie, BaseItemKind.Episode, BaseItemKind.Season] // Editor may have favourited individual episodes or seasons - we will handle this later
                     };
-                    result = _libraryManager.GetItemList(query);
+                    initialResult = _libraryManager.GetItemList(query);
                     
                     // Get ids of items in the favourites list
                     List<Guid> itemIds = new List<Guid>();
-                    foreach (var item in result) {
+                    foreach (var item in initialResult) {
                         if (!itemIds.Contains(item.Id)){
                             // Only include if active user has parental access to this item
                             if (item.IsVisible(activeUser)){
@@ -108,7 +109,22 @@ public class EditorsChoiceActivityController : ControllerBase {
                         IncludeItemTypes = [BaseItemKind.Series, BaseItemKind.Movie]
                         
                     };
-                    result = _libraryManager.GetItemList(query);
+                    initialResult = _libraryManager.GetItemList(query);
+
+                    // Randomly add items until we run out or reach the admin-set cap
+                    var random = new Random();
+                    int max = initialResult.Count;
+                    
+                    for (int i = 0; i < _config.RandomMediaCount && i < max; i++) {
+                        BaseItem shiftItem = initialResult[random.Next(initialResult.Count)];
+                        // Only include if active user has parental access to this item
+                        if (shiftItem.IsVisible(activeUser)){
+                            result.Add(shiftItem);
+                        } else {
+                            i--; // reset increment so we make up for non-accessible items
+                        }
+                        initialResult.Remove(shiftItem);
+                    }
 
                     editorsFavouritesEmpty = result.Count == 0;
                 } 
@@ -117,9 +133,7 @@ public class EditorsChoiceActivityController : ControllerBase {
 
             // If showing random media is enabled OR the editor's favourites list is currently empty, collect a random selection from the entire library
             if (_config.ShowRandomMedia || editorsFavouritesEmpty) {
-                
-                List<BaseItem> initialResult = [];
-                                
+                                               
                 // Get all shows and movies
                 query = new InternalItemsQuery(activeUser) {
                     IncludeItemTypes = [BaseItemKind.Series, BaseItemKind.Movie]                    
