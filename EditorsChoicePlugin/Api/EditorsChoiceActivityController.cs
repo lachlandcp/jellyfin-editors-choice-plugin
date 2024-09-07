@@ -1,9 +1,7 @@
-using System.Net;
 using System.Net.Mime;
 using System.Reflection;
 using EditorsChoicePlugin.Configuration;
 using Jellyfin.Data.Enums;
-using MediaBrowser.Common.Api;
 using MediaBrowser.Controller.Entities;
 using MediaBrowser.Controller.Library;
 using Microsoft.AspNetCore.Authorization;
@@ -33,7 +31,7 @@ public class EditorsChoiceActivityController : ControllerBase {
         _scriptPath = GetType().Namespace + ".client.js";
 
         _logger.LogInformation("EditorsChoiceActivityController loaded.");
-    }
+    }  
 
     [HttpGet("script")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -52,6 +50,7 @@ public class EditorsChoiceActivityController : ControllerBase {
     [HttpGet("favourites")]
     [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [Produces(MediaTypeNames.Application.Json)]
     public ActionResult<Dictionary<string, object>> GetFavourites() {
@@ -62,47 +61,88 @@ public class EditorsChoiceActivityController : ControllerBase {
             List<object> items;
             InternalItemsQuery query;
             List<BaseItem> result = [];
-            bool editorsFavouritesEmpty = false;
+            bool editorsFavouritesEmpty = false;  
+
+            // Get active user - haven't found a better way than this
+            string name = "";
+            if (User.Identity != null) {
+                if (User.Identity.Name != null) {
+                    name = User.Identity.Name;
+                }
+            }
+
+            Jellyfin.Data.Entities.User? activeUser = _userManager.GetUserByName(name);
+            if (activeUser == null) return NotFound();
 
             // If not showing random media, collect the editor user's favourited items
             if (!_config.ShowRandomMedia) {
+
                 // Use random fallback if no editor ID set
-                editorsFavouritesEmpty = _config.EditorUserId == "" || _config.EditorUserId.Length < 16;
+                if (_config.EditorUserId == null || _config.EditorUserId == "" || _config.EditorUserId.Length < 16 ) {
+                    editorsFavouritesEmpty = true;
+                } else {
+                    Jellyfin.Data.Entities.User? editorUser = _userManager.GetUserById(Guid.Parse(_config.EditorUserId));
 
-                Jellyfin.Data.Entities.User? editorUser = _userManager.GetUserById(Guid.Parse(_config.EditorUserId));
+                    // Get the favourites list
+                    query = new InternalItemsQuery(editorUser) {
+                        IsFavorite = true,
+                        IncludeItemsByName = true,
+                        IncludeItemTypes = [BaseItemKind.Series, BaseItemKind.Movie, BaseItemKind.Episode, BaseItemKind.Season] // Editor may have favourited individual episodes or seasons - we will handle this later
+                    };
+                    result = _libraryManager.GetItemList(query);
+                    
+                    // Get ids of items in the favourites list
+                    List<Guid> itemIds = new List<Guid>();
+                    foreach (var item in result) {
+                        if (!itemIds.Contains(item.Id)){
+                            // Only include if active user has parental access to this item
+                            if (item.IsVisible(activeUser)){
+                                itemIds.Add(item.Id);
+                            }
+                        }
+                    }
 
-                // TODO: exclude items from libraries that active user does not have access to. This assumes users have access to ALL libraries.
-                query = new InternalItemsQuery(editorUser) {
-                    IsFavorite = true,
-                    IncludeItemsByName = true,
-                    IncludeItemTypes = [BaseItemKind.Series, BaseItemKind.Movie, BaseItemKind.Episode, BaseItemKind.Season] // Editor may have favourited individual episodes or seasons - we will handle this later
-                };
+                    // Query items from the active user to ensure access
+                    query = new InternalItemsQuery(activeUser) {
+                        ItemIds = [.. itemIds],
+                        IncludeItemTypes = [BaseItemKind.Series, BaseItemKind.Movie]
+                        
+                    };
+                    result = _libraryManager.GetItemList(query);
 
-                result = _libraryManager.GetItemList(query);
+                    editorsFavouritesEmpty = result.Count == 0;
+                } 
 
-                editorsFavouritesEmpty = result.Count == 0;
             }
 
             // If showing random media is enabled OR the editor's favourites list is currently empty, collect a random selection from the entire library
             if (_config.ShowRandomMedia || editorsFavouritesEmpty) {
+                
+                List<BaseItem> initialResult = [];
+                                
                 // Get all shows and movies
-                // TODO: exclude items from libraries that active user does not have access to. This assumes users have access to ALL libraries.
-                query = new InternalItemsQuery() {
-                    IncludeItemTypes = [BaseItemKind.Series, BaseItemKind.Movie]
+                query = new InternalItemsQuery(activeUser) {
+                    IncludeItemTypes = [BaseItemKind.Series, BaseItemKind.Movie]                    
                 };
+                initialResult = _libraryManager.GetItemList(query);
 
-                List<BaseItem> initialResult = _libraryManager.GetItemList(query);
-
+                // Randomly add items until we run out or reach the admin-set cap
                 var random = new Random();
                 int max = initialResult.Count;
-
+                
                 for (int i = 0; i < _config.RandomMediaCount && i < max; i++) {
                     BaseItem shiftItem = initialResult[random.Next(initialResult.Count)];
-                    result.Add(shiftItem);
+                    // Only include if active user has parental access to this item
+                    if (shiftItem.IsVisible(activeUser)){
+                        result.Add(shiftItem);
+                    } else {
+                        i--; // reset increment so we make up for non-accessible items
+                    }
                     initialResult.Remove(shiftItem);
                 }
             }
 
+            // Build response
             response = new Dictionary<string, object>();
             items = new List<object>();
 
@@ -148,7 +188,8 @@ public class EditorsChoiceActivityController : ControllerBase {
 
             return Ok(response);
 
-        } catch (Exception) {
+        } catch (Exception e) {
+            _logger.LogError(e.ToString());
             return StatusCode(503);
         }
 
