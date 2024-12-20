@@ -78,6 +78,14 @@
                 "sourceUrl": "https://github.com/lachlandcp/jellyfin-editors-choice-plugin/releases/download/1.0.2.2/EditorsChoicePlugin-v1.0.2.2.zip",
                 "checksum": "eba01c3237a9c13f4e2f4795e93ee887",
                 "timestamp": "2024-09-07 13:19:00"
+            },
+            {
+                "version": "1.0.3.0",
+                "changelog": "Now works with Jellyfin 10.10.x. Other changes in this version include: Users can now only see items from libraries that they have permission to access. The option to show a particular number of items applies to 'favourites' mode as well as random mode. Slider will not show IMDB ratings if unavailable. Scroller buttons adjusted to stand out more on light background.",
+                "targetAbi": "10.10.0.0",
+                "sourceUrl": "https://github.com/lachlandcp/jellyfin-editors-choice-plugin/releases/download/1.0.3.0/EditorsChoicePlugin-v1.0.3.0.zip",
+                "checksum": "0599d79e62f26815e94323f2c5d2b917",
+                "timestamp": "2024-12-20 16:00:00"
             }
         ]
     }
