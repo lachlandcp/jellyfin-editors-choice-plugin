@@ -5,14 +5,14 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 
-    <AssemblyVersion>1.0.2.2</AssemblyVersion>
-    <FileVersion>1.0.2.2</FileVersion>
+    <AssemblyVersion>1.0.3.0</AssemblyVersion>
+    <FileVersion>1.0.3.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Jellyfin.Controller" Version="10.9.0" />
-    <PackageReference Include="Jellyfin.Model" Version="10.9.0" />
-    <PackageReference Include="Jellyfin.Common" Version="10.9.0" />
+    <PackageReference Include="Jellyfin.Controller" Version="10.10.0" />
+    <PackageReference Include="Jellyfin.Model" Version="10.10.0" />
+    <PackageReference Include="Jellyfin.Common" Version="10.10.0" />
   </ItemGroup>
 
   <ItemGroup>

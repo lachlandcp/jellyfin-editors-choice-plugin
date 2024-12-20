@@ -125,7 +125,7 @@ document.addEventListener('viewshow', setup);
 $(document).ready(setup);
 
 function setup() {
-    var path = Emby.Page.currentRouteInfo.path;
+    var path = Emby.Page.lastPath;
     if (path == undefined) {
         path = window.location.href;
     }
