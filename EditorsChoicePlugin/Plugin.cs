@@ -41,7 +41,7 @@ public class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages {
                     }
 
                     // Don't run if script already exists
-                    string scriptReplace = "<script plugin=\"EditorsChoice\".*?></script><style plugin=\"EditorsChoice\">.*?</style>";
+                    string scriptReplace = "<script plugin=\"EditorsChoice\".*?></script>(<style plugin=\"EditorsChoice\">.*?</style>)?";
                     string scriptElement = string.Format("<script plugin=\"EditorsChoice\" defer=\"defer\" src=\"{0}/EditorsChoice/script\"></script>", basePath);
 
                     if (!indexContents.Contains(scriptElement))
