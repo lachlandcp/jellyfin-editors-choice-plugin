@@ -133,8 +133,6 @@ var observer = new MutationObserver(function( mutations ) {
     	$nodes.each(function() {
     		var $node = $( this );
     		if( $node.hasClass('section0') && !$node.hasClass('editorsChoiceAdded')) {
-                console.log($node);
-                console.log('node added');
     			setup();
     		}
     	});
