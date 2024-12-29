@@ -144,11 +144,6 @@ observer.observe(target, {attributes: true, childList: true, characterData: true
 
 // Setup slider
 function setup() {
-    var path = Emby.Page.lastPath;
-    if (path == undefined) {
-        path = window.location.href;
-    }
-
     console.log("Attempting creation of editors choice slider.");
     $('.homeSectionsContainer').each((index, elem) => {
         if (!$(elem).hasClass('editorsChoiceAdded')) {
