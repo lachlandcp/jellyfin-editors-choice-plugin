@@ -88,7 +88,8 @@ public class EditorsChoiceActivityController : ControllerBase {
                     query = new InternalItemsQuery(editorUser) {
                         IsFavorite = true,
                         IncludeItemsByName = true,
-                        IncludeItemTypes = [BaseItemKind.Series, BaseItemKind.Movie, BaseItemKind.Episode, BaseItemKind.Season] // Editor may have favourited individual episodes or seasons - we will handle this later
+                        IncludeItemTypes = [BaseItemKind.Series, BaseItemKind.Movie, BaseItemKind.Episode, BaseItemKind.Season], // Editor may have favourited individual episodes or seasons - we will handle this later
+                        MinCommunityRating = _config.MinimumRating
                     };
                     initialResult = _libraryManager.GetItemList(query);
                     
@@ -121,7 +122,7 @@ public class EditorsChoiceActivityController : ControllerBase {
                         if (shiftItem.IsVisible(activeUser)){
                             result.Add(shiftItem);
                         } else {
-                            i--; // reset increment so we make up for non-accessible items
+                            i--; // reset increment so we make up for non-inclusion
                         }
                         initialResult.Remove(shiftItem);
                     }
@@ -136,7 +137,8 @@ public class EditorsChoiceActivityController : ControllerBase {
                                                
                 // Get all shows and movies
                 query = new InternalItemsQuery(activeUser) {
-                    IncludeItemTypes = [BaseItemKind.Series, BaseItemKind.Movie]                    
+                    IncludeItemTypes = [BaseItemKind.Series, BaseItemKind.Movie],
+                    MinCommunityRating = _config.MinimumRating
                 };
                 initialResult = _libraryManager.GetItemList(query);
 
@@ -150,7 +152,7 @@ public class EditorsChoiceActivityController : ControllerBase {
                     if (shiftItem.IsVisible(activeUser)){
                         result.Add(shiftItem);
                     } else {
-                        i--; // reset increment so we make up for non-accessible items
+                        i--; // reset increment so we make up for non-inclusion
                     }
                     initialResult.Remove(shiftItem);
                 }

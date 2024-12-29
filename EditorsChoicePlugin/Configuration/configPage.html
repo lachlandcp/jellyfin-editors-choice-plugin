@@ -32,6 +32,11 @@
                         <div class="fieldDescription">This sets how many items to show in the banner, whether random or from the favourites list. Set to a massive number if you want to show all of your favourited items.</div>
                     </div>
 
+                    <div class="inputContainer">
+                        <input is="emby-input" type="number" id="MinimumRating" name="Minimum community rating" label="Minimum community rating" min="0" max="10" step="0.1">
+                        <div class="fieldDescription">Only show shows or films that have a community rating at least this number. Set to 0 to ignore rating.</div>
+                    </div>
+
                     <div class="checkboxContainer">
                         <label>
                             <input is="emby-checkbox"  type="checkbox" id="DoScriptInject" name="Enable client script injection" label="Enable client script injection">
@@ -68,7 +73,7 @@
                         $('#DoScriptInject').first().prop('checked', config.DoScriptInject);
                         $('#ShowRandomMedia').first().prop('checked', config.ShowRandomMedia);
                         $('#RandomMediaCount').val(config.RandomMediaCount);
-                            
+                        $('#MinimumRating').val(config.MinimumRating);
 
                         Dashboard.hideLoadingMsg();
 
@@ -116,6 +121,13 @@
                             config.RandomMediaCount = 5;
                         } else {
                             config.RandomMediaCount = randomMediaCount;
+                        }
+
+                        let minimumRating = $('#MinimumRating').first().val();
+                        if (minimumRating < 0 || minimumRating == '' || minimumRating > 10) {
+                            config.RandomMediaCount = 0;
+                        } else {
+                            config.MinimumRating = minimumRating;
                         }
 
                         ApiClient.updatePluginConfiguration(pluginId, config).then(Dashboard.processPluginConfigurationUpdateResult);
