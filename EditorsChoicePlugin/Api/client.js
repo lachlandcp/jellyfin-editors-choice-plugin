@@ -200,5 +200,5 @@ $(document).ready(function () {
                 }
             });
         }
-    })
+    });
 });
