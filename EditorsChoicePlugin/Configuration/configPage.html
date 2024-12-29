@@ -11,6 +11,7 @@
 
                 <form class="editorsChoiceConfigurationForm">
                     <br>
+                    <h1>Mode</h1>
 
                     <div class="selectContainer">
                         <label class="selectLabel" for="EditorUserId">User's favourites list</label>
@@ -22,7 +23,7 @@
                     <div class="checkboxContainer">
                         <label>
                             <input is="emby-checkbox"  type="checkbox" id="ShowRandomMedia" name="Show random media" label="Show random media">
-                            <span>Show random media</span>
+                            <span>Show random media instead of using a user's favourites list</span>
                         </label>
                         <div class="fieldDescription">If enabled, this will show a random selection of media in the banner, instead of a selected user's favourites.</div>
                     </div>
@@ -32,6 +33,7 @@
                         <div class="fieldDescription">This sets how many items to show in the banner, whether random or from the favourites list. Set to a massive number if you want to show all of your favourited items.</div>
                     </div>
 
+                    <h1>Filter by minimum rating</h1>
                     <div class="inputContainer">
                         <input is="emby-input" type="number" id="MinimumRating" name="Minimum community rating" label="Minimum community rating" min="0" max="10" step="0.1">
                         <div class="fieldDescription">Only show shows or films that have a community rating at least this number (0.0 to 1.0). Set to 0 to ignore rating.</div>
@@ -42,6 +44,7 @@
                         <div class="fieldDescription">Only show shows or films that have a critic rating at least this number (0 to 100). Set to 0 to ignore rating.</div>
                     </div>
 
+                    <h1>Technical settings</h1>
                     <div class="checkboxContainer">
                         <label>
                             <input is="emby-checkbox"  type="checkbox" id="DoScriptInject" name="Enable client script injection" label="Enable client script injection">
