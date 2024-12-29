@@ -122,7 +122,7 @@ function shuffle(old_array) {
 const GUID = "70bb2ec1-f19e-46b5-b49a-942e6b96ebae";
 
 // Detect if container is ready to setup slider
-var target = $( "#reactRoot" )[0];
+var target = document.getElementById('reactRoot');
 
 // Create an observer instance
 var observer = new MutationObserver(function( mutations ) {
