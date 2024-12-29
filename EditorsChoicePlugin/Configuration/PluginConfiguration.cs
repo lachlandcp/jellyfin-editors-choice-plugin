@@ -14,4 +14,6 @@ public class PluginConfiguration : BasePluginConfiguration {
     public int RandomMediaCount {get; set; } = 5;
 
     public float MinimumRating {get; set; } = 0.0f;
+
+    public int MinimumCriticRating {get; set; } = 0;
 }

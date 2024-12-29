@@ -89,7 +89,8 @@ public class EditorsChoiceActivityController : ControllerBase {
                         IsFavorite = true,
                         IncludeItemsByName = true,
                         IncludeItemTypes = [BaseItemKind.Series, BaseItemKind.Movie, BaseItemKind.Episode, BaseItemKind.Season], // Editor may have favourited individual episodes or seasons - we will handle this later
-                        MinCommunityRating = _config.MinimumRating
+                        MinCommunityRating = _config.MinimumRating,
+                        MinCriticRating = _config.MinimumCriticRating
                     };
                     initialResult = _libraryManager.GetItemList(query);
                     
@@ -138,7 +139,8 @@ public class EditorsChoiceActivityController : ControllerBase {
                 // Get all shows and movies
                 query = new InternalItemsQuery(activeUser) {
                     IncludeItemTypes = [BaseItemKind.Series, BaseItemKind.Movie],
-                    MinCommunityRating = _config.MinimumRating
+                    MinCommunityRating = _config.MinimumRating,
+                    MinCriticRating = _config.MinimumCriticRating
                 };
                 initialResult = _libraryManager.GetItemList(query);
 

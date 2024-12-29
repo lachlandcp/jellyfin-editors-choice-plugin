@@ -34,7 +34,12 @@
 
                     <div class="inputContainer">
                         <input is="emby-input" type="number" id="MinimumRating" name="Minimum community rating" label="Minimum community rating" min="0" max="10" step="0.1">
-                        <div class="fieldDescription">Only show shows or films that have a community rating at least this number. Set to 0 to ignore rating.</div>
+                        <div class="fieldDescription">Only show shows or films that have a community rating at least this number (0.0 to 1.0). Set to 0 to ignore rating.</div>
+                    </div>
+
+                    <div class="inputContainer">
+                        <input is="emby-input" type="number" id="MinimumCriticRating" name="Minimum critic rating" label="Minimum critic rating" min="0" max="100" step="1">
+                        <div class="fieldDescription">Only show shows or films that have a critic rating at least this number (0 to 100). Set to 0 to ignore rating.</div>
                     </div>
 
                     <div class="checkboxContainer">
@@ -74,6 +79,7 @@
                         $('#ShowRandomMedia').first().prop('checked', config.ShowRandomMedia);
                         $('#RandomMediaCount').val(config.RandomMediaCount);
                         $('#MinimumRating').val(config.MinimumRating);
+                        $('#MinimumCriticRating').val(config.MinimumCriticRating);
 
                         Dashboard.hideLoadingMsg();
 
@@ -125,9 +131,16 @@
 
                         let minimumRating = $('#MinimumRating').first().val();
                         if (minimumRating < 0 || minimumRating == '' || minimumRating > 10) {
-                            config.RandomMediaCount = 0;
+                            config.MinimumRating = 0;
                         } else {
                             config.MinimumRating = minimumRating;
+                        }
+
+                        let minimumCriticRating = $('#MinimumCriticRating').first().val();
+                        if (minimumCriticRating < 0 || minimumCriticRating == '' || minimumCriticRating > 100) {
+                            config.MinimumCriticRating = 0;
+                        } else {
+                            config.MinimumCriticRating = minimumCriticRating;
                         }
 
                         ApiClient.updatePluginConfiguration(pluginId, config).then(Dashboard.processPluginConfigurationUpdateResult);
