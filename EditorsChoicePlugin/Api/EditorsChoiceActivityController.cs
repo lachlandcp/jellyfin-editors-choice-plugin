@@ -110,36 +110,9 @@ public class EditorsChoiceActivityController : ControllerBase {
                         ItemIds = [.. itemIds],
                         IncludeItemTypes = [BaseItemKind.Series, BaseItemKind.Movie, BaseItemKind.Episode, BaseItemKind.Season] // Editor may have favourited individual episodes or seasons - we will handle this later
                     };
-                    initialResult = _libraryManager.GetItemList(query);
+                    result = PrepareResult(query, activeUser);
 
-                    // Randomly add items until we run out or reach the admin-set cap
-                    var random = new Random();
-                    int max = initialResult.Count;
-                    
-                    for (int i = 0; i < _config.RandomMediaCount && i < max; i++) {
-                        BaseItem initItem = initialResult[random.Next(initialResult.Count)];
-                        var shiftItem = initItem;
-
-                        // Deal with episodes or seasons
-                        if (shiftItem.GetBaseItemKind() == BaseItemKind.Episode || shiftItem.GetBaseItemKind() == BaseItemKind.Season) {
-                            shiftItem = shiftItem.GetParent();
-
-                            // If the parent is a season (i.e. the favourited item was an episode) then we need to get the season's parent show
-                            if (shiftItem.GetBaseItemKind() == BaseItemKind.Season) {
-                                shiftItem = shiftItem.GetParent();
-                            }
-                        }
-
-                        // Only include if active user has parental access to this item, and skip if already in the results
-                        if (shiftItem.IsVisible(activeUser) && !result.Contains(shiftItem)){
-                            result.Add(shiftItem);
-                        } else {
-                            i--; // reset increment so we make up for non-inclusion
-                            max--;
-                        }
-                        initialResult.Remove(initItem);
-                    }
-
+                    // If the result is empty (i.e. the active user doesn't have access to any of the items), fallback to random mode.
                     editorsFavouritesEmpty = result.Count == 0;
                 } 
 
@@ -154,35 +127,7 @@ public class EditorsChoiceActivityController : ControllerBase {
                     MinCommunityRating = _config.MinimumRating,
                     MinCriticRating = _config.MinimumCriticRating
                 };
-                initialResult = _libraryManager.GetItemList(query);
-
-                // Randomly add items until we run out or reach the admin-set cap
-                var random = new Random();
-                int max = initialResult.Count;
-                
-                for (int i = 0; i < _config.RandomMediaCount && i < max; i++) {
-                        BaseItem initItem = initialResult[random.Next(initialResult.Count)];
-                        var shiftItem = initItem;
-
-                        // Deal with episodes or seasons
-                        if (shiftItem.GetBaseItemKind() == BaseItemKind.Episode || shiftItem.GetBaseItemKind() == BaseItemKind.Season) {
-                            shiftItem = shiftItem.GetParent();
-
-                            // If the parent is a season (i.e. the favourited item was an episode) then we need to get the season's parent show
-                            if (shiftItem.GetBaseItemKind() == BaseItemKind.Season) {
-                                shiftItem = shiftItem.GetParent();
-                            }
-                        }
-
-                        // Only include if active user has parental access to this item, and skip if already in the results
-                        if (shiftItem.IsVisible(activeUser) && !result.Contains(shiftItem)){
-                            result.Add(shiftItem);
-                        } else {
-                            i--; // reset increment so we make up for non-inclusion
-                            max--;
-                        }
-                        initialResult.Remove(initItem);
-                    }
+                result = PrepareResult(query, activeUser);
             }
 
             // Build response
@@ -228,5 +173,39 @@ public class EditorsChoiceActivityController : ControllerBase {
 
     }
 
+    private List<BaseItem> PrepareResult(InternalItemsQuery query, Jellyfin.Data.Entities.User? activeUser) {
+        List<BaseItem> initialResult = _libraryManager.GetItemList(query);
+        List<BaseItem> result = [];
+
+        // Randomly add items until we run out or reach the admin-set cap
+        var random = new Random();
+        int max = initialResult.Count;
+        
+        for (int i = 0; i < _config.RandomMediaCount && i < max; i++) {
+            BaseItem initItem = initialResult[random.Next(initialResult.Count)];
+            var shiftItem = initItem;
+
+            // Deal with episodes or seasons
+            if (shiftItem.GetBaseItemKind() == BaseItemKind.Episode || shiftItem.GetBaseItemKind() == BaseItemKind.Season) {
+                shiftItem = shiftItem.GetParent();
+
+                // If the parent is a season (i.e. the favourited item was an episode) then we need to get the season's parent show
+                if (shiftItem.GetBaseItemKind() == BaseItemKind.Season) {
+                    shiftItem = shiftItem.GetParent();
+                }
+            }
+
+            // Only include if active user has parental access to this item, and skip if already in the results
+            if (shiftItem.IsVisible(activeUser) && !result.Contains(shiftItem)){
+                result.Add(shiftItem);
+            } else {
+                i--; // reset increment so we make up for non-inclusion
+                max--;
+            }
+            initialResult.Remove(initItem);
+        }
+
+        return result;
+    }
 
 }
