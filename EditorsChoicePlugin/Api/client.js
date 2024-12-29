@@ -121,27 +121,6 @@ function shuffle(old_array) {
 
 const GUID = "70bb2ec1-f19e-46b5-b49a-942e6b96ebae";
 
-// Detect if container is ready to setup slider
-var target = document.getElementById('reactRoot');
-
-// Create an observer instance
-var observer = new MutationObserver(function( mutations ) {
-  mutations.forEach(function( mutation ) {
-    var newNodes = mutation.addedNodes; // DOM NodeList
-    if( newNodes !== null ) { // If there are new nodes added
-    	var $nodes = $( newNodes ); // jQuery set
-    	$nodes.each(function() {
-    		var $node = $( this );
-    		if( $node.hasClass('section0') && !$node.hasClass('editorsChoiceAdded')) {
-    			setup();
-    		}
-    	});
-    }
-  });    
-});
-observer.observe(target, {attributes: true, childList: true, characterData: true, subtree: true});
-
-
 // Setup slider
 function setup() {
     console.log("Attempting creation of editors choice slider.");
@@ -190,7 +169,27 @@ function setup() {
     });
 }
 
-$(document).ready(function () {
+window.onload = function() {
+    // Detect if container is ready to setup slider
+    var target = document.getElementById('reactRoot');
+
+    // Create an observer instance
+    var observer = new MutationObserver(function( mutations ) {
+        mutations.forEach(function( mutation ) {
+            var newNodes = mutation.addedNodes; // DOM NodeList
+            if( newNodes !== null ) { // If there are new nodes added
+                var $nodes = $( newNodes ); // jQuery set
+                $nodes.each(function() {
+                    var $node = $( this );
+                    if( $node.hasClass('section0') && !$node.hasClass('editorsChoiceAdded')) {
+                        setup();
+                    }
+                });
+            }
+        });    
+    });
+    observer.observe(target, {attributes: true, childList: true, characterData: true, subtree: true});
+
     // Remind user that their favourites will be public when they add a new favourite.
     $('body').on('click', '[is="emby-ratingbutton"]', function () {
         if (!$(this).hasClass('ratingbutton-withrating')) {
@@ -201,4 +200,4 @@ $(document).ready(function () {
             });
         }
     });
-});
+};
