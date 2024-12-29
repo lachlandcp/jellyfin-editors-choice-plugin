@@ -94,6 +94,14 @@
                 "sourceUrl": "https://github.com/lachlandcp/jellyfin-editors-choice-plugin/releases/download/1.0.4.0/EditorsChoicePlugin-v1.0.4.0.zip",
                 "checksum": "184a35514a3a1901401aa710a18c4b21",
                 "timestamp": "2024-12-29 13:48:00"
+            },
+            {
+                "version": "1.0.5.0",
+                "changelog": "Allows filtering by minimum community or critic rating! And fixes slider on Jellyfin Android app",
+                "targetAbi": "10.10.0.0",
+                "sourceUrl": "https://github.com/lachlandcp/jellyfin-editors-choice-plugin/releases/download/1.0.5.0/EditorsChoicePlugin-v1.0.5.0.zip",
+                "checksum": "0054586015bed521b556ed7e3b9b21af",
+                "timestamp": "2024-12-30 10:48:00"
             }
         ]
     }
