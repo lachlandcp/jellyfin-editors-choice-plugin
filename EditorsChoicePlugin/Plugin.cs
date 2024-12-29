@@ -42,7 +42,7 @@ public class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages {
 
                     // Don't run if script already exists
                     string scriptReplace = "<script plugin=\"EditorsChoice\".*?></script><style plugin=\"EditorsChoice\">.*?</style>";
-                    string scriptElement = string.Format("<script plugin=\"EditorsChoice\" defer=\"defer\" src=\"{0}/EditorsChoice/script\"></script><style plugin=\"EditorsChoice\">.sections.homeSectionsContainer {1}</style>", basePath, "{padding-top:360px;}");
+                    string scriptElement = string.Format("<script plugin=\"EditorsChoice\" defer=\"defer\" src=\"{0}/EditorsChoice/script\"></script>", basePath);
 
                     if (!indexContents.Contains(scriptElement))
                     {
