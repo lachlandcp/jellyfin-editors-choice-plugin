@@ -108,8 +108,7 @@ public class EditorsChoiceActivityController : ControllerBase {
                     // Query items from the active user to ensure access
                     query = new InternalItemsQuery(activeUser) {
                         ItemIds = [.. itemIds],
-                        IncludeItemTypes = [BaseItemKind.Series, BaseItemKind.Movie]
-                        
+                        IncludeItemTypes = [BaseItemKind.Series, BaseItemKind.Movie, BaseItemKind.Episode, BaseItemKind.Season] // Editor may have favourited individual episodes or seasons - we will handle this later
                     };
                     initialResult = _libraryManager.GetItemList(query);
 
@@ -118,14 +117,27 @@ public class EditorsChoiceActivityController : ControllerBase {
                     int max = initialResult.Count;
                     
                     for (int i = 0; i < _config.RandomMediaCount && i < max; i++) {
-                        BaseItem shiftItem = initialResult[random.Next(initialResult.Count)];
-                        // Only include if active user has parental access to this item
-                        if (shiftItem.IsVisible(activeUser)){
+                        BaseItem initItem = initialResult[random.Next(initialResult.Count)];
+                        var shiftItem = initItem;
+
+                        // Deal with episodes or seasons
+                        if (shiftItem.GetBaseItemKind() == BaseItemKind.Episode || shiftItem.GetBaseItemKind() == BaseItemKind.Season) {
+                            shiftItem = shiftItem.GetParent();
+
+                            // If the parent is a season (i.e. the favourited item was an episode) then we need to get the season's parent show
+                            if (shiftItem.GetBaseItemKind() == BaseItemKind.Season) {
+                                shiftItem = shiftItem.GetParent();
+                            }
+                        }
+
+                        // Only include if active user has parental access to this item, and skip if already in the results
+                        if (shiftItem.IsVisible(activeUser) && !result.Contains(shiftItem)){
                             result.Add(shiftItem);
                         } else {
                             i--; // reset increment so we make up for non-inclusion
+                            max--;
                         }
-                        initialResult.Remove(shiftItem);
+                        initialResult.Remove(initItem);
                     }
 
                     editorsFavouritesEmpty = result.Count == 0;
@@ -149,15 +161,28 @@ public class EditorsChoiceActivityController : ControllerBase {
                 int max = initialResult.Count;
                 
                 for (int i = 0; i < _config.RandomMediaCount && i < max; i++) {
-                    BaseItem shiftItem = initialResult[random.Next(initialResult.Count)];
-                    // Only include if active user has parental access to this item
-                    if (shiftItem.IsVisible(activeUser)){
-                        result.Add(shiftItem);
-                    } else {
-                        i--; // reset increment so we make up for non-inclusion
+                        BaseItem initItem = initialResult[random.Next(initialResult.Count)];
+                        var shiftItem = initItem;
+
+                        // Deal with episodes or seasons
+                        if (shiftItem.GetBaseItemKind() == BaseItemKind.Episode || shiftItem.GetBaseItemKind() == BaseItemKind.Season) {
+                            shiftItem = shiftItem.GetParent();
+
+                            // If the parent is a season (i.e. the favourited item was an episode) then we need to get the season's parent show
+                            if (shiftItem.GetBaseItemKind() == BaseItemKind.Season) {
+                                shiftItem = shiftItem.GetParent();
+                            }
+                        }
+
+                        // Only include if active user has parental access to this item, and skip if already in the results
+                        if (shiftItem.IsVisible(activeUser) && !result.Contains(shiftItem)){
+                            result.Add(shiftItem);
+                        } else {
+                            i--; // reset increment so we make up for non-inclusion
+                            max--;
+                        }
+                        initialResult.Remove(initItem);
                     }
-                    initialResult.Remove(shiftItem);
-                }
             }
 
             // Build response
@@ -166,16 +191,6 @@ public class EditorsChoiceActivityController : ControllerBase {
 
             foreach (BaseItem i in result) {
                 BaseItem item = i;
-
-                // If it's an episode or a season, then we'll get the parent season or show
-                if (item.GetBaseItemKind() == BaseItemKind.Episode || item.GetBaseItemKind() == BaseItemKind.Season) {
-                    item = item.GetParent();
-
-                    // If the parent is a season (i.e. the favourited item was an episode) then we need to get the season's parent show
-                    if (item.GetBaseItemKind() == BaseItemKind.Season) {
-                        item = item.GetParent();
-                    }
-                }
 
                 // Skip this item if it lacks a backdrop image
                 if (!item.HasImage(MediaBrowser.Model.Entities.ImageType.Backdrop)) break;
