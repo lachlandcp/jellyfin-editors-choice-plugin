@@ -121,63 +121,80 @@ function shuffle(old_array) {
 
 const GUID = "70bb2ec1-f19e-46b5-b49a-942e6b96ebae";
 
-document.addEventListener('viewshow', setup);
-$(document).ready(setup);
+// Detect if container is ready to setup slider
+var target = $( "#reactRoot" )[0];
 
+// Create an observer instance
+var observer = new MutationObserver(function( mutations ) {
+  mutations.forEach(function( mutation ) {
+    var newNodes = mutation.addedNodes; // DOM NodeList
+    if( newNodes !== null ) { // If there are new nodes added
+    	var $nodes = $( newNodes ); // jQuery set
+    	$nodes.each(function() {
+    		var $node = $( this );
+    		if( $node.hasClass('section0') && !$node.hasClass('editorsChoiceAdded')) {
+                console.log($node);
+                console.log('node added');
+    			setup();
+    		}
+    	});
+    }
+  });    
+});
+observer.observe(target, {attributes: true, childList: true, characterData: true, subtree: true});
+
+
+// Setup slider
 function setup() {
     var path = Emby.Page.lastPath;
     if (path == undefined) {
         path = window.location.href;
     }
 
-    if (path.includes("/home.html")) {
-        console.log("Attempting creation of editors choice slider.");
-        setTimeout(() => {
-            $('.homeSectionsContainer').each((index, elem) => {
-                if (!$(elem).hasClass('editorsChoiceAdded')) {
+    console.log("Attempting creation of editors choice slider.");
+    $('.homeSectionsContainer').each((index, elem) => {
+        if (!$(elem).hasClass('editorsChoiceAdded')) {
+            console.log("Fetching favourites data from API...");
+            ApiClient.fetch({url: ApiClient.getUrl('/EditorsChoice/favourites'), type: 'GET'}).then(function(response) {
+                response.json().then(function(data) {
+                    var favourites = shuffle(data.favourites);
+                        
+                    $(elem).prepend(container);
 
-                    ApiClient.fetch({url: ApiClient.getUrl('/EditorsChoice/favourites'), type: 'GET'}).then(function(response) {
-                        response.json().then(function(data) {
-                            var favourites = shuffle(data.favourites);
-                                
-                            $(elem).prepend(container);
+                    favourites.forEach((favourite, i) => {
+                        let communityRating = favourite.community_rating.toFixed(1);
+                        
+                        let editorsChoiceItemLogo = `<img class='editorsChoiceItemLogo' src='/Items/${favourite.id}/Images/Logo/0' alt='${favourite.name}'/>`;
 
-                            favourites.forEach((favourite, i) => {
-                                let communityRating = favourite.community_rating.toFixed(1);
-                                
-                                let editorsChoiceItemLogo = `<img class='editorsChoiceItemLogo' src='/Items/${favourite.id}/Images/Logo/0' alt='${favourite.name}'/>`;
+                        if (!favourite.hasLogo) {
+                            editorsChoiceItemLogo = `<h1 class="editorsChoiceItemTitle">${favourite.name}</h1>`;
+                        }
 
-                                if (!favourite.hasLogo) {
-                                    editorsChoiceItemLogo = `<h1 class="editorsChoiceItemTitle">${favourite.name}</h1>`;
-                                }
+                        let editorsChoiceItemRating = `<div class='editorsChoiceItemRating starRatingContainer'><span class='material-icons starIcon star'></span>${communityRating}</div>`;
+                        
+                        // Skip rating if it is 0 - a perfect zero means the metadata provider has no score so is misrepresentative
+                        if (favourite.communityRating == 0) {
+                            editorsChoiceItemRating = "";
+                        }
 
-                                let editorsChoiceItemRating = `<div class='editorsChoiceItemRating starRatingContainer'><span class='material-icons starIcon star'></span>${communityRating}</div>`;
-                                
-                                // Skip rating if it is 0 - a perfect zero means the metadata provider has no score so is misrepresentative
-                                if (favourite.communityRating == 0) {
-                                    editorsChoiceItemRating = "";
-                                }
+                        let editorsChoiceItemOverview = `<p class='editorsChoiceItemOverview'>${favourite.overview}</p>`;
+                        let editorsChoiceItemButton = `<button is='emby-button' class='editorsChoiceItemButton raised button-submit block emby-button'> <span>Watch</span> </button>`;
 
-                                let editorsChoiceItemOverview = `<p class='editorsChoiceItemOverview'>${favourite.overview}</p>`;
-                                let editorsChoiceItemButton = `<button is='emby-button' class='editorsChoiceItemButton raised button-submit block emby-button'> <span>Watch</span> </button>`;
+                        // Sometimes the path will be /web/index.html#/home.html, other times it will be /web/#/home.html
+                        var baseUrl = Emby.Page.baseUrl() + '/';
+                        if (window.location.href.includes('/index.html')) {
+                            baseUrl += 'index.html';
+                        }
 
-                                // Sometimes the path will be /web/index.html#/home.html, other times it will be /web/#/home.html
-                                var baseUrl = Emby.Page.baseUrl() + '/';
-                                if (window.location.href.includes('/index.html')) {
-                                    baseUrl += 'index.html';
-                                }
-
-                                let editorsChoiceItemBanner = `<div class='editorsChoiceItemBanner' data-index='${i}' style="background-image:url('/Items/${favourite.id}/Images/Backdrop/0');" onclick="window.location.href='${baseUrl}#/details?id=${favourite.id}';"><div> ${editorsChoiceItemLogo} ${editorsChoiceItemRating} ${editorsChoiceItemOverview} ${editorsChoiceItemButton}</div></div>`;
-                                $(".editorsChoiceItemsContainer").append(editorsChoiceItemBanner);
-                            });
-
-                            $(elem).addClass('editorsChoiceAdded');     
-                        });
+                        let editorsChoiceItemBanner = `<div class='editorsChoiceItemBanner' data-index='${i}' style="background-image:url('/Items/${favourite.id}/Images/Backdrop/0');" onclick="window.location.href='${baseUrl}#/details?id=${favourite.id}';"><div> ${editorsChoiceItemLogo} ${editorsChoiceItemRating} ${editorsChoiceItemOverview} ${editorsChoiceItemButton}</div></div>`;
+                        $(".editorsChoiceItemsContainer").append(editorsChoiceItemBanner);
                     });
-                }
+
+                    $(elem).addClass('editorsChoiceAdded');     
+                });
             });
-        }, 100);
-    }
+        }
+    });
 }
 
 $(document).ready(function () {
