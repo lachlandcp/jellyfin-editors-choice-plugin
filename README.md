@@ -11,7 +11,7 @@ The featured content list is drawn from a specified user's favourited items, or 
 * **Install from distro repositories** - the jellyfin-server will execute as the `jellyfin` user while the web files will be owned by `root`, `www-data`, etc. This can *likely* be fixed by adding the `jellyfin` (or whichever user your main jellyfin server runs as) user to the same group the jellyfin-web folders are owned by. You should only do this if they are owned by a group other than root, and will have to lookup how to manage permissions on your specific distro.
 * **Alternatively, the script can manually be added to the index.html as described below.**
 
-**NOTE: If you manually injected the script tag, you will have to manually inject it on every jellyfin-web update, as the index.html file will get overwritten. However, for normal Jellyscrub updates the script tag will not need to be changed as the plugin will return the latest script from /EditorsChoice/script**
+**NOTE: If you manually injected the script tag, you will have to manually inject it on every jellyfin-web update, as the index.html file will get overwritten. However, for normal updates the script tag will not need to be changed as the plugin will return the latest script from /EditorsChoice/script**
 
 1. Add https://github.com/lachlandcp/jellyfin-editors-choice-plugin/raw/main/manifest.json as a Jellyfin plugin repository
 2. Install **Editor's Choice** from the repository
