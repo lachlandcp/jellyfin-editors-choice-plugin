@@ -136,7 +136,7 @@ function setup() {
                     favourites.forEach((favourite, i) => {
                         let communityRating = favourite.community_rating.toFixed(1);
                         
-                        let editorsChoiceItemLogo = `<img class='editorsChoiceItemLogo' src='/Items/${favourite.id}/Images/Logo/0' alt='${favourite.name}'/>`;
+                        let editorsChoiceItemLogo = `<img class='editorsChoiceItemLogo' src='/Items/${favourite.id}/Images/Logo/0?width=300' alt='${favourite.name}'/>`;
 
                         if (!favourite.hasLogo) {
                             editorsChoiceItemLogo = `<h1 class="editorsChoiceItemTitle">${favourite.name}</h1>`;
@@ -158,7 +158,7 @@ function setup() {
                             baseUrl += 'index.html';
                         }
 
-                        let editorsChoiceItemBanner = `<div class='editorsChoiceItemBanner' data-index='${i}' style="background-image:url('/Items/${favourite.id}/Images/Backdrop/0');" onclick="window.location.href='${baseUrl}#/details?id=${favourite.id}';"><div> ${editorsChoiceItemLogo} ${editorsChoiceItemRating} ${editorsChoiceItemOverview} ${editorsChoiceItemButton}</div></div>`;
+                        let editorsChoiceItemBanner = `<div class='editorsChoiceItemBanner' data-index='${i}' style="background-image:url('/Items/${favourite.id}/Images/Backdrop/0?width=${window.screen.width}');" onclick="window.location.href='${baseUrl}#/details?id=${favourite.id}';"><div> ${editorsChoiceItemLogo} ${editorsChoiceItemRating} ${editorsChoiceItemOverview} ${editorsChoiceItemButton}</div></div>`;
                         $(".editorsChoiceItemsContainer").append(editorsChoiceItemBanner);
                     });
 
