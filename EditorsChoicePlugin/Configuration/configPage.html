@@ -4,7 +4,133 @@
     <title>Editors Choice Plugin</title>
 </head>
 <body>
-    <div data-role="page" class="page type-interior pluginConfigurationPage editorsChoiceConfigurationPage" data-require="emby-input,emby-button,emby-select,emby-checkbox,emby-linkbutton">
+    <div data-role="page" class="page type-interior pluginConfigurationPage editorsChoiceConfigurationPage" data-require="emby-input,emby-button,emby-select,emby-checkbox,emby-linkbutton,emby-radio">
+        <style>
+            .mdl-radio {
+                box-sizing: border-box;
+                display: inline-block;
+                line-height: 24px;
+                margin: 0px;
+                position: relative;
+            }
+    
+            .radio-label-block {
+                align-items: center;
+                display: flex;
+                margin-bottom: 0.5em;
+                margin-top: 0.5em;
+            }
+    
+            .mdl-radio__button {
+                appearance: none;
+                border: none;
+                height: 1px;
+                line-height: 24px;
+                margin: 0px;
+                opacity: 0;
+                padding: 0px;
+                position: absolute;
+                width: 1px;
+            }
+    
+            .mdl-radio__circles {
+                border-radius: 50%;
+                cursor: pointer;
+                height: 1.08em;
+                position: relative;
+                width: 1.08em;
+            }
+    
+            [dir="ltr"] .mdl-radio__circles {
+                margin-right: 0.54em;
+            }
+    
+            [dir="rtl"] .mdl-radio__circles {
+                margin-left: 0.54em;
+            }
+    
+            .mdl-radio__circles svg {
+                height: 100%;
+                overflow: visible;
+                position: absolute;
+                top: 0px;
+                width: 100%;
+                z-index: 1;
+            }
+    
+            [dir="ltr"] .mdl-radio__circles svg {
+                left: 0px;
+            }
+    
+            [dir="rtl"] .mdl-radio__circles svg {
+                right: 0px;
+            }
+    
+            .mdl-radio__button:disabled + .mdl-radio__circles {
+                cursor: auto;
+            }
+    
+            .mdl-radio__button:disabled + .mdl-radio__circles .mdl-radio__outer-circle {
+                color: rgba(0, 0, 0, 0.26);
+            }
+    
+            .mdl-radio.show-focus .mdl-radio__button:focus + .mdl-radio__circles .mdl-radio__outer-circle {
+                color: rgb(0, 164, 220);
+            }
+    
+            .mdl-radio__inner-circle {
+                transform: scale(0);
+                transform-origin: 50% 50%;
+                transition-duration: 0.2s;
+                transition-property: transform, -webkit-transform;
+            }
+    
+            .mdl-radio__button:checked + .mdl-radio__circles .mdl-radio__inner-circle {
+                transform: scale(1);
+            }
+    
+            .mdl-radio__button:disabled + .mdl-radio__circles .mdl-radio__inner-circle {
+                color: rgba(0, 0, 0, 0.26);
+            }
+    
+            .mdl-radio.show-focus .mdl-radio__button:focus + .mdl-radio__circles .mdl-radio__inner-circle {
+                color: rgb(0, 164, 220);
+            }
+    
+            .mdl-radio__focus-circle {
+                background: rgb(0, 164, 220);
+                border-radius: 50%;
+                box-sizing: border-box;
+                height: 100%;
+                left: 0px;
+                margin: 0px;
+                opacity: 0.26;
+                position: absolute;
+                top: 0px;
+                transform: scale(0);
+                transition-duration: 0.2s;
+                transition-property: transform, -webkit-transform;
+                width: 100%;
+            }
+    
+            .mdl-radio.show-focus .mdl-radio__button:focus + .mdl-radio__circles .mdl-radio__focus-circle {
+                transform: scale(1.75);
+            }
+    
+            .mdl-radio__label {
+                cursor: pointer;
+            }
+    
+            .mdl-radio__button:disabled + .mdl-radio__label {
+                color: rgba(0, 0, 0, 0.26);
+                cursor: auto;
+            }
+
+            .radio-label-block .fieldDescription {
+                margin-left: 1em;
+            }
+    
+        </style>
 
         <div data-role="content">
             <div class="content-primary">
@@ -13,19 +139,34 @@
                     <br>
                     <h1>Mode</h1>
 
-                    <div class="selectContainer">
+                    <div class="inputContainer">
+                        <label class="radio-label-block mdl-radio show-focus">
+                            <input type="radio" is="emby-radio" id="FavouritesMode" name="mode" value="FavouritesMode" class="mdl-radio__button"/>
+                            <div class="mdl-radio__circles"><svg><defs><clipPath id="cutoff"><circle cx="50%" cy="50%" r="50%"></circle></clipPath></defs><circle class="mdl-radio__outer-circle" cx="50%" cy="50%" r="50%" fill="none" stroke="currentcolor" stroke-width="0.26em" clip-path="url(#cutoff)"></circle><circle class="mdl-radio__inner-circle" cx="50%" cy="50%" r="25%" fill="currentcolor"></circle></svg><div class="mdl-radio__focus-circle"></div></div>
+                            <span class="radioButtonLabel mdl-radio__label">Favourites</span>
+                            <div class="fieldDescription">Shows items from the specified user's favourites</div>
+                        </label>
+                        <label class="radio-label-block mdl-radio show-focus">
+                            <input type="radio" is="emby-radio" id="RandomMode" name="mode" value="RandomMode" class="mdl-radio__button"/>
+                            <div class="mdl-radio__circles"><svg><defs><clipPath id="cutoff"><circle cx="50%" cy="50%" r="50%"></circle></clipPath></defs><circle class="mdl-radio__outer-circle" cx="50%" cy="50%" r="50%" fill="none" stroke="currentcolor" stroke-width="0.26em" clip-path="url(#cutoff)"></circle><circle class="mdl-radio__inner-circle" cx="50%" cy="50%" r="25%" fill="currentcolor"></circle></svg><div class="mdl-radio__focus-circle"></div></div>
+                            <span class="radioButtonLabel mdl-radio__label">Random</span>
+                            <div class="fieldDescription">Shows a random selection of items from your library</div>
+                        </label>
+                        <!-- Yet to figure out this feature...
+                        <label class="radio-label-block mdl-radio show-focus">
+                            <input type="radio" is="emby-radio" id="CollectionsMode" name="mode" value="CollectionsMode" class="mdl-radio__button"/>
+                            <div class="mdl-radio__circles"><svg><defs><clipPath id="cutoff"><circle cx="50%" cy="50%" r="50%"></circle></clipPath></defs><circle class="mdl-radio__outer-circle" cx="50%" cy="50%" r="50%" fill="none" stroke="currentcolor" stroke-width="0.26em" clip-path="url(#cutoff)"></circle><circle class="mdl-radio__inner-circle" cx="50%" cy="50%" r="25%" fill="currentcolor"></circle></svg><div class="mdl-radio__focus-circle"></div></div>
+                            <span class="radioButtonLabel mdl-radio__label">Collections</span>
+                            <div class="fieldDescription">Shows items from the specified collections</div>
+                        </label>
+                        -->
+                    </div>
+
+                    <div id="EditorUserId-container" class="selectContainer" style="display: none;">
                         <label class="selectLabel" for="EditorUserId">User's favourites list</label>
                         <select is="emby-select" id="EditorUserId" name="EditorUserId" class="emby-select-withcolor emby-select">
                             <option value="none">None</option>
                         </select>
-                    </div>
-
-                    <div class="checkboxContainer">
-                        <label>
-                            <input is="emby-checkbox"  type="checkbox" id="ShowRandomMedia" name="Show random media" label="Show random media">
-                            <span>Show random media instead of using a user's favourites list</span>
-                        </label>
-                        <div class="fieldDescription">If enabled, this will show a random selection of media in the banner, instead of a selected user's favourites.</div>
                     </div>
 
                     <h1>Filtering</h1>
@@ -81,9 +222,16 @@
                         //$('#EditorUserId').first().val(config.EditorUserId);
                         $('#DoScriptInject').first().prop('checked', config.DoScriptInject);
                         $('#ShowRandomMedia').first().prop('checked', config.ShowRandomMedia);
+                        $('#FavouritesMode').first().prop('checked', config.Mode == 'FAVOURITES');
+                        $('#RandomMode').first().prop('checked', config.Mode == 'RANDOM');
+                        $('#CollectionsMode').first().prop('checked', config.Mode == 'COLLECTIONS');
                         $('#RandomMediaCount').val(config.RandomMediaCount);
                         $('#MinimumRating').val(config.MinimumRating);
                         $('#MinimumCriticRating').val(config.MinimumCriticRating);
+
+                        if (config.Mode == 'FAVOURITES') {
+                            $('#EditorUserId-container').show();
+                        }
 
                         Dashboard.hideLoadingMsg();
 
@@ -124,7 +272,18 @@
                         }
                         
                         config.DoScriptInject = $('#DoScriptInject').first().is(':checked');
-                        config.ShowRandomMedia = $('#ShowRandomMedia').first().is(':checked');
+                        //config.ShowRandomMedia = $('#ShowRandomMedia').first().is(':checked');
+
+                        if ($('#FavouritesMode').first().is(':checked')) {
+                            config.Mode = "FAVOURITES";
+                            config.ShowRandomMedia = false;
+                        } else if ($('#RandomMode').first().is(':checked')) {
+                            config.Mode = "RANDOM";
+                            config.ShowRandomMedia = true;
+                        } else if ($('#CollectionsMode').first().is(':checked')) {
+                            config.mode = "COLLECTIONS";
+                            config.ShowRandomMedia = false;
+                        }
                         
                         let randomMediaCount = $('#RandomMediaCount').first().val();
                         if (randomMediaCount < 1 || randomMediaCount == '') {
@@ -153,6 +312,10 @@
                     });
 
                     return false;
+                });
+
+                $('input[name="mode"]').on('change', function() {
+                    $('#EditorUserId-container').toggle($('#FavouritesMode').is(':checked'));
                 });
 
             })();

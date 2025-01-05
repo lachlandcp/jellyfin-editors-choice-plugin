@@ -15,6 +15,15 @@ public class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages {
     public Plugin(IApplicationPaths applicationPaths, IXmlSerializer xmlSerializer, ILogger<Plugin> logger, IServerConfigurationManager configurationManager) : base(applicationPaths, xmlSerializer) {
         Instance = this;
 
+        // Convert configuration mode boolean variable
+        if (Configuration.Mode == "") {
+            if (Configuration.ShowRandomMedia) {
+                Configuration.Mode = "RANDOM";
+            } else {
+                Configuration.Mode = "FAVOURITES";
+            }
+        }
+
         // https://github.com/nicknsy/jellyscrub/blob/main/Nick.Plugin.Jellyscrub/JellyscrubPlugin.cs
         if (Configuration.DoScriptInject) {
             if (!string.IsNullOrWhiteSpace(applicationPaths.WebPath))

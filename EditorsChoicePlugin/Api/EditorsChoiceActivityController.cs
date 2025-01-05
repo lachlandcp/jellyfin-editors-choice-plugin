@@ -76,7 +76,7 @@ public class EditorsChoiceActivityController : ControllerBase {
             if (activeUser == null) return NotFound();
 
             // If not showing random media, collect the editor user's favourited items
-            if (!_config.ShowRandomMedia) {
+            if (_config.Mode == "FAVOURITES") {
 
                 // Use random fallback if no editor ID set
                 if (_config.EditorUserId == null || _config.EditorUserId == "" || _config.EditorUserId.Length < 16 ) {
@@ -119,7 +119,7 @@ public class EditorsChoiceActivityController : ControllerBase {
             }
 
             // If showing random media is enabled OR the editor's favourites list is currently empty, collect a random selection from the entire library
-            if (_config.ShowRandomMedia || editorsFavouritesEmpty) {
+            if (_config.Mode == "RANDOM" || editorsFavouritesEmpty) {
                                                
                 // Get all shows and movies
                 query = new InternalItemsQuery(activeUser) {
