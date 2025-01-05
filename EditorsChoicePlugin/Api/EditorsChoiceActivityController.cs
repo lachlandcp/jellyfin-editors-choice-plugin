@@ -197,9 +197,13 @@ public class EditorsChoiceActivityController : ControllerBase {
 
             // Check is in an allowed library
             bool inFilteredLibrary = false;
-            foreach (String filteredLibraryId in _config.FilteredLibraries) {
-                if (shiftItem.GetAncestorIds().Contains(Guid.Parse(filteredLibraryId))) {
-                    inFilteredLibrary = true;
+            if (_config.FilteredLibraries.Length == 0) {
+                inFilteredLibrary = true; // If no libraries are selected, then we default to all libraries
+            } else {
+                foreach (String filteredLibraryId in _config.FilteredLibraries) {
+                    if (shiftItem.GetAncestorIds().Contains(Guid.Parse(filteredLibraryId))) {
+                        inFilteredLibrary = true;
+                    }
                 }
             }
 
