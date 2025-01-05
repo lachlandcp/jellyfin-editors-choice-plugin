@@ -195,8 +195,16 @@ public class EditorsChoiceActivityController : ControllerBase {
                 }
             }
 
-            // Only include if active user has parental access to this item, and skip if already in the results
-            if (shiftItem.IsVisible(activeUser) && !result.Contains(shiftItem)){
+            // Check is in an allowed library
+            bool inFilteredLibrary = false;
+            foreach (String filteredLibraryId in _config.FilteredLibraries) {
+                if (shiftItem.GetAncestorIds().Contains(Guid.Parse(filteredLibraryId))) {
+                    inFilteredLibrary = true;
+                }
+            }
+
+            // Only include if active user has parental access to this item, not already in the results
+            if (shiftItem.IsVisible(activeUser) && !result.Contains(shiftItem) && inFilteredLibrary){
                 result.Add(shiftItem);
             } else {
                 i--; // reset increment so we make up for non-inclusion

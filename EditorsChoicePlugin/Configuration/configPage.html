@@ -186,6 +186,9 @@
                         <div class="fieldDescription">Only show shows or films that have a critic rating at least this number (0 to 100). Set to 0 to ignore rating.</div>
                     </div>
 
+                    <h3 class="checkboxListLabel">Limit to following libraries:</h3>
+                    <div id="LibraryList" class="checkboxList"></div>
+
                     <h1>Technical settings</h1>
                     <div class="checkboxContainer">
                         <label>
@@ -239,14 +242,15 @@
                         ApiClient.getUsers().then(function (users) {
                             console.log(users);
 
-                            $.each(users, function (i, user) {
+                            for (var user of users) {
+                                console.log(user);
                                 if (!user.Policy.IsDisabled) {
                                     $('#EditorUserId').first().append($('<option>', {
                                         value: user.Id,
                                         text: user.Name
                                     }));
                                 }
-                            });
+                            }
 
                             if (config.EditorUserId) {
                                 $('#EditorUserId').val(config.EditorUserId);
@@ -255,6 +259,19 @@
                             }
                             
                         });
+
+                        // Populate libraries checkboxes
+                        const libraryTypes = ["tvshows", "movies"];
+                        $('#LibraryList label').remove();
+                        ApiClient.getItems().then(function (data) {
+                            for (var item of data.Items) {
+                                if (libraryTypes.includes(item.CollectionType)) {
+                                    var checked = config.FilteredLibraries.includes(item.Id) ? 'checked' : '';
+                                    var checkboxItem = '<label class="emby-checkbox-label"><input is="emby-checkbox" type="checkbox" data-id="'+item.Id+'" '+checked+'><span class="checkboxLabel">'+item.Name+'</span></label>';
+                                    $('#LibraryList').append(checkboxItem);
+                                }
+                            }
+                        })
                     });
                 });
 
@@ -305,6 +322,12 @@
                         } else {
                             config.MinimumCriticRating = minimumCriticRating;
                         }
+
+                        var filteredLibraries = [];
+                        $('#LibraryList input[is="emby-checkbox"]:checked').each(function () {
+                            filteredLibraries.push($(this).attr('data-id'));
+                        });
+                        config.FilteredLibraries = filteredLibraries;
 
                         ApiClient.updatePluginConfiguration(pluginId, config).then(Dashboard.processPluginConfigurationUpdateResult);
 

@@ -18,4 +18,6 @@ public class PluginConfiguration : BasePluginConfiguration {
     public float MinimumRating {get; set; } = 0.0f;
 
     public int MinimumCriticRating {get; set; } = 0;
+
+    public string[] FilteredLibraries {get; set; } = [];
 }
