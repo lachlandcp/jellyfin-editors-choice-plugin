@@ -158,7 +158,8 @@ function setup() {
                             baseUrl += 'index.html';
                         }
 
-                        let editorsChoiceItemBanner = `<div class='editorsChoiceItemBanner' data-index='${i}' style="background-image:url('/Items/${favourite.id}/Images/Backdrop/0?width=${window.screen.width}');" onclick="window.location.href='${baseUrl}#/details?id=${favourite.id}';"><div> ${editorsChoiceItemLogo} ${editorsChoiceItemRating} ${editorsChoiceItemOverview} ${editorsChoiceItemButton}</div></div>`;
+                        var bannerImageWidth = Math.max(window.screen.width, window.screen.height);
+                        let editorsChoiceItemBanner = `<div class='editorsChoiceItemBanner' data-index='${i}' style="background-image:url('/Items/${favourite.id}/Images/Backdrop/0?width=${bannerImageWidth}');" onclick="window.location.href='${baseUrl}#/details?id=${favourite.id}';"><div> ${editorsChoiceItemLogo} ${editorsChoiceItemRating} ${editorsChoiceItemOverview} ${editorsChoiceItemButton}</div></div>`;
                         $(".editorsChoiceItemsContainer").append(editorsChoiceItemBanner);
                     });
 
