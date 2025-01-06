@@ -153,14 +153,12 @@
                             <span class="radioButtonLabel mdl-radio__label">Random</span>
                             <div class="fieldDescription">Shows a random selection of items from your library</div>
                         </label>
-                        <!-- Yet to figure out this feature...
                         <label class="radio-label-block mdl-radio show-focus">
                             <input type="radio" is="emby-radio" id="CollectionsMode" name="mode" value="CollectionsMode" class="mdl-radio__button"/>
                             <div class="mdl-radio__circles"><svg><defs><clipPath id="cutoff"><circle cx="50%" cy="50%" r="50%"></circle></clipPath></defs><circle class="mdl-radio__outer-circle" cx="50%" cy="50%" r="50%" fill="none" stroke="currentcolor" stroke-width="0.26em" clip-path="url(#cutoff)"></circle><circle class="mdl-radio__inner-circle" cx="50%" cy="50%" r="25%" fill="currentcolor"></circle></svg><div class="mdl-radio__focus-circle"></div></div>
                             <span class="radioButtonLabel mdl-radio__label">Collections</span>
                             <div class="fieldDescription">Shows items from the specified collections</div>
                         </label>
-                        -->
                     </div>
 
                     <div id="EditorUserId-container" class="selectContainer" style="display: none;">
@@ -168,6 +166,12 @@
                         <select is="emby-select" id="EditorUserId" name="EditorUserId" class="emby-select-withcolor emby-select">
                             <option value="none">None</option>
                         </select>
+                    </div>
+                    
+                    <div id="CollectionsList-container" style="display: none;">
+                        <h3 class="checkboxListLabel">Show items from these collections:</h3>
+                        <div id="CollectionsList" class="checkboxList"></div>
+                        <p>One collection will be shown at a time across the slider. If multiple are checked below, one of them will be randomly chosen each time it loads.</p>
                     </div>
 
                     <h2>Filtering</h2>
@@ -235,6 +239,8 @@
 
                         if (config.Mode == 'FAVOURITES') {
                             $('#EditorUserId-container').show();
+                        } else if (config.Mode == 'COLLECTIONS') {
+                            $('#CollectionsList-container').show();
                         }
 
                         Dashboard.hideLoadingMsg();
@@ -261,15 +267,32 @@
                             
                         });
 
-                        // Populate libraries checkboxes
+                        // Populate libraries and collections checkboxes
                         const libraryTypes = ["tvshows", "movies"];
-                        $('#LibraryList label').remove();
+                        $('#LibraryList label, #CollectionsList label').remove();
                         ApiClient.getItems().then(function (data) {
                             for (var item of data.Items) {
                                 if (libraryTypes.includes(item.CollectionType)) {
                                     var checked = config.FilteredLibraries.includes(item.Id) ? 'checked' : '';
                                     var checkboxItem = '<label class="emby-checkbox-label"><input is="emby-checkbox" type="checkbox" data-id="'+item.Id+'" '+checked+'><span class="checkboxLabel">'+item.Name+'</span></label>';
                                     $('#LibraryList').append(checkboxItem);
+
+                                } else if (item.CollectionType == 'boxsets') {
+                                    var collectionsParentId = item.Id;
+                                    
+                                    // There may be a tidier way to fetch items with a query
+                                    ApiClient.fetch({url: ApiClient.getUrl('/Items?parentId=' + collectionsParentId), type: 'GET'}).then(function(response) {
+                                        response.json().then(function(data) {
+                                            console.log(data);
+
+                                            for (var item of data.Items) {
+                                                var checked = config.SelectedCollections.includes(item.Id) ? 'checked' : '';
+                                                var checkboxItem = '<label class="emby-checkbox-label"><input is="emby-checkbox" type="checkbox" data-id="'+item.Id+'" '+checked+'><span class="checkboxLabel">'+item.Name+'</span></label>';
+                                                $('#CollectionsList').append(checkboxItem);
+                                            }
+                                        })
+                                    });
+
                                 }
                             }
                         })
@@ -299,7 +322,7 @@
                             config.Mode = "RANDOM";
                             config.ShowRandomMedia = true;
                         } else if ($('#CollectionsMode').first().is(':checked')) {
-                            config.mode = "COLLECTIONS";
+                            config.Mode = "COLLECTIONS";
                             config.ShowRandomMedia = false;
                         }
                         
@@ -330,6 +353,12 @@
                         });
                         config.FilteredLibraries = filteredLibraries;
 
+                        var selectedCollections = [];
+                        $('#CollectionsList input[is="emby-checkbox"]:checked').each(function () {
+                            selectedCollections.push($(this).attr('data-id'));
+                        });
+                        config.SelectedCollections = selectedCollections;
+
                         ApiClient.updatePluginConfiguration(pluginId, config).then(Dashboard.processPluginConfigurationUpdateResult);
 
                         return true;
@@ -340,6 +369,7 @@
 
                 $('input[name="mode"]').on('change', function() {
                     $('#EditorUserId-container').toggle($('#FavouritesMode').is(':checked'));
+                    $('#CollectionsList-container').toggle($('#CollectionsMode').is(':checked'));
                 });
 
             })();

@@ -20,4 +20,6 @@ public class PluginConfiguration : BasePluginConfiguration {
     public int MinimumCriticRating {get; set; } = 0;
 
     public string[] FilteredLibraries {get; set; } = [];
+
+    public string[] SelectedCollections {get; set; } = [];
 }

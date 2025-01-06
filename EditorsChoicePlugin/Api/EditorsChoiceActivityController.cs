@@ -2,6 +2,7 @@ using System.Net.Mime;
 using System.Reflection;
 using EditorsChoicePlugin.Configuration;
 using Jellyfin.Data.Enums;
+using Jellyfin.Extensions;
 using MediaBrowser.Controller.Entities;
 using MediaBrowser.Controller.Library;
 using Microsoft.AspNetCore.Authorization;
@@ -62,7 +63,7 @@ public class EditorsChoiceActivityController : ControllerBase {
             InternalItemsQuery query;
             List<BaseItem> initialResult = [];
             List<BaseItem> result = [];
-            bool editorsFavouritesEmpty = false;  
+            bool resultsEmpty = false;  
 
             // Get active user - haven't found a better way than this
             string name = "";
@@ -80,7 +81,7 @@ public class EditorsChoiceActivityController : ControllerBase {
 
                 // Use random fallback if no editor ID set
                 if (_config.EditorUserId == null || _config.EditorUserId == "" || _config.EditorUserId.Length < 16 ) {
-                    editorsFavouritesEmpty = true;
+                    resultsEmpty = true;
                 } else {
                     Jellyfin.Data.Entities.User? editorUser = _userManager.GetUserById(Guid.Parse(_config.EditorUserId));
 
@@ -113,13 +114,50 @@ public class EditorsChoiceActivityController : ControllerBase {
                     result = PrepareResult(query, activeUser);
 
                     // If the result is empty (i.e. the active user doesn't have access to any of the items), fallback to random mode.
-                    editorsFavouritesEmpty = result.Count == 0;
+                    resultsEmpty = result.Count == 0;
                 } 
 
             }
 
-            // If showing random media is enabled OR the editor's favourites list is currently empty, collect a random selection from the entire library
-            if (_config.Mode == "RANDOM" || editorsFavouritesEmpty) {
+            if (_config.Mode == "COLLECTIONS") {
+                List<String> remainingCollections = _config.SelectedCollections.ToList();
+
+                while (result.Count == 0 && remainingCollections.Count > 0) { // if a collection is totally inaccessible due to user visibility or excessive filters configured, we need to try another collection
+                    int collectionR = new Random().Next(remainingCollections.Count);
+                    string collectionId = remainingCollections[collectionR]; 
+                    remainingCollections.RemoveAt(collectionR);
+                    Guid collectionGuid = Guid.Parse(collectionId);
+
+                    BaseItem collection = _libraryManager.GetParentItem(collectionGuid, activeUser.Id);
+                    if (collection is Folder) {
+                        Folder f = (Folder)collection;
+                        initialResult = f.GetChildren(activeUser, true);                    
+
+                        // Get ids of items in the collection
+                        List<Guid> itemIds = new List<Guid>();
+                        foreach (var item in initialResult) {
+                            if (!itemIds.Contains(item.Id)){
+                                    itemIds.Add(item.Id);
+                            }
+                        }
+
+                        query = new InternalItemsQuery(activeUser) {
+                            ItemIds = [.. itemIds],
+                            IncludeItemTypes = [BaseItemKind.Series, BaseItemKind.Movie],
+                            MinCommunityRating = _config.MinimumRating,
+                            MinCriticRating = _config.MinimumCriticRating
+                        };
+
+                        result = PrepareResult(query, activeUser);
+                    }
+
+                    // If the result is empty (i.e. the active user doesn't have access to any of the items), fallback to random mode.
+                    resultsEmpty = result.Count == 0;
+                }
+            }
+
+            // If showing random media is enabled OR the results list is currently empty, collect a random selection from the entire library
+            if (_config.Mode == "RANDOM" || resultsEmpty) {
                                                
                 // Get all shows and movies
                 query = new InternalItemsQuery(activeUser) {
