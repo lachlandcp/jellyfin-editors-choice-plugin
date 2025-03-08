@@ -110,6 +110,14 @@
                 "sourceUrl": "https://github.com/lachlandcp/jellyfin-editors-choice-plugin/releases/download/1.0.6.0/EditorsChoicePlugin-v1.0.6.0.zip",
                 "checksum": "fc7041f859a883bf8dfeb055f92b8f66",
                 "timestamp": "2025-01-06 15:43:00"
+            },
+            {
+                "version": "1.0.6.1",
+                "changelog": "Compatability with Jellygin 10.10.6",
+                "targetAbi": "10.10.6.0",
+                "sourceUrl": "https://github.com/lachlandcp/jellyfin-editors-choice-plugin/releases/download/1.0.6.1/EditorsChoicePlugin-v1.0.6.1.zip",
+                "checksum": "09ccc0326c17140d6a5373155aa7a737",
+                "timestamp": "2025-03-08 13:20:38"
             }
         ]
     }
