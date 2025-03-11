@@ -1,8 +1,26 @@
-const container = `<div class="verticalSection section-1 emby-scroller-container">
-<div is="emby-scroller" class="padded-top-focusscale padded-bottom-focusscale emby-scroller" data-centerfocus="true" data-scroll-mode-x="custom" style="overflow: hidden;">
-    <div is="emby-itemscontainer" class="itemsContainer scrollSlider editorsChoiceItemsContainer focuscontainer-x animatedScrollX" style="white-space: nowrap; will-change: transform; transition: transform 50ms ease-out 0s; transform: translateX(0px);">
+const container = `<div class="verticalSection section-1 editorsChoiceContainer">
+    <div class="splide">
+        <div class="editorsChoiceScrollButtonsContainer">
+            <div class="emby-scrollbuttons splide__arrows">
+                <button type="button" is="paper-icon-button-light" data-ripple="false" data-direction="left" title="Previous" class="emby-scrollbuttons-button paper-icon-button-light splide__arrow splide__arrow--prev">
+                    <span class="material-icons chevron_left" aria-hidden="true"></span>
+                </button>
+                <button type="button" is="paper-icon-button-light" data-ripple="false" data-direction="right" title="Next" class="emby-scrollbuttons-button paper-icon-button-light splide__arrow splide__arrow--next">
+                    <span class="material-icons chevron_right" aria-hidden="true"></span>
+                </button>
+            </div>
+        </div>
+        <div class="editorsChoicePlayPauseContainer">
+            <button class="splide__toggle emby-scrollbuttons-button paper-icon-button-light" type="button">
+                <span class="splide__toggle__play material-icons play_arrow" aria-hidden="true"></span>
+                <span class="splide__toggle__pause material-icons pause" aria-hidden="true"></span>
+            </button>
+        </div>
+        <div class="splide__track">
+            <div is="emby-itemscontainer" class="editorsChoiceItemsContainer splide__list">
+            </div>
+        </div>
     </div>
-</div>
 </div>
 
 <style>
@@ -10,20 +28,62 @@ const container = `<div class="verticalSection section-1 emby-scroller-container
         padding-top: 0 !important;
     }
 
-    .homeSectionsContainer.editorsChoiceAdded .emby-scroller {
-        padding: 0 !important;
-        margin-left: 3.3%;
-        margin-left: max(env(safe-area-inset-left), 3.3%);
-        margin-right: 3.3%;
-        margin-right: max(env(safe-area-inset-right), 3.3%);
-    }
-
-    .homeSectionsContainer.editorsChoiceAdded .emby-scrollbuttons {
-        mix-blend-mode: difference;
+    .homeSectionsContainer.editorsChoiceAdded .editorsChoiceContainer {
+        padding-left: 3.3%;
+        padding-left: max(env(safe-area-inset-left), 3.3%);
+        padding-right: 3.3%;
+        padding-right: max(env(safe-area-inset-right), 3.3%);
     }
 
     .editorsChoiceItemsContainer {
         margin-bottom: 0.75em;
+    }
+
+    .editorsChoiceScrollButtonsContainer, .editorsChoicePlayPauseContainer {
+        position: absolute;
+        z-index: 99;
+        width: 10em;
+        right: 0.15em;
+        mix-blend-mode: difference;
+    }
+
+    .editorsChoiceScrollButtonsContainer > .splide__arrows, .editorsChoicePlayPauseContainer > .splide__toggle {
+        float: right;
+    }
+
+    @media screen and (max-width: 500px) {
+        .editorsChoiceScrollButtonsContainer, .editorsChoicePlayPauseContainer {
+            display: none;
+        }
+    }
+
+    .splide__arrow, .splide__toggle {
+        position: relative;
+        display: inline-block;
+        opacity: 1;
+        top: auto;
+        transform: none;
+        width: auto;
+        height: auto;
+        padding: .556em;
+        margin-top: .85em;
+        background: transparent;
+    }
+
+    .splide__arrow--next {
+        right: auto;
+    }
+
+    .splide__arrow--prev {
+        left: auto;
+    }
+
+    .editorsChoicePlayPauseContainer {
+        bottom: 0.83em;
+    }
+
+    .splide__toggle.is-active .splide__toggle__play, .emby-scrollbuttons-button>.splide__toggle__pause {
+        display: none;
     }
 
     .editorsChoiceItemBanner {
@@ -35,6 +95,9 @@ const container = `<div class="verticalSection section-1 emby-scroller-container
         background-position-x: center;
         background-position-y: 15%;
         cursor: pointer;
+        color: #ddd;
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
     }
 
     .editorsChoiceItemBanner > div {
@@ -159,11 +222,19 @@ function setup() {
                         }
 
                         var bannerImageWidth = Math.max(window.screen.width, window.screen.height);
-                        let editorsChoiceItemBanner = `<div class='editorsChoiceItemBanner' data-index='${i}' style="background-image:url('/Items/${favourite.id}/Images/Backdrop/0?width=${bannerImageWidth}');" onclick="window.location.href='${baseUrl}#/details?id=${favourite.id}';"><div> ${editorsChoiceItemLogo} ${editorsChoiceItemRating} ${editorsChoiceItemOverview} ${editorsChoiceItemButton}</div></div>`;
+                        let editorsChoiceItemBanner = `<a href='${baseUrl}#/details?id=${favourite.id}' class='editorsChoiceItemBanner splide__slide' style="background-image:url('/Items/${favourite.id}/Images/Backdrop/0?width=${bannerImageWidth}');"><div> ${editorsChoiceItemLogo} ${editorsChoiceItemRating} ${editorsChoiceItemOverview} ${editorsChoiceItemButton}</div></a>`;
                         $(".editorsChoiceItemsContainer").append(editorsChoiceItemBanner);
                     });
-
+                    
                     $(elem).addClass('editorsChoiceAdded');     
+                    
+                    new Splide( '.splide', {
+                        type: 'loop',
+                        autoplay: true,
+                        interval: 10000,
+                        pagination: false
+                      }).mount();
+
                 });
             });
         }
@@ -171,6 +242,17 @@ function setup() {
 }
 
 window.onload = function() {
+    var sliderScript = document.createElement('script');
+    sliderScript.type = 'text/javascript';
+    sliderScript.src = 'https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js';
+
+    var sliderStyle = document.createElement('link');
+    sliderStyle.rel = 'stylesheet';
+    sliderStyle.href = 'https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css';
+
+    document.head.appendChild(sliderScript);
+    document.head.appendChild(sliderStyle);
+
     // Detect if container is ready to setup slider
     var target = document.getElementById('reactRoot');
 
