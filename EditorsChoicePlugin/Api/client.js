@@ -17,7 +17,7 @@ const container = `<div class="verticalSection section-1 editorsChoiceContainer"
             </button>
         </div>
         <div class="splide__track">
-            <div is="emby-itemscontainer" class="editorsChoiceItemsContainer splide__list">
+            <div is="emby-itemscontainer" class="editorsChoiceItemsContainer splide__list animatedScrollX">
             </div>
         </div>
     </div>
