@@ -79,6 +79,7 @@ const container = `<div class="verticalSection section-1 editorsChoiceContainer"
     }
 
     .editorsChoicePlayPauseContainer {
+        display: none;
         bottom: 0.83em;
     }
 
@@ -230,11 +231,15 @@ function setup() {
                         
                     });
                     
-                    $(elem).addClass('editorsChoiceAdded');     
+                    $(elem).addClass('editorsChoiceAdded');
+                    
+                    if (data.autoplay) {
+                        $('.editorsChoicePlayPauseContainer').show();
+                    }
                     
                     new Splide( '#' + containerId + ' .splide', {
                         type: 'loop',
-                        autoplay: true,
+                        autoplay: data.autoplay,
                         interval: 10000,
                         pagination: false
                       }).mount();

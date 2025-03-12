@@ -22,4 +22,6 @@ public class PluginConfiguration : BasePluginConfiguration {
     public string[] FilteredLibraries {get; set; } = [];
 
     public string[] SelectedCollections {get; set; } = [];
+
+    public bool EnableAutoplay {get; set; } = true;
 }
