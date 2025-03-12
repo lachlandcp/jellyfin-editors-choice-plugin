@@ -194,7 +194,10 @@ function setup() {
                 response.json().then(function(data) {
                     var favourites = shuffle(data.favourites);
                         
-                    $(elem).prepend(container);
+                    var containerElem = $(container);
+                    var containerId = 'editorsChoice-' + Date.now();
+                    containerElem.first().attr('id', containerId); // add unique id to container element to handle duplicate indexPages
+                    $(elem).prepend(containerElem);
 
                     favourites.forEach((favourite, i) => {
                         let communityRating = favourite.community_rating.toFixed(1);
@@ -223,12 +226,13 @@ function setup() {
 
                         var bannerImageWidth = Math.max(window.screen.width, window.screen.height);
                         let editorsChoiceItemBanner = `<a href='${baseUrl}#/details?id=${favourite.id}' class='editorsChoiceItemBanner splide__slide' style="background-image:url('/Items/${favourite.id}/Images/Backdrop/0?width=${bannerImageWidth}');"><div> ${editorsChoiceItemLogo} ${editorsChoiceItemRating} ${editorsChoiceItemOverview} ${editorsChoiceItemButton}</div></a>`;
-                        $(".editorsChoiceItemsContainer").append(editorsChoiceItemBanner);
+                        $('#' + containerId + ' .editorsChoiceItemsContainer').append(editorsChoiceItemBanner);
+                        
                     });
                     
                     $(elem).addClass('editorsChoiceAdded');     
                     
-                    new Splide( '.splide', {
+                    new Splide( '#' + containerId + ' .splide', {
                         type: 'loop',
                         autoplay: true,
                         interval: 10000,
