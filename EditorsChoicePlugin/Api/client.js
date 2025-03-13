@@ -42,9 +42,16 @@ const container = `<div class="verticalSection section-1 editorsChoiceContainer"
     .editorsChoiceScrollButtonsContainer, .editorsChoicePlayPauseContainer {
         position: absolute;
         z-index: 99;
-        width: 10em;
         right: 0.15em;
         mix-blend-mode: difference;
+    }
+
+    .editorsChoiceScrollButtonsContainer
+        width: 7em;
+    }
+
+    .editorsChoicePlayPauseContainer {
+        width: 4em;
     }
 
     .editorsChoiceScrollButtonsContainer > .splide__arrows, .editorsChoicePlayPauseContainer > .splide__toggle {
@@ -132,6 +139,11 @@ const container = `<div class="verticalSection section-1 editorsChoiceContainer"
         -webkit-box-orient: vertical;
         -webkit-line-clamp: 4;
         overflow: hidden;
+    }
+
+    .layout-tv .editorsChoiceItemOverview {
+        min-width: 55%;
+        -webkit-line-clamp: 2;
     }
 
     .editorsChoiceItemButton {
