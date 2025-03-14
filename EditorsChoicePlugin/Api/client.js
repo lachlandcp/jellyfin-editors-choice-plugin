@@ -212,6 +212,14 @@ function setup() {
                     containerElem.first().attr('id', containerId); // add unique id to container element to handle duplicate indexPages
                     $(elem).prepend(containerElem);
 
+                    var focusResolved = false;
+                    $('.layout-tv #' + containerId + ' .emby-scrollbuttons button').on('focus', function () {
+                        if (!focusResolved) {
+                            $('[is="emby-tabs"] .emby-button').first().trigger('focus');
+                            focusResolved = true;
+                        }
+                    });
+
                     favourites.forEach((favourite, i) => {
                         let communityRating = favourite.community_rating.toFixed(1);
                         
