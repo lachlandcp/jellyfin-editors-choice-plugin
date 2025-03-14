@@ -261,7 +261,8 @@ function setup() {
                         type: 'loop',
                         autoplay: data.autoplay,
                         interval: 10000,
-                        pagination: false
+                        pagination: false,
+                        keyboard: true
                       }).mount();
 
                 });
