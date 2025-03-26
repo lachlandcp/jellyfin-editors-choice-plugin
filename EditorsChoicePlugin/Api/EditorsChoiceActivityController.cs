@@ -8,6 +8,7 @@ using MediaBrowser.Controller.Library;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;
 
 namespace EditorsChoicePlugin.Api;
@@ -63,7 +64,9 @@ public class EditorsChoiceActivityController : ControllerBase {
             InternalItemsQuery query;
             List<BaseItem> initialResult = [];
             List<BaseItem> result = [];
-            bool resultsEmpty = false;  
+            bool resultsEmpty = false;
+            int? maximumParentRating = null;
+            bool? mustHaveParentRating = null;
 
             // Get active user - haven't found a better way than this
             string name = "";
@@ -75,6 +78,17 @@ public class EditorsChoiceActivityController : ControllerBase {
 
             Jellyfin.Data.Entities.User? activeUser = _userManager.GetUserByName(name);
             if (activeUser == null) return NotFound();
+
+            // If the config is set to be user profile specific, then we need to set the rating to the user's max age rating.
+            if (_config.MaximumParentRating == -2) {
+                maximumParentRating = activeUser.MaxParentalAgeRating;
+                if (maximumParentRating >= 0) {
+                    mustHaveParentRating = true; // we want to avoid showing unrated content when a user has a parental access limitation
+                }
+            } else {
+                maximumParentRating = _config.MaximumParentRating;
+                mustHaveParentRating = true; // we want to avoid showing unrated content when a user has a parental access limitation
+            }
 
             // If not showing random media, collect the editor user's favourited items
             if (_config.Mode == "FAVOURITES") {
@@ -91,7 +105,9 @@ public class EditorsChoiceActivityController : ControllerBase {
                         IncludeItemsByName = true,
                         IncludeItemTypes = [BaseItemKind.Series, BaseItemKind.Movie, BaseItemKind.Episode, BaseItemKind.Season], // Editor may have favourited individual episodes or seasons - we will handle this later
                         MinCommunityRating = _config.MinimumRating,
-                        MinCriticRating = _config.MinimumCriticRating
+                        MinCriticRating = _config.MinimumCriticRating,
+                        MaxParentalRating = maximumParentRating,
+                        HasParentalRating = mustHaveParentRating
                     };
                     initialResult = _libraryManager.GetItemList(query);
                     
@@ -145,7 +161,9 @@ public class EditorsChoiceActivityController : ControllerBase {
                             ItemIds = [.. itemIds],
                             IncludeItemTypes = [BaseItemKind.Series, BaseItemKind.Movie],
                             MinCommunityRating = _config.MinimumRating,
-                            MinCriticRating = _config.MinimumCriticRating
+                            MinCriticRating = _config.MinimumCriticRating,
+                            MaxParentalRating = maximumParentRating,
+                            HasParentalRating = mustHaveParentRating
                         };
 
                         result = PrepareResult(query, activeUser);
@@ -163,7 +181,9 @@ public class EditorsChoiceActivityController : ControllerBase {
                 query = new InternalItemsQuery(activeUser) {
                     IncludeItemTypes = [BaseItemKind.Series, BaseItemKind.Movie],
                     MinCommunityRating = _config.MinimumRating,
-                    MinCriticRating = _config.MinimumCriticRating
+                    MinCriticRating = _config.MinimumCriticRating,
+                    MaxParentalRating = maximumParentRating,
+                    HasParentalRating = mustHaveParentRating
                 };
                 result = PrepareResult(query, activeUser);
             }

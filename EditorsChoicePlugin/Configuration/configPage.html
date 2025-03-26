@@ -198,8 +198,13 @@
                         <div class="fieldDescription">Only show shows or films that have a critic rating at least this number (0 to 100). Set to 0 to ignore rating.</div>
                     </div>
 
-                    <h3 class="checkboxListLabel">Limit to following libraries:</h3>
-                    <div id="LibraryList" class="checkboxList"></div>
+                    <div id="MaximumParentRating-container" class="selectContainer">
+                        <label class="selectLabel" for="MaximumParentRating">Maximum parental rating</label>
+                        <select is="emby-select" id="MaximumParentRating" name="MaximumParentRating" class="emby-select-withcolor emby-select">
+                            <option value="-2">User profile specific</option>
+                        </select>
+                        <div class="fieldDescription">Items with a parental rating higher than this will not be shown. Set to 'User profile specific' to limit to a user's specific parental access controls.</div>
+                    </div>
 
                     <h2>Technical settings</h2>
                     <div class="checkboxContainer">
@@ -303,7 +308,45 @@
 
                                 }
                             }
-                        })
+                        });
+
+                        ApiClient.getParentalRatings().then(function (allParentalRatings) {
+                            var rating;
+                            var ratings = [];
+                            
+                            for (let i = 0, length = allParentalRatings.length; i < length; i++) {
+                                rating = allParentalRatings[i];
+
+                                if (ratings.length) {
+                                    var lastRating = ratings[ratings.length - 1];
+
+                                    if (lastRating.Value === rating.Value) {
+                                        lastRating.Name += '/' + rating.Name;
+                                        continue;
+                                    }
+                                }
+
+                                ratings.push({
+                                    Name: rating.Name,
+                                    Value: rating.Value
+                                });
+                            }
+                            
+                            for (var rating of ratings) {
+                                if (rating.Value != null) { // skip unrated 
+                                    $('#MaximumParentRating').first().append($('<option>', {
+                                        value: rating.Value,
+                                        text: rating.Name
+                                    }));
+                                }
+                            }
+
+                            if (config.MaximumParentRating) {
+                                $('#MaximumParentRating').val(config.MaximumParentRating);
+                            } else {
+                                $('#MaximumParentRating').val(-2);
+                            }
+                        });
                     });
                 });
 
@@ -354,6 +397,8 @@
                         } else {
                             config.MinimumCriticRating = minimumCriticRating;
                         }
+
+                        config.MaximumParentRating = $('#MaximumParentRating').first().val();
 
                         var filteredLibraries = [];
                         $('#LibraryList input[is="emby-checkbox"]:checked').each(function () {
