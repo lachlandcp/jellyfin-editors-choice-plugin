@@ -8,6 +8,14 @@
         "category": "General",
         "versions": [
             {
+                "version": "1.0.8.0.",
+                "changelog": "Adds parental rating filtering.",
+                "targetAbi": "10.10.6.0",
+                "sourceUrl": "https://github.com/lachlandcp/jellyfin-editors-choice-plugin/releases/download/1.0.8.0/EditorsChoicePlugin-v1.0.8.0.zip",
+                "checksum": "9716bbcfdc39c04671dea43001e4485f",
+                "timestamp": "2025-04-05 12:03:29"
+            },
+            {
                 "version": "1.0.7.1",
                 "changelog": "Fixes issues on TV mode.",
                 "targetAbi": "10.10.6.0",
