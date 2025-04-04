@@ -159,6 +159,12 @@
                             <span class="radioButtonLabel mdl-radio__label">Collections</span>
                             <div class="fieldDescription">Shows items from the specified collections</div>
                         </label>
+                        <label class="radio-label-block mdl-radio show-focus">
+                            <input type="radio" is="emby-radio" id="NewMode" name="mode" value="NewMode" class="mdl-radio__button"/>
+                            <div class="mdl-radio__circles"><svg><defs><clipPath id="cutoff"><circle cx="50%" cy="50%" r="50%"></circle></clipPath></defs><circle class="mdl-radio__outer-circle" cx="50%" cy="50%" r="50%" fill="none" stroke="currentcolor" stroke-width="0.26em" clip-path="url(#cutoff)"></circle><circle class="mdl-radio__inner-circle" cx="50%" cy="50%" r="25%" fill="currentcolor"></circle></svg><div class="mdl-radio__focus-circle"></div></div>
+                            <span class="radioButtonLabel mdl-radio__label">New</span>
+                            <div class="fieldDescription">Shows only items released in the current year</div>
+                        </label>
                     </div>
 
                     <div id="EditorUserId-container" class="selectContainer" style="display: none;">
@@ -245,6 +251,7 @@
                         $('#FavouritesMode').first().prop('checked', config.Mode == 'FAVOURITES');
                         $('#RandomMode').first().prop('checked', config.Mode == 'RANDOM');
                         $('#CollectionsMode').first().prop('checked', config.Mode == 'COLLECTIONS');
+                        $('#NewMode').first().prop('checked', config.Mode == 'NEW');
                         $('#RandomMediaCount').val(config.RandomMediaCount);
                         $('#MinimumRating').val(config.MinimumRating);
                         $('#MinimumCriticRating').val(config.MinimumCriticRating);
@@ -374,6 +381,9 @@
                             config.ShowRandomMedia = true;
                         } else if ($('#CollectionsMode').first().is(':checked')) {
                             config.Mode = "COLLECTIONS";
+                            config.ShowRandomMedia = false;
+                        } else if ($('#NewMode').first().is(':checked')) {
+                            config.Mode = "NEW";
                             config.ShowRandomMedia = false;
                         }
                         
