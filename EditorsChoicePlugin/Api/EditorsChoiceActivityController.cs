@@ -173,6 +173,20 @@ public class EditorsChoiceActivityController : ControllerBase {
                 }
             }
 
+            if(_config.Mode == "NEW") {
+                query = new InternalItemsQuery(activeUser) {
+                    IncludeItemTypes = [BaseItemKind.Series, BaseItemKind.Movie],
+                    MinCommunityRating = _config.MinimumRating,
+                    MinCriticRating = _config.MinimumCriticRating,
+                    MaxParentalRating = maximumParentRating,
+                    HasParentalRating = mustHaveParentRating,
+                    Years = [DateTime.Now.Year]
+                };
+
+                result = PrepareResult(query, activeUser);
+                resultsEmpty = result.Count == 0;
+            }
+            
             // If showing random media is enabled OR the results list is currently empty, collect a random selection from the entire library
             if (_config.Mode == "RANDOM" || resultsEmpty) {
                                                
