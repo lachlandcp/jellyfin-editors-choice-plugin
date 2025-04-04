@@ -180,7 +180,7 @@ public class EditorsChoiceActivityController : ControllerBase {
                     MinCriticRating = _config.MinimumCriticRating,
                     MaxParentalRating = maximumParentRating,
                     HasParentalRating = mustHaveParentRating,
-                    Years = [DateTime.Now.Year]
+                    MinPremiereDate = DateTime.Today.AddMonths(-6)
                 };
 
                 result = PrepareResult(query, activeUser);
