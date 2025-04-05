@@ -26,4 +26,6 @@ public class PluginConfiguration : BasePluginConfiguration {
     public string[] SelectedCollections {get; set; } = [];
 
     public bool EnableAutoplay {get; set; } = true;
+
+    public string NewTimeLimit {get; set; } = "1month";
 }

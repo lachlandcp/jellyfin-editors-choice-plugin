@@ -159,6 +159,12 @@
                             <span class="radioButtonLabel mdl-radio__label">Collections</span>
                             <div class="fieldDescription">Shows items from the specified collections</div>
                         </label>
+                        <label class="radio-label-block mdl-radio show-focus">
+                            <input type="radio" is="emby-radio" id="NewMode" name="mode" value="NewMode" class="mdl-radio__button"/>
+                            <div class="mdl-radio__circles"><svg><defs><clipPath id="cutoff"><circle cx="50%" cy="50%" r="50%"></circle></clipPath></defs><circle class="mdl-radio__outer-circle" cx="50%" cy="50%" r="50%" fill="none" stroke="currentcolor" stroke-width="0.26em" clip-path="url(#cutoff)"></circle><circle class="mdl-radio__inner-circle" cx="50%" cy="50%" r="25%" fill="currentcolor"></circle></svg><div class="mdl-radio__focus-circle"></div></div>
+                            <span class="radioButtonLabel mdl-radio__label">New</span>
+                            <div class="fieldDescription">Shows only items released in the last 6 months</div>
+                        </label>
                     </div>
 
                     <div id="EditorUserId-container" class="selectContainer" style="display: none;">
@@ -168,6 +174,17 @@
                         </select>
                     </div>
                     
+                    <div id="NewTimeLimit-container" style="display: none;">
+                        <h3 class="selectLabel">Show items released in the last:</h3>
+                        <select is="emby-select" id="NewTimeLimitSelect" name="NewTimeLimit" class="emby-select-withcolor emby-select">
+                            <option value="1month">1 month</option>
+                            <option value="2month">2 months</option>
+                            <option value="6month">6 months</option>
+                            <option value="1year">1 year</option>
+                        </select>
+                        <br/>
+                    </div>
+
                     <div id="CollectionsList-container" style="display: none;">
                         <h3 class="checkboxListLabel">Show items from these collections:</h3>
                         <div id="CollectionsList" class="checkboxList"></div>
@@ -236,8 +253,6 @@
                     Dashboard.showLoadingMsg();
 
                     ApiClient.getPluginConfiguration(pluginId).then(function (config) {
-
-                        console.log(config);
                         selectedUserId = config.EditorUserId;
                         //$('#EditorUserId').first().val(config.EditorUserId);
                         $('#DoScriptInject').first().prop('checked', config.DoScriptInject);
@@ -245,15 +260,20 @@
                         $('#FavouritesMode').first().prop('checked', config.Mode == 'FAVOURITES');
                         $('#RandomMode').first().prop('checked', config.Mode == 'RANDOM');
                         $('#CollectionsMode').first().prop('checked', config.Mode == 'COLLECTIONS');
+                        $('#NewMode').first().prop('checked', config.Mode == 'NEW');
                         $('#RandomMediaCount').val(config.RandomMediaCount);
                         $('#MinimumRating').val(config.MinimumRating);
                         $('#MinimumCriticRating').val(config.MinimumCriticRating);
                         $('#EnableAutoplay').first().prop('checked', config.EnableAutoplay);
 
+                        $("#NewTimeLimitSelect").val(config.NewTimeLimit);
+                        
                         if (config.Mode == 'FAVOURITES') {
                             $('#EditorUserId-container').show();
                         } else if (config.Mode == 'COLLECTIONS') {
                             $('#CollectionsList-container').show();
+                        } else if (config.Mode == "NEW") {
+                            $('#NewTimeLimit-container').show();
                         }
 
                         Dashboard.hideLoadingMsg();
@@ -277,7 +297,6 @@
                             } else {
                                 $('#EditorUserId').val("none");
                             }
-                            
                         });
 
                         // Populate libraries and collections checkboxes
@@ -375,6 +394,10 @@
                         } else if ($('#CollectionsMode').first().is(':checked')) {
                             config.Mode = "COLLECTIONS";
                             config.ShowRandomMedia = false;
+                        } else if ($('#NewMode').first().is(':checked')) {
+                            config.Mode = "NEW";
+                            config.ShowRandomMedia = false;
+                            
                         }
                         
                         let randomMediaCount = $('#RandomMediaCount').first().val();
@@ -411,6 +434,8 @@
                             selectedCollections.push($(this).attr('data-id'));
                         });
                         config.SelectedCollections = selectedCollections;
+                        
+                        config.NewTimeLimit = $("#NewTimeLimitSelect").val();
 
                         ApiClient.updatePluginConfiguration(pluginId, config).then(Dashboard.processPluginConfigurationUpdateResult);
 
@@ -423,6 +448,7 @@
                 $('input[name="mode"]').on('change', function() {
                     $('#EditorUserId-container').toggle($('#FavouritesMode').is(':checked'));
                     $('#CollectionsList-container').toggle($('#CollectionsMode').is(':checked'));
+                    $('#NewTimeLimit-container').toggle($('#NewMode').is(':checked'));
                 });
 
             })();
