@@ -172,15 +172,32 @@ public class EditorsChoiceActivityController : ControllerBase {
                     resultsEmpty = result.Count == 0;
                 }
             }
-
+            
             if(_config.Mode == "NEW") {
+                DateTime newPremiereDate = DateTime.Today.AddMonths(-1);
+                
+                switch(_config.NewTimeLimit) {
+                    case "1month": 
+                        newPremiereDate = DateTime.Today.AddMonths(-1);
+                    break;
+                    case "2month":
+                        newPremiereDate = DateTime.Today.AddMonths(-2);
+                    break;
+                    case "6month":
+                        newPremiereDate = DateTime.Today.AddMonths(-6);
+                    break;
+                    case "1year":
+                        newPremiereDate = DateTime.Today.AddYears(-1);
+                    break;
+                }
+                
                 query = new InternalItemsQuery(activeUser) {
                     IncludeItemTypes = [BaseItemKind.Series, BaseItemKind.Movie],
                     MinCommunityRating = _config.MinimumRating,
                     MinCriticRating = _config.MinimumCriticRating,
                     MaxParentalRating = maximumParentRating,
                     HasParentalRating = mustHaveParentRating,
-                    MinPremiereDate = DateTime.Today.AddMonths(-6)
+                    MinPremiereDate = newPremiereDate
                 };
 
                 result = PrepareResult(query, activeUser);
