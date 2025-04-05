@@ -253,8 +253,6 @@
                     Dashboard.showLoadingMsg();
 
                     ApiClient.getPluginConfiguration(pluginId).then(function (config) {
-
-                        console.log(config);
                         selectedUserId = config.EditorUserId;
                         //$('#EditorUserId').first().val(config.EditorUserId);
                         $('#DoScriptInject').first().prop('checked', config.DoScriptInject);
@@ -267,8 +265,6 @@
                         $('#MinimumRating').val(config.MinimumRating);
                         $('#MinimumCriticRating').val(config.MinimumCriticRating);
                         $('#EnableAutoplay').first().prop('checked', config.EnableAutoplay);
-                        console.log(config);
-                        console.log(config.NewTimeLimit);
 
                         $("#NewTimeLimitSelect").val(config.NewTimeLimit);
                         
@@ -439,8 +435,6 @@
                         });
                         config.SelectedCollections = selectedCollections;
                         
-                        console.log($("#NewTimeLimitSelect").val());
-                    
                         config.NewTimeLimit = $("#NewTimeLimitSelect").val();
 
                         ApiClient.updatePluginConfiguration(pluginId, config).then(Dashboard.processPluginConfigurationUpdateResult);
