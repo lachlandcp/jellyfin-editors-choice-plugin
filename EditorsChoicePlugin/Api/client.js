@@ -197,6 +197,25 @@ function shuffle(old_array) {
 
 const GUID = "70bb2ec1-f19e-46b5-b49a-942e6b96ebae";
 
+// Function to get localized string based on user's language
+function getLocalizedString(key) {
+    const localization = {
+        'watchButton': {
+            'en': 'Watch',
+            'fr': 'Regarder',
+            'es': 'Ver',
+            'de': 'Ansehen',
+            'it': 'Guarda',
+            'pt': 'Assistir',
+            'zh': '观看',
+            'ja': '見る'
+        }
+    };
+
+    const userLanguage = navigator.language.slice(0, 2); // Retrieve the first two characters of the user's language
+    return localization[key]?.[userLanguage] || localization[key]?.['en']; // Fallback to English if the user's language is not available
+}
+
 // Setup slider
 function setup() {
     console.log("Attempting creation of editors choice slider.");
@@ -237,7 +256,7 @@ function setup() {
                         }
 
                         let editorsChoiceItemOverview = `<p class='editorsChoiceItemOverview'>${favourite.overview}</p>`;
-                        let editorsChoiceItemButton = `<button is='emby-button' class='editorsChoiceItemButton raised button-submit block emby-button'> <span>Watch</span> </button>`;
+                        let editorsChoiceItemButton = `<button is='emby-button' class='editorsChoiceItemButton raised button-submit block emby-button'> <span>${getLocalizedString('watchButton')}</span> </button>`;
 
                         // Sometimes the path will be /web/index.html#/home.html, other times it will be /web/#/home.html
                         var baseUrl = Emby.Page.baseUrl() + '/';
