@@ -6,6 +6,7 @@
         "description": "Create a Netflix-style featured content slider on the main page.",
         "owner": "lachlandcp",
         "category": "General",
+        "imageUrl": "https://raw.githubusercontent.com/lachlandcp/jellyfin-editors-choice-plugin/main/logo.png",
         "versions": [
             {
                 "version": "1.0.8.0",
