@@ -260,7 +260,7 @@ function setup() {
                     new Splide( '#' + containerId + ' .splide', {
                         type: 'loop',
                         autoplay: data.autoplay,
-                        interval: 10000,
+                        interval: data.autoplayInterval,
                         pagination: false,
                         keyboard: true
                       }).mount();

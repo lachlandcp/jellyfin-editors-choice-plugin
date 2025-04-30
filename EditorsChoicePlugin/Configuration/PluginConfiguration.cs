@@ -27,5 +27,7 @@ public class PluginConfiguration : BasePluginConfiguration {
 
     public bool EnableAutoplay {get; set; } = true;
 
+    public int AutoplayInterval {get; set;} = 10;
+
     public string NewTimeLimit {get; set; } = "1month";
 }

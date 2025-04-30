@@ -191,11 +191,18 @@
                         <p>One collection will be shown at a time across the slider. If multiple are checked below, one of them will be randomly chosen each time it loads.</p>
                     </div>
 
+                    <h2>Autoplay</h2>
+
                     <div class="checkboxContainer">
                         <label>
                             <input is="emby-checkbox"  type="checkbox" id="EnableAutoplay" name="Enable autoplay" label="Enable autoplay">
                             <span>Enable autoplay</span>
                         </label>
+                    </div>
+
+                    <div id="AutoplayInterval-container" class="inputContainer" style="display: none;">
+                        <input is="emby-input" type="number" id="AutoplayInterval" name="Autoplay interval" label="Autoplay interval" min="1" step="1">
+                        <div class="fieldDescription">How often, in seconds, the slider moves to the next item. Default is 10 seconds.</div>
                     </div>
 
                     <h2>Filtering</h2>
@@ -265,6 +272,7 @@
                         $('#MinimumRating').val(config.MinimumRating);
                         $('#MinimumCriticRating').val(config.MinimumCriticRating);
                         $('#EnableAutoplay').first().prop('checked', config.EnableAutoplay);
+                        $('#AutoplayInterval').first().val(config.AutoplayInterval);
 
                         $("#NewTimeLimitSelect").val(config.NewTimeLimit);
                         
@@ -274,6 +282,11 @@
                             $('#CollectionsList-container').show();
                         } else if (config.Mode == "NEW") {
                             $('#NewTimeLimit-container').show();
+                        }
+                        
+                        // Only show interval selection if autoplay is enabled
+                        if (config.EnableAutoplay) {
+                            $('#AutoplayInterval-container').show();
                         }
 
                         Dashboard.hideLoadingMsg();
@@ -384,6 +397,7 @@
                         
                         config.DoScriptInject = $('#DoScriptInject').first().is(':checked');
                         config.EnableAutoplay = $('#EnableAutoplay').first().is(':checked');
+                        config.AutoplayInterval = $('#AutoplayInterval').first().val();
 
                         if ($('#FavouritesMode').first().is(':checked')) {
                             config.Mode = "FAVOURITES";
@@ -445,10 +459,11 @@
                     return false;
                 });
 
-                $('input[name="mode"]').on('change', function() {
+                $('input[name="mode"], #EnableAutoplay').on('change', function() {
                     $('#EditorUserId-container').toggle($('#FavouritesMode').is(':checked'));
                     $('#CollectionsList-container').toggle($('#CollectionsMode').is(':checked'));
                     $('#NewTimeLimit-container').toggle($('#NewMode').is(':checked'));
+                    $('#AutoplayInterval-container').toggle($('#EnableAutoplay').is(':checked'));
                 });
 
             })();

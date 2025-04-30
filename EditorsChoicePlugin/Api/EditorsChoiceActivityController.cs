@@ -252,6 +252,7 @@ public class EditorsChoiceActivityController : ControllerBase {
 
             response.Add("favourites", items);
             response.Add("autoplay", _config.EnableAutoplay);
+            response.Add("autoplayInterval", _config.AutoplayInterval * 1000);
 
             return Ok(response);
 
