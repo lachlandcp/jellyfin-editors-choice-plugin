@@ -230,6 +230,20 @@
                         <div class="fieldDescription">Items with a parental rating higher than this will not be shown. Set to 'User profile' to limit to a user's specific parental access controls (default).</div>
                     </div>
 
+                    <h2>Display</h2>
+                    <div class="checkboxContainer">
+                        <label>
+                            <input is="emby-checkbox"  type="checkbox" id="ShowRating" name="Show rating" label="Show rating">
+                            <span>Show community rating</span>
+                        </label>
+                    </div>
+                    <div class="checkboxContainer">
+                        <label>
+                            <input is="emby-checkbox"  type="checkbox" id="ShowDesc" name="Show description" label="Show description">
+                            <span>Show description</span>
+                        </label>
+                    </div>
+
                     <h2>Technical settings</h2>
                     <div class="checkboxContainer">
                         <label>
@@ -273,8 +287,9 @@
                         $('#MinimumCriticRating').val(config.MinimumCriticRating);
                         $('#EnableAutoplay').first().prop('checked', config.EnableAutoplay);
                         $('#AutoplayInterval').first().val(config.AutoplayInterval);
-
                         $("#NewTimeLimitSelect").val(config.NewTimeLimit);
+                        $('#ShowRating').first().prop('checked', config.ShowRating);
+                        $('#ShowDesc').first().prop('checked', config.ShowDescription);
                         
                         if (config.Mode == 'FAVOURITES') {
                             $('#EditorUserId-container').show();
@@ -398,6 +413,8 @@
                         config.DoScriptInject = $('#DoScriptInject').first().is(':checked');
                         config.EnableAutoplay = $('#EnableAutoplay').first().is(':checked');
                         config.AutoplayInterval = $('#AutoplayInterval').first().val();
+                        config.ShowRating = $('#ShowRating').first().is(':checked');
+                        config.ShowDescription =  $('#ShowDesc').first().is(':checked');
 
                         if ($('#FavouritesMode').first().is(':checked')) {
                             config.Mode = "FAVOURITES";

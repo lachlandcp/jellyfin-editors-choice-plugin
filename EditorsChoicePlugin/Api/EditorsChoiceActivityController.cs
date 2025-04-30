@@ -234,16 +234,17 @@ public class EditorsChoiceActivityController : ControllerBase {
                     { "id", item.Id.ToString() },
                     { "name", item.Name },
                     { "tagline", item.Tagline },
-                    { "overview", item.Overview },
                     { "official_rating", item.OfficialRating },
                     { "hasLogo", item.HasImage(MediaBrowser.Model.Entities.ImageType.Logo) }
                 };
 
-                
-                if (item.CriticRating.HasValue) {
+                if (_config.ShowDescription) {
+                    itemObject.Add("overview", item.Overview);
+                }                
+                if (item.CriticRating.HasValue && _config.ShowRating) {
                     itemObject.Add("critic_rating", item.CriticRating);
                 }
-                if (item.CommunityRating.HasValue) {
+                if (item.CommunityRating.HasValue && _config.ShowRating) {
                     itemObject.Add("community_rating", Math.Round(Convert.ToDecimal(item.CommunityRating), 2));
                 }
 

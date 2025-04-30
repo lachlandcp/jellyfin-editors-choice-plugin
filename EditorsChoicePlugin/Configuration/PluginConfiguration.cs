@@ -30,4 +30,8 @@ public class PluginConfiguration : BasePluginConfiguration {
     public int AutoplayInterval {get; set;} = 10;
 
     public string NewTimeLimit {get; set; } = "1month";
+
+    public bool ShowRating {get; set;} = true;
+
+    public bool ShowDescription {get; set;} = true;
 }

@@ -117,6 +117,7 @@ const container = `<div class="verticalSection section-1 editorsChoiceContainer"
     }
 
     .editorsChoiceItemLogo {
+        display: block;
         max-width: 300px;
         max-height: calc(50% - 45px);
     }
@@ -240,25 +241,41 @@ function setup() {
                     });
 
                     favourites.forEach((favourite, i) => {
-                        let communityRating = favourite.community_rating.toFixed(1);
                         
-                        let editorsChoiceItemLogo = `<img class='editorsChoiceItemLogo' src='/Items/${favourite.id}/Images/Logo/0?width=300' alt='${favourite.name}'/>`;
-
-                        if (!favourite.hasLogo) {
-                            editorsChoiceItemLogo = `<h1 class="editorsChoiceItemTitle">${favourite.name}</h1>`;
+                        // Process star rating
+                        var communityRating = 0;
+                        
+                        if ('community_rating' in favourite) {
+                            communityRating = favourite.community_rating.toFixed(1);
                         }
 
-                        let editorsChoiceItemRating = `<div class='editorsChoiceItemRating starRatingContainer'><span class='material-icons starIcon star'></span>${communityRating}</div>`;
-                        
-                        // Skip rating if it is 0 - a perfect zero means the metadata provider has no score so is misrepresentative
-                        if (favourite.communityRating == 0) {
+                        var editorsChoiceItemRating = `<div class='editorsChoiceItemRating starRatingContainer'><span class='material-icons starIcon star'></span>${communityRating}</div>`;
+
+                        // skip rating if it is 0 - a perfect zero means the metadata provider has no score so is misrepresentative
+                        if (communityRating == 0) {
                             editorsChoiceItemRating = "";
                         }
+            
+                        // Process logo
+                        var editorsChoiceItemLogo = `<img class='editorsChoiceItemLogo' src='/Items/${favourite.id}/Images/Logo/0?width=300' alt='${favourite.name}'/>`;
 
-                        let editorsChoiceItemOverview = `<p class='editorsChoiceItemOverview'>${favourite.overview}</p>`;
+                        if (!favourite.hasLogo) editorsChoiceItemLogo = `<h1 class="editorsChoiceItemTitle">${favourite.name}</h1>`;
+
+                        // Process item description
+                        if (!('overview' in favourite)) {
+                            favourite.overview = "";
+                        }
+
+                        var editorsChoiceItemOverview = `<p class='editorsChoiceItemOverview'>${favourite.overview}</p>`;
+
+                        if (favourite.overview == "") {
+                            editorsChoiceItemOverview = "";
+                        }
+
+                        // Process button
                         let editorsChoiceItemButton = `<button is='emby-button' class='editorsChoiceItemButton raised button-submit block emby-button'> <span>${getLocalizedString('watchButton')}</span> </button>`;
 
-                        // Sometimes the path will be /web/index.html#/home.html, other times it will be /web/#/home.html
+                        // sometimes the path will be /web/index.html#/home.html, other times it will be /web/#/home.html
                         var baseUrl = Emby.Page.baseUrl() + '/';
                         if (window.location.href.includes('/index.html')) {
                             baseUrl += 'index.html';
