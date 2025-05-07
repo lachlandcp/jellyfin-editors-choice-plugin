@@ -1,9 +1,11 @@
 ## About
-Editor's Choice is a plugin for Jellyfin that adds a full-width slider to the main page to feature selected content, similar to the main Netflix home page.
+Editor's Choice is a plugin for the Jellyfin web UI that adds a full-width slider to the main page to feature selected content, similar to the main Netflix home page.
 
 The featured content list is drawn from a specified user's favourited items, or a totally random selection of shows and films. The selection can also be filtered by minimum community or critic rating.
 
 ![Screenshot of Jellyfin with Editor's Choice banner slider](https://github.com/lachlandcp/jellyfin-editors-choice-plugin/blob/main/example.png?raw=true)
+
+Note that the plugin only works for the web UI (and therefore also the mobile app), but does not and can not work for the Android TV app or other apps due to limitations of those platforms.
 
 ## Installation
 **NOTE: The client script will fail to inject automatically into the jellyfin-web server if there is a difference in permission between the owner of the web files (root, or www-data, etc.) and the executor of the main jellyfin-server. This often happens because...**
