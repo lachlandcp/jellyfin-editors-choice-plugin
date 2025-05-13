@@ -106,8 +106,10 @@ public class EditorsChoiceActivityController : ControllerBase {
                         MinCommunityRating = _config.MinimumRating,
                         MinCriticRating = _config.MinimumCriticRating,
                         MaxParentalRating = maximumParentRating,
-                        HasParentalRating = mustHaveParentRating
+                        HasParentalRating = mustHaveParentRating,
+                        OrderBy = new[] {(ItemSortBy.Random, SortOrder.Ascending)}
                     };
+                    query.Limit = _config.RandomMediaCount * 2;
                     initialResult = _libraryManager.GetItemList(query);
                     
                     // Get ids of items in the favourites list
@@ -162,9 +164,10 @@ public class EditorsChoiceActivityController : ControllerBase {
                             MinCommunityRating = _config.MinimumRating,
                             MinCriticRating = _config.MinimumCriticRating,
                             MaxParentalRating = maximumParentRating,
-                            HasParentalRating = mustHaveParentRating
+                            HasParentalRating = mustHaveParentRating,
+                            OrderBy = new[] {(ItemSortBy.Random, SortOrder.Ascending)}
                         };
-
+                        query.Limit = _config.RandomMediaCount * 2;
                         result = PrepareResult(query, activeUser);
                     }
 
@@ -197,9 +200,10 @@ public class EditorsChoiceActivityController : ControllerBase {
                     MinCriticRating = _config.MinimumCriticRating,
                     MaxParentalRating = maximumParentRating,
                     HasParentalRating = mustHaveParentRating,
-                    MinPremiereDate = newPremiereDate
+                    MinPremiereDate = newPremiereDate,
+                    OrderBy = new[] {(ItemSortBy.Random, SortOrder.Ascending)}
                 };
-
+                query.Limit = _config.RandomMediaCount * 2;
                 result = PrepareResult(query, activeUser);
                 resultsEmpty = result.Count == 0;
             }
@@ -213,8 +217,10 @@ public class EditorsChoiceActivityController : ControllerBase {
                     MinCommunityRating = _config.MinimumRating,
                     MinCriticRating = _config.MinimumCriticRating,
                     MaxParentalRating = maximumParentRating,
-                    HasParentalRating = mustHaveParentRating
+                    HasParentalRating = mustHaveParentRating,
+                    OrderBy = new[] {(ItemSortBy.Random, SortOrder.Ascending)}
                 };
+                query.Limit = _config.RandomMediaCount * 2;
                 result = PrepareResult(query, activeUser);
             }
 
