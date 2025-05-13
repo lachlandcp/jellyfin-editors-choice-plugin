@@ -257,8 +257,11 @@ function setup() {
                         }
             
                         // Process logo
-                        var editorsChoiceItemLogo = `<img class='editorsChoiceItemLogo' src='/Items/${favourite.id}/Images/Logo/0?width=300' alt='${favourite.name}'/>`;
-
+                        var logoImageSize = "";
+                        if (data.reduceImageSizes) {
+                            logoImageSize = "?width=300";
+                        }
+                        var editorsChoiceItemLogo = `<img class='editorsChoiceItemLogo' src='/Items/${favourite.id}/Images/Logo/0${logoImageSize}' alt='${favourite.name}'/>`;
                         if (!favourite.hasLogo) editorsChoiceItemLogo = `<h1 class="editorsChoiceItemTitle">${favourite.name}</h1>`;
 
                         // Process item description
@@ -280,9 +283,14 @@ function setup() {
                         if (window.location.href.includes('/index.html')) {
                             baseUrl += 'index.html';
                         }
-
+                        
+                        // Process banner 
                         var bannerImageWidth = Math.max(window.screen.width, window.screen.height);
-                        let editorsChoiceItemBanner = `<a href='${baseUrl}#/details?id=${favourite.id}' class='editorsChoiceItemBanner splide__slide' style="background-image:url('/Items/${favourite.id}/Images/Backdrop/0?width=${bannerImageWidth}');"><div> ${editorsChoiceItemLogo} ${editorsChoiceItemRating} ${editorsChoiceItemOverview} ${editorsChoiceItemButton}</div></a>`;
+                        var bannerImageSize = "";
+                        if (data.reduceImageSizes) {
+                            bannerImageSize = "?width=" + bannerImageWidth;
+                        }
+                        let editorsChoiceItemBanner = `<a href='${baseUrl}#/details?id=${favourite.id}' class='editorsChoiceItemBanner splide__slide' style="background-image:url('/Items/${favourite.id}/Images/Backdrop/0${bannerImageSize}');"><div> ${editorsChoiceItemLogo} ${editorsChoiceItemRating} ${editorsChoiceItemOverview} ${editorsChoiceItemButton}</div></a>`;
                         $('#' + containerId + ' .editorsChoiceItemsContainer').append(editorsChoiceItemBanner);
                         
                     });

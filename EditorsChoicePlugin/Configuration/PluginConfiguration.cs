@@ -34,4 +34,6 @@ public class PluginConfiguration : BasePluginConfiguration {
     public bool ShowRating {get; set;} = true;
 
     public bool ShowDescription {get; set;} = true;
+
+    public bool ReduceImageSize {get; set;} = false;
 }

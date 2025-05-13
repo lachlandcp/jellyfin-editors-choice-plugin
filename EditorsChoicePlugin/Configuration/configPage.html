@@ -253,6 +253,14 @@
                         <div class="fieldDescription">This will depend on permissions for the jellyfin-web index.html file.</div>
                     </div>
 
+                    <div class="checkboxContainer">
+                        <label>
+                            <input is="emby-checkbox"  type="checkbox" id="ReduceImageSize" name="Reduce image sizes" label="Reduce image sizes">
+                            <span>Reduce image sizes.</span>
+                        </label>
+                        <div class="fieldDescription">This will make banner and logo images load faster for users and reduce network usage, but increase processing demand on your media server. Turn off if plugin is having a significant performance impact.</div>
+                    </div>
+
                     <div>
                         <button is="emby-button" type="submit" class="raised button-submit block emby-button"><span>Save</span></button>
                     </div>
@@ -290,6 +298,7 @@
                         $("#NewTimeLimitSelect").val(config.NewTimeLimit);
                         $('#ShowRating').first().prop('checked', config.ShowRating);
                         $('#ShowDesc').first().prop('checked', config.ShowDescription);
+                        $('#ReduceImageSize').first().prop('checked', config.ReduceImageSize);
                         
                         if (config.Mode == 'FAVOURITES') {
                             $('#EditorUserId-container').show();
@@ -415,6 +424,7 @@
                         config.AutoplayInterval = $('#AutoplayInterval').first().val();
                         config.ShowRating = $('#ShowRating').first().is(':checked');
                         config.ShowDescription =  $('#ShowDesc').first().is(':checked');
+                        config.ReduceImageSize = $('#ReduceImageSize').first().is(':checked');
 
                         if ($('#FavouritesMode').first().is(':checked')) {
                             config.Mode = "FAVOURITES";

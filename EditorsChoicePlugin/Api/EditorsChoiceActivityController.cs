@@ -260,6 +260,7 @@ public class EditorsChoiceActivityController : ControllerBase {
             response.Add("favourites", items);
             response.Add("autoplay", _config.EnableAutoplay);
             response.Add("autoplayInterval", _config.AutoplayInterval * 1000);
+            response.Add("reduceImageSizes", _config.ReduceImageSize);
 
             return Ok(response);
 
