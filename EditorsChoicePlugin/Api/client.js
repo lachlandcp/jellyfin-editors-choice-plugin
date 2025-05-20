@@ -209,7 +209,8 @@ function getLocalizedString(key) {
             'it': 'Guarda',
             'pt': 'Assistir',
             'zh': '观看',
-            'ja': '見る'
+            'ja': '見る',
+            'ru': 'Смотреть'
         }
     };
 
