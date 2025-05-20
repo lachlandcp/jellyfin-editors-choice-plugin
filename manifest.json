@@ -17,14 +17,6 @@
                 "timestamp": "2025-05-20 18:25:21"
             },
             {
-                "version": "1.1.0.1",
-                "changelog": "Removes image resizing as default to improve plugin performance.",
-                "targetAbi": "10.10.6.0",
-                "sourceUrl": "https://github.com/lachlandcp/jellyfin-editors-choice-plugin/releases/download/1.1.0.1/EditorsChoicePlugin-v1.1.0.1.zip",
-                "checksum": "c1b9df27e64ead73a27095fc13147d59",
-                "timestamp": "2025-05-13 21:36:21"
-            },
-            {
                 "version": "1.1.0.0",
                 "changelog": "Adds new 'recent releases' mode, localisation for 'Watch' button, option to change autoplay interval, and options to show description and rating or not.",
                 "targetAbi": "10.10.6.0",
