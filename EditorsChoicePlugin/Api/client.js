@@ -1,5 +1,5 @@
 const container = `<div class="verticalSection section-1 editorsChoiceContainer">
-    <div class="splide">
+    <div class="splide cardScalable">
         <div class="editorsChoiceScrollButtonsContainer">
             <div class="emby-scrollbuttons splide__arrows">
                 <button type="button" is="paper-icon-button-light" data-ripple="false" data-direction="left" title="Previous" class="emby-scrollbuttons-button paper-icon-button-light splide__arrow splide__arrow--prev">
@@ -33,6 +33,7 @@ const container = `<div class="verticalSection section-1 editorsChoiceContainer"
         padding-left: max(env(safe-area-inset-left), 3.3%);
         padding-right: 3.3%;
         padding-right: max(env(safe-area-inset-right), 3.3%);
+        border-radius: 0.2em;
     }
 
     .editorsChoiceItemsContainer {
@@ -97,7 +98,6 @@ const container = `<div class="verticalSection section-1 editorsChoiceContainer"
     .editorsChoiceItemBanner {
         width: 100%;
         height: 360px;
-        border-radius: 0.2em;
         flex: none;
         background-size: cover;
         background-position-x: center;
