@@ -172,6 +172,7 @@ const container = `<div class="verticalSection section-1 editorsChoiceContainer"
             max-width: 100%;
             max-height: 100px;
             height: auto;
+            filter: drop-shadow(3px 3px 15px black);
         }
     }
 
