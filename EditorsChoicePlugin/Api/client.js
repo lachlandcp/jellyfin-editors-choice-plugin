@@ -34,6 +34,7 @@ const container = `<div class="verticalSection section-1 editorsChoiceContainer"
         padding-right: 3.3%;
         padding-right: max(env(safe-area-inset-right), 3.3%);
         border-radius: 0.2em;
+        margin-bottom: 1.8em;
     }
 
     .editorsChoiceItemsContainer {
