@@ -9,6 +9,14 @@
         "imageUrl": "https://raw.githubusercontent.com/lachlandcp/jellyfin-editors-choice-plugin/main/logo.png",
         "versions": [
             {
+                "version": "1.1.1.0",
+                "changelog": "Stylistic corrections and compatability with ElegantFin.",
+                "targetAbi": "10.10.6.0",
+                "sourceUrl": "https://github.com/lachlandcp/jellyfin-editors-choice-plugin/releases/download/1.1.1.0/EditorsChoicePlugin-v1.1.1.0.zip",
+                "checksum": "25e915de71afc48813b7363c8cbc0075",
+                "timestamp": "2025-05-31 20:06:15"
+            },
+            {
                 "version": "1.1.0.2",
                 "changelog": "Re-release of 1.1.0.1 to fix versioning. Removes image resizing as default to improve plugin performance.",
                 "targetAbi": "10.10.6.0",
