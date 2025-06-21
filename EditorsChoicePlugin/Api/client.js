@@ -309,7 +309,8 @@ function setup() {
                         autoplay: data.autoplay,
                         interval: data.autoplayInterval,
                         pagination: false,
-                        keyboard: true
+                        keyboard: true,
+                        height: `${data.bannerHeight}px`
                       }).mount();
 
                 });

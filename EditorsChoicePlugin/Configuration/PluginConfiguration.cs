@@ -2,38 +2,41 @@ using MediaBrowser.Model.Plugins;
 
 namespace EditorsChoicePlugin.Configuration;
 
-public class PluginConfiguration : BasePluginConfiguration {
-    public PluginConfiguration(){}
+public class PluginConfiguration : BasePluginConfiguration
+{
+    public PluginConfiguration() { }
 
-    public string EditorUserId {get; set; } = "";
+    public string EditorUserId { get; set; } = "";
 
-    public bool DoScriptInject {get; set;} = true;
+    public bool DoScriptInject { get; set; } = true;
 
-    public bool ShowRandomMedia {get; set; } = true;
+    public bool ShowRandomMedia { get; set; } = true;
 
-    public string Mode {get; set; } = "";
+    public string Mode { get; set; } = "";
 
-    public int RandomMediaCount {get; set; } = 5;
+    public int RandomMediaCount { get; set; } = 5;
 
-    public float MinimumRating {get; set; } = 0.0f;
+    public float MinimumRating { get; set; } = 0.0f;
 
-    public int MinimumCriticRating {get; set; } = 0;
+    public int MinimumCriticRating { get; set; } = 0;
 
-    public int MaximumParentRating {get; set; } = -2;
+    public int MaximumParentRating { get; set; } = -2;
 
-    public string[] FilteredLibraries {get; set; } = [];
+    public string[] FilteredLibraries { get; set; } = [];
 
-    public string[] SelectedCollections {get; set; } = [];
+    public string[] SelectedCollections { get; set; } = [];
 
-    public bool EnableAutoplay {get; set; } = true;
+    public bool EnableAutoplay { get; set; } = true;
 
-    public int AutoplayInterval {get; set;} = 10;
+    public int AutoplayInterval { get; set; } = 10;
 
-    public string NewTimeLimit {get; set; } = "1month";
+    public string NewTimeLimit { get; set; } = "1month";
 
-    public bool ShowRating {get; set;} = true;
+    public bool ShowRating { get; set; } = true;
 
-    public bool ShowDescription {get; set;} = true;
+    public bool ShowDescription { get; set; } = true;
 
-    public bool ReduceImageSize {get; set;} = false;
+    public bool ReduceImageSize { get; set; } = false;
+
+    public int BannerHeight { get; set; } = 360;
 }

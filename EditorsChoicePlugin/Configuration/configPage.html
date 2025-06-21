@@ -243,6 +243,16 @@
                             <span>Show description</span>
                         </label>
                     </div>
+                    <div id="BannerHeight-container" class="selectContainer">
+                        <h3 class="selectLabel">Height of banner:</h3>
+                        <select is="emby-select" id="BannerHeightSelect" name="BannerHeight" class="emby-select-withcolor emby-select">
+                            <option value="360">Slim (Default)</option>
+                            <option value="400">Thick</option>
+                            <option value="500">Large</option>
+                            <option value="600">Huge</option>
+                        </select>
+                        <br/>
+                    </div>
 
                     <h2>Technical settings</h2>
                     <div class="checkboxContainer">
@@ -299,6 +309,7 @@
                         $('#ShowRating').first().prop('checked', config.ShowRating);
                         $('#ShowDesc').first().prop('checked', config.ShowDescription);
                         $('#ReduceImageSize').first().prop('checked', config.ReduceImageSize);
+                        $("#BannerHeightSelect").val(config.BannerHeight);
                         
                         if (config.Mode == 'FAVOURITES') {
                             $('#EditorUserId-container').show();
@@ -477,6 +488,7 @@
                         config.SelectedCollections = selectedCollections;
                         
                         config.NewTimeLimit = $("#NewTimeLimitSelect").val();
+                        config.BannerHeight = $("#BannerHeightSelect").val();
 
                         ApiClient.updatePluginConfiguration(pluginId, config).then(Dashboard.processPluginConfigurationUpdateResult);
 

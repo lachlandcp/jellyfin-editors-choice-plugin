@@ -261,6 +261,7 @@ public class EditorsChoiceActivityController : ControllerBase {
             response.Add("autoplay", _config.EnableAutoplay);
             response.Add("autoplayInterval", _config.AutoplayInterval * 1000);
             response.Add("reduceImageSizes", _config.ReduceImageSize);
+            response.Add("bannerHeight", _config.BannerHeight);
 
             return Ok(response);
 
