@@ -9,6 +9,14 @@
         "imageUrl": "https://raw.githubusercontent.com/lachlandcp/jellyfin-editors-choice-plugin/main/logo.png",
         "versions": [
             {
+                "version": "1.2.0.0",
+                "changelog": "Adds options to exclude played items, and configure the height of the slider.",
+                "targetAbi": "10.10.6.0",
+                "sourceUrl": "https://github.com/lachlandcp/jellyfin-editors-choice-plugin/releases/download/1.2.0.0/EditorsChoicePlugin-v1.2.0.0.zip",
+                "checksum": "ec0b23fc7ebe19a08836e4b1516dda01",
+                "timestamp": "2025-06-29 12:34:45"
+            },
+            {
                 "version": "1.1.1.0",
                 "changelog": "Stylistic corrections and compatability with ElegantFin.",
                 "targetAbi": "10.10.6.0",
