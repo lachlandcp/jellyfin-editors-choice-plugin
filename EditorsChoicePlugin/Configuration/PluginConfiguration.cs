@@ -39,4 +39,6 @@ public class PluginConfiguration : BasePluginConfiguration
     public bool ReduceImageSize { get; set; } = false;
 
     public int BannerHeight { get; set; } = 360;
+
+    public bool ShowPlayed { get; set; } = true;
 }

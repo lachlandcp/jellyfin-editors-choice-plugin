@@ -230,6 +230,13 @@
                         <div class="fieldDescription">Items with a parental rating higher than this will not be shown. Set to 'User profile' to limit to a user's specific parental access controls (default).</div>
                     </div>
 
+                    <div class="checkboxContainer">
+                        <label>
+                            <input is="emby-checkbox"  type="checkbox" id="ShowPlayed" name="Show played" label="Show played">
+                            <span>Show played items</span>
+                        </label>
+                    </div>
+
                     <h2>Display</h2>
                     <div class="checkboxContainer">
                         <label>
@@ -310,6 +317,7 @@
                         $('#ShowDesc').first().prop('checked', config.ShowDescription);
                         $('#ReduceImageSize').first().prop('checked', config.ReduceImageSize);
                         $("#BannerHeightSelect").val(config.BannerHeight);
+                        $('#ShowPlayed').first().prop('checked', config.ShowPlayed);
                         
                         if (config.Mode == 'FAVOURITES') {
                             $('#EditorUserId-container').show();
@@ -436,6 +444,7 @@
                         config.ShowRating = $('#ShowRating').first().is(':checked');
                         config.ShowDescription =  $('#ShowDesc').first().is(':checked');
                         config.ReduceImageSize = $('#ReduceImageSize').first().is(':checked');
+                        config.ShowPlayed = $('#ShowPlayed').first().is(':checked');
 
                         if ($('#FavouritesMode').first().is(':checked')) {
                             config.Mode = "FAVOURITES";

@@ -124,9 +124,11 @@ public class EditorsChoiceActivityController : ControllerBase {
                     }
 
                     // Query items from the active user to ensure access
-                    query = new InternalItemsQuery(activeUser) {
+                    query = new InternalItemsQuery(activeUser)
+                    {
                         ItemIds = [.. itemIds],
-                        IncludeItemTypes = [BaseItemKind.Series, BaseItemKind.Movie, BaseItemKind.Episode, BaseItemKind.Season] // Editor may have favourited individual episodes or seasons - we will handle this later
+                        IncludeItemTypes = [BaseItemKind.Series, BaseItemKind.Movie, BaseItemKind.Episode, BaseItemKind.Season], // Editor may have favourited individual episodes or seasons - we will handle this later
+                        IsPlayed = _config.ShowPlayed ? null : false
                     };
                     result = PrepareResult(query, activeUser);
 
@@ -158,14 +160,16 @@ public class EditorsChoiceActivityController : ControllerBase {
                             }
                         }
 
-                        query = new InternalItemsQuery(activeUser) {
+                        query = new InternalItemsQuery(activeUser)
+                        {
                             ItemIds = [.. itemIds],
                             IncludeItemTypes = [BaseItemKind.Series, BaseItemKind.Movie],
                             MinCommunityRating = _config.MinimumRating,
                             MinCriticRating = _config.MinimumCriticRating,
                             MaxParentalRating = maximumParentRating,
                             HasParentalRating = mustHaveParentRating,
-                            OrderBy = new[] {(ItemSortBy.Random, SortOrder.Ascending)}
+                            OrderBy = new[] { (ItemSortBy.Random, SortOrder.Ascending) },
+                            IsPlayed = _config.ShowPlayed ? null : false
                         };
                         query.Limit = _config.RandomMediaCount * 2;
                         result = PrepareResult(query, activeUser);
@@ -194,14 +198,16 @@ public class EditorsChoiceActivityController : ControllerBase {
                     break;
                 }
                 
-                query = new InternalItemsQuery(activeUser) {
+                query = new InternalItemsQuery(activeUser)
+                {
                     IncludeItemTypes = [BaseItemKind.Series, BaseItemKind.Movie],
                     MinCommunityRating = _config.MinimumRating,
                     MinCriticRating = _config.MinimumCriticRating,
                     MaxParentalRating = maximumParentRating,
                     HasParentalRating = mustHaveParentRating,
                     MinPremiereDate = newPremiereDate,
-                    OrderBy = new[] {(ItemSortBy.Random, SortOrder.Ascending)}
+                    OrderBy = new[] { (ItemSortBy.Random, SortOrder.Ascending) },
+                    IsPlayed = _config.ShowPlayed ? null : false
                 };
                 query.Limit = _config.RandomMediaCount * 2;
                 result = PrepareResult(query, activeUser);
@@ -212,13 +218,15 @@ public class EditorsChoiceActivityController : ControllerBase {
             if (_config.Mode == "RANDOM" || resultsEmpty) {
                                                
                 // Get all shows and movies
-                query = new InternalItemsQuery(activeUser) {
+                query = new InternalItemsQuery(activeUser)
+                {
                     IncludeItemTypes = [BaseItemKind.Series, BaseItemKind.Movie],
                     MinCommunityRating = _config.MinimumRating,
                     MinCriticRating = _config.MinimumCriticRating,
                     MaxParentalRating = maximumParentRating,
                     HasParentalRating = mustHaveParentRating,
-                    OrderBy = new[] {(ItemSortBy.Random, SortOrder.Ascending)}
+                    OrderBy = new[] { (ItemSortBy.Random, SortOrder.Ascending) },
+                    IsPlayed = _config.ShowPlayed ? null : false
                 };
                 query.Limit = _config.RandomMediaCount * 2;
                 result = PrepareResult(query, activeUser);
@@ -230,9 +238,6 @@ public class EditorsChoiceActivityController : ControllerBase {
 
             foreach (BaseItem i in result) {
                 BaseItem item = i;
-
-                // Skip this item if it lacks a backdrop image
-                if (!item.HasImage(MediaBrowser.Model.Entities.ImageType.Backdrop)) break;
 
                 // Narrow down properties that are strictly necessary to pass through to frontend
                 Dictionary<string, object> itemObject = new Dictionary<string, object>
@@ -306,10 +311,13 @@ public class EditorsChoiceActivityController : ControllerBase {
                 }
             }
 
-            // Only include if active user has parental access to this item, not already in the results
-            if (shiftItem.IsVisible(activeUser) && !result.Contains(shiftItem) && inFilteredLibrary){
+            // Only include if active user has parental access to this item, not already in the results, if only unplayed items should be shown & this is unplayed, and if has a backdrop image
+            if (shiftItem.IsVisible(activeUser) && !result.Contains(shiftItem) && inFilteredLibrary && !(shiftItem.IsPlayed(activeUser) && !_config.ShowPlayed) && shiftItem.HasImage(MediaBrowser.Model.Entities.ImageType.Backdrop))
+            {
                 result.Add(shiftItem);
-            } else {
+            }
+            else
+            {
                 i--; // reset increment so we make up for non-inclusion
                 max--;
             }
