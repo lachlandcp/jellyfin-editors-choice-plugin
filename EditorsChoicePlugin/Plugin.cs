@@ -68,9 +68,9 @@ public class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages
                         logger.LogError("Unable to get base path from config, using '/': {e}", e);
                     }
 
-                    // Don't run if script already exists
+                    // Don't run if script already exists, unless it's a variation.
                     string scriptReplace = "<script plugin=\"EditorsChoice\".*?></script>(<style plugin=\"EditorsChoice\">.*?</style>)?";
-                    string scriptElement = string.Format("<script plugin=\"EditorsChoice\" defer=\"defer\" src=\"{0}/EditorsChoice/script\"></script>", basePath);
+                    string scriptElement = string.Format("<script injection=\"true\" plugin=\"EditorsChoice\" defer=\"defer\" src=\"{0}/EditorsChoice/script\"></script>", basePath);
 
                     if (!indexContents.Contains(scriptElement))
                     {
@@ -109,7 +109,7 @@ public class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages
         }
         else if (Configuration.FileTransformation)
         {
-             _ = RegisterTransformation();
+            _ = RegisterTransformation();
         }
 
     }

@@ -129,6 +129,10 @@
             .radio-label-block .fieldDescription {
                 margin-left: 1em;
             }
+
+            .checkboxContainer .fieldDescription {
+                width: 100%;
+            }
     
         </style>
 
@@ -267,7 +271,15 @@
                             <input is="emby-checkbox"  type="checkbox" id="DoScriptInject" name="Enable client script injection" label="Enable client script injection">
                             <span>Enable client script injection</span>
                         </label>
-                        <div class="fieldDescription">This will depend on permissions for the jellyfin-web index.html file.</div>
+                        <div class="fieldDescription">This will depend on permissions for the jellyfin-web index.html file. Toggling this mode will take effect after the next restart.</div>
+                    </div>
+
+                    <div class="checkboxContainer">
+                        <label>
+                            <input is="emby-checkbox"  type="checkbox" id="FileTransformation" name="Use FileTransformation plugin" label="Use FileTransformation plugin">
+                            <span>Use FileTransformation plugin (recommended)</span>
+                        </label>
+                        <div class="fieldDescription">Using <a href="https://github.com/IAmParadox27/jellyfin-plugin-file-transformation" target="_blank">the FileTransformation plugin</a> is the easiest way to inject the required script to the Jellyfin homepage. Toggling this mode will take effect after the next restart.</div>
                     </div>
 
                     <div class="checkboxContainer">
@@ -302,6 +314,7 @@
                         selectedUserId = config.EditorUserId;
                         //$('#EditorUserId').first().val(config.EditorUserId);
                         $('#DoScriptInject').first().prop('checked', config.DoScriptInject);
+                        $('#FileTransformation').first().prop('checked', config.FileTransformation);
                         $('#ShowRandomMedia').first().prop('checked', config.ShowRandomMedia);
                         $('#FavouritesMode').first().prop('checked', config.Mode == 'FAVOURITES');
                         $('#RandomMode').first().prop('checked', config.Mode == 'RANDOM');
@@ -439,6 +452,7 @@
                         }
                         
                         config.DoScriptInject = $('#DoScriptInject').first().is(':checked');
+                        config.FileTransformation = $('#FileTransformation').first().is(':checked');
                         config.EnableAutoplay = $('#EnableAutoplay').first().is(':checked');
                         config.AutoplayInterval = $('#AutoplayInterval').first().val();
                         config.ShowRating = $('#ShowRating').first().is(':checked');
@@ -513,6 +527,20 @@
                     $('#NewTimeLimit-container').toggle($('#NewMode').is(':checked'));
                     $('#AutoplayInterval-container').toggle($('#EnableAutoplay').is(':checked'));
                 });
+
+
+                // If user chooses scriptinject or filetransformation, disable the other.
+                $('#DoScriptInject').on('change', function () {
+                    if ($(this).is(':checked')) {
+                        $('#FileTransformation').first().prop('checked', false);
+                    }
+                })
+
+                $('#FileTransformation').on('change', function () {
+                    if ($(this).is(':checked')) {
+                        $('#DoScriptInject').first().prop('checked', false);
+                    }
+                })
 
             })();
 
