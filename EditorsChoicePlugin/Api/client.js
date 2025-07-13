@@ -280,12 +280,6 @@ function setup() {
 
                         // Process button
                         let editorsChoiceItemButton = `<button is='emby-button' class='editorsChoiceItemButton raised button-submit block emby-button'> <span>${getLocalizedString('watchButton')}</span> </button>`;
-
-                        // sometimes the path will be /web/index.html#/home.html, other times it will be /web/#/home.html
-                        var baseUrl = Emby.Page.baseUrl() + '/';
-                        if (window.location.href.includes('/index.html')) {
-                            baseUrl += 'index.html';
-                        }
                         
                         // Process banner 
                         var bannerImageWidth = Math.max(window.screen.width, window.screen.height);
@@ -293,7 +287,7 @@ function setup() {
                         if (data.reduceImageSizes) {
                             bannerImageSize = "?width=" + bannerImageWidth;
                         }
-                        let editorsChoiceItemBanner = `<a href='${baseUrl}#/details?id=${favourite.id}' class='editorsChoiceItemBanner splide__slide' style="background-image:url('/Items/${favourite.id}/Images/Backdrop/0${bannerImageSize}');"><div> ${editorsChoiceItemLogo} ${editorsChoiceItemRating} ${editorsChoiceItemOverview} ${editorsChoiceItemButton}</div></a>`;
+                        let editorsChoiceItemBanner = `<a href='' onclick="Emby.Page.showItem('${favourite.id}'); return false;" class='editorsChoiceItemBanner splide__slide' style="background-image:url('/Items/${favourite.id}/Images/Backdrop/0${bannerImageSize}');"><div> ${editorsChoiceItemLogo} ${editorsChoiceItemRating} ${editorsChoiceItemOverview} ${editorsChoiceItemButton}</div></a>`;
                         $('#' + containerId + ' .editorsChoiceItemsContainer').append(editorsChoiceItemBanner);
                         
                     });
