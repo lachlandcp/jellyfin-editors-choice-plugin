@@ -7,25 +7,44 @@ using System.Globalization;
 using MediaBrowser.Controller.Configuration;
 using Microsoft.Extensions.Logging;
 using System.Text.RegularExpressions;
+using MediaBrowser.Controller;
+using System.Reflection;
+using System.Net.Http.Headers;
+using Emby.Naming.Common;
+using System.Net.Mime;
+using System.Runtime.InteropServices.JavaScript;
+using System.Text.Json.Nodes;
 
 namespace EditorsChoicePlugin;
 
-public class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages {
+public class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages
+{
 
-    public Plugin(IApplicationPaths applicationPaths, IXmlSerializer xmlSerializer, ILogger<Plugin> logger, IServerConfigurationManager configurationManager) : base(applicationPaths, xmlSerializer) {
+    private readonly IServerApplicationHost _applicationHost;
+    private readonly ILogger _logger;
+
+    public Plugin(IApplicationPaths applicationPaths, IXmlSerializer xmlSerializer, ILogger<Plugin> logger, IServerConfigurationManager configurationManager, IServerApplicationHost applicationHost) : base(applicationPaths, xmlSerializer)
+    {
         Instance = this;
+        _applicationHost = applicationHost;
+        _logger = logger;
 
         // Convert configuration mode boolean variable
-        if (Configuration.Mode == "") {
-            if (Configuration.ShowRandomMedia) {
+        if (Configuration.Mode == "")
+        {
+            if (Configuration.ShowRandomMedia)
+            {
                 Configuration.Mode = "RANDOM";
-            } else {
+            }
+            else
+            {
                 Configuration.Mode = "FAVOURITES";
             }
         }
 
         // https://github.com/nicknsy/jellyscrub/blob/main/Nick.Plugin.Jellyscrub/JellyscrubPlugin.cs
-        if (Configuration.DoScriptInject) {
+        if (Configuration.DoScriptInject)
+        {
             if (!string.IsNullOrWhiteSpace(applicationPaths.WebPath))
             {
                 var indexFile = Path.Combine(applicationPaths.WebPath, "index.html");
@@ -88,6 +107,11 @@ public class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages {
                 }
             }
         }
+        else if (Configuration.FileTransformation)
+        {
+             _ = RegisterTransformation();
+        }
+
     }
     public override string Name => "EditorsChoice";
 
@@ -95,14 +119,42 @@ public class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages {
 
     public override string Description => base.Description;
 
-    public static Plugin? Instance { get; private set;}
+    public static Plugin? Instance { get; private set; }
 
-    public IEnumerable<PluginPageInfo> GetPages() {
-        return new [] {
+    public IEnumerable<PluginPageInfo> GetPages()
+    {
+        return new[] {
             new PluginPageInfo {
                 Name = this.Name,
                 EmbeddedResourcePath = string.Format(CultureInfo.InvariantCulture, "{0}.Configuration.configPage.html", GetType().Namespace)
             }
         };
+    }
+
+    public async Task RegisterTransformation()
+    {
+        try
+        {
+
+            string? publishedServerUrl = _applicationHost.GetType()
+                        .GetProperty("PublishedServerUrl", BindingFlags.Instance | BindingFlags.NonPublic)?.GetValue(_applicationHost) as string;
+
+            HttpClient client = new HttpClient();
+            client.BaseAddress = new Uri(publishedServerUrl ?? $"http://localhost:{_applicationHost.HttpPort}");
+
+            JsonObject data = new JsonObject
+            {
+                { "id", "b3d45a0e-3dac-4413-97df-32a13316571e" },
+                { "fileNamePattern", "index.html" },
+                { "transformationEndpoint", "/editorschoice/transform" }
+            };
+
+            await client.PostAsync("/FileTransformation/RegisterTransformation", new StringContent(data.ToString(), MediaTypeHeaderValue.Parse(MediaTypeNames.Application.Json)));
+
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e.ToString());
+        }
     }
 }

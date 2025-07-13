@@ -10,6 +10,8 @@ public class PluginConfiguration : BasePluginConfiguration
 
     public bool DoScriptInject { get; set; } = true;
 
+    public bool FileTransformation { get; set; } = false;
+
     public bool ShowRandomMedia { get; set; } = true;
 
     public string Mode { get; set; } = "";
