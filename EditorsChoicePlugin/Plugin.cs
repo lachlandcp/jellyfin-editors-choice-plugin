@@ -135,9 +135,7 @@ public class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages
     {
         try
         {
-
-            string? publishedServerUrl = _applicationHost.GetType()
-                        .GetProperty("PublishedServerUrl", BindingFlags.Instance | BindingFlags.NonPublic)?.GetValue(_applicationHost) as string;
+            string? publishedServerUrl = Configuration.Url;
 
             HttpClient client = new HttpClient();
             client.BaseAddress = new Uri(publishedServerUrl ?? $"http://localhost:{_applicationHost.HttpPort}");
@@ -149,8 +147,8 @@ public class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages
                 { "transformationEndpoint", "/editorschoice/transform" }
             };
 
-            await client.PostAsync("/FileTransformation/RegisterTransformation", new StringContent(data.ToString(), MediaTypeHeaderValue.Parse(MediaTypeNames.Application.Json)));
-
+            HttpResponseMessage resp = await client.PostAsync("/FileTransformation/RegisterTransformation", new StringContent(data.ToString(), MediaTypeHeaderValue.Parse(MediaTypeNames.Application.Json)));
+            _logger.LogInformation(resp.ToString());
         }
         catch (Exception e)
         {

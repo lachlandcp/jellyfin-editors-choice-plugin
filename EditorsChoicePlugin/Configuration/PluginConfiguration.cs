@@ -43,4 +43,6 @@ public class PluginConfiguration : BasePluginConfiguration
     public int BannerHeight { get; set; } = 360;
 
     public bool ShowPlayed { get; set; } = true;
+
+    public string? Url { get; set; }
 }
