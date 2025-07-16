@@ -4,16 +4,7 @@ using MediaBrowser.Model.Plugins;
 using MediaBrowser.Common.Configuration;
 using MediaBrowser.Model.Serialization;
 using System.Globalization;
-using MediaBrowser.Controller.Configuration;
 using Microsoft.Extensions.Logging;
-using System.Text.RegularExpressions;
-using MediaBrowser.Controller;
-using System.Reflection;
-using System.Net.Http.Headers;
-using Emby.Naming.Common;
-using System.Net.Mime;
-using System.Runtime.InteropServices.JavaScript;
-using System.Text.Json.Nodes;
 
 namespace EditorsChoicePlugin;
 
