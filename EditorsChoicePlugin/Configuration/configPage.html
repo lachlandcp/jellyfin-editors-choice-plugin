@@ -282,6 +282,12 @@
                         <div class="fieldDescription">Using <a href="https://github.com/IAmParadox27/jellyfin-plugin-file-transformation" target="_blank">the FileTransformation plugin</a> is the easiest way to inject the required script to the Jellyfin homepage. Toggling this mode will take effect after the next restart.</div>
                     </div>
 
+                    <div class="inputContainer">
+                        <label class="inputLabel inputLabelUnfocused" for="Url">URL for FileTransformation request</label>
+                        <input is="emby-input" type="text" id="Url" label="URL" class="emby-input">
+                        <div class="fieldDescription">If your local server is unavailable at 'localhost:port', you may need to provide the server URL for the plugin to make an API request to the FileTransformation plugin e.g. https://mydomain.net or http://mydomain:8096</div>
+                    </div>
+
                     <div class="checkboxContainer">
                         <label>
                             <input is="emby-checkbox"  type="checkbox" id="ReduceImageSize" name="Reduce image sizes" label="Reduce image sizes">
@@ -331,6 +337,7 @@
                         $('#ReduceImageSize').first().prop('checked', config.ReduceImageSize);
                         $("#BannerHeightSelect").val(config.BannerHeight);
                         $('#ShowPlayed').first().prop('checked', config.ShowPlayed);
+                        $("#Url").val(config.Url);
                         
                         if (config.Mode == 'FAVOURITES') {
                             $('#EditorUserId-container').show();
@@ -512,6 +519,7 @@
                         
                         config.NewTimeLimit = $("#NewTimeLimitSelect").val();
                         config.BannerHeight = $("#BannerHeightSelect").val();
+                        config.Url = $('#Url').first().val();
 
                         ApiClient.updatePluginConfiguration(pluginId, config).then(Dashboard.processPluginConfigurationUpdateResult);
 
