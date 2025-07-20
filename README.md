@@ -22,7 +22,7 @@ The easiest way is to install the plugin is to use the [File Transformation plug
 
 3. Add `https://www.iamparadox.dev/jellyfin/plugins/manifest.json` as a plugin source repository on your Jellyfin server.
 4. Find "File Transformation" in the list and install it.
-5. In the **Editor's Choice** plugin settings, enable 'File Transformation' in the Technical Settings section.
+5. In the **Editor's Choice** plugin settings, enable 'File Transformation' in the Technical Settings section, and put your server URL in the field below (e.g. `https://www.mymediaserver.com`).
 6. Restart server
 
 ### Option 2: Script injection
