@@ -244,6 +244,11 @@
                     </div>
 
                     <h2>Display</h2>
+                    <div class="inputContainer">
+                        <label class="inputLabel inputLabelUnfocused" for="Heading">Banner heading</label>
+                        <input is="emby-input" type="text" id="Heading" label="Banner heading" class="emby-input">
+                        <div class="fieldDescription">Add a heading above the banner. Leave empty for no heading.</div>
+                    </div>
                     <div class="checkboxContainer">
                         <label>
                             <input is="emby-checkbox"  type="checkbox" id="ShowRating" name="Show rating" label="Show rating">
@@ -340,6 +345,7 @@
                         $("#BannerHeightSelect").val(config.BannerHeight);
                         $('#ShowPlayed').first().prop('checked', config.ShowPlayed);
                         $("#Url").val(config.Url);
+                        $("#Heading").val(config.Heading);
                         
                         if (config.Mode == 'FAVOURITES') {
                             $('#EditorUserId-container').show();
@@ -522,6 +528,7 @@
                         config.NewTimeLimit = $("#NewTimeLimitSelect").val();
                         config.BannerHeight = $("#BannerHeightSelect").val();
                         config.Url = $('#Url').first().val();
+                        config.Heading = $('#Heading').first().val();
 
                         ApiClient.updatePluginConfiguration(pluginId, config).then(Dashboard.processPluginConfigurationUpdateResult);
 

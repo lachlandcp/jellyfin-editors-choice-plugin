@@ -145,10 +145,13 @@ public class StartupService : IScheduledTask
     {
         try
         {
-            string? publishedServerUrl = _config.Url;
+            string publishedServerUrl = _config.Url ?? "";
+            if (publishedServerUrl == "") {
+                publishedServerUrl = $"http://localhost:{_applicationHost.HttpPort}";
+            }
 
             HttpClient client = new HttpClient();
-            client.BaseAddress = new Uri(publishedServerUrl ?? $"http://localhost:{_applicationHost.HttpPort}");
+            client.BaseAddress = new Uri(publishedServerUrl);
 
             JsonObject data = new JsonObject
             {

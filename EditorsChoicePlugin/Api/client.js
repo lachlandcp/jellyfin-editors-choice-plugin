@@ -168,6 +168,10 @@ const container = `<div class="verticalSection section-1 editorsChoiceContainer"
         vertical-align: bottom;
     }
 
+    editorsChoiceContainer .sectionTitle-cards {
+        padding-bottom: 0.35em;
+    }
+
     @media screen and (max-width: 500px) {
         .editorsChoiceItemLogo {
             max-width: 100%;
@@ -242,6 +246,11 @@ function setup() {
                             focusResolved = true;
                         }
                     });
+
+                    // Add heading if exists
+                    if ('heading' in data) {
+                        $(containerElem).prepend(`<h2 class="sectionTitle sectionTitle-cards padded-left">${data.heading}</h2>`);
+                    }
 
                     favourites.forEach((favourite, i) => {
                         
