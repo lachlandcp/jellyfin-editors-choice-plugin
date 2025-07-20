@@ -8,6 +8,7 @@ using MediaBrowser.Common.Configuration;
 using System.Text.RegularExpressions;
 using System.Net.Http.Headers;
 using System.Net.Mime;
+using MediaBrowser.Common.Net;
 
 namespace EditorsChoicePlugin;
 public class StartupService : IScheduledTask
@@ -27,6 +28,7 @@ public class StartupService : IScheduledTask
     private readonly IServerApplicationHost _applicationHost;
     private readonly IConfigurationManager _configurationManager;
     private readonly PluginConfiguration _config;
+    private String _basePath;
 
     public StartupService(IServerApplicationHost serverApplicationHost, ILogger<Plugin> logger, IUserManager userManager, IApplicationPaths applicationPaths, IServerApplicationHost applicationHost, IConfigurationManager configurationManager)
     {
@@ -37,6 +39,7 @@ public class StartupService : IScheduledTask
         _applicationHost = applicationHost;
         _configurationManager = configurationManager;
         _config = Plugin.Instance!.Configuration;
+        _basePath = "";
     }
 
     public Task ExecuteAsync(IProgress<double> progress, CancellationToken cancellationToken)
@@ -58,6 +61,28 @@ public class StartupService : IScheduledTask
             }
         }
 
+        // Get base path from network config
+        try
+        {
+            NetworkConfiguration networkConfiguration = Plugin.Instance!.ServerConfigurationManager.GetNetworkConfiguration();
+
+            string basePath = "";
+            if (!string.IsNullOrWhiteSpace(networkConfiguration.BaseUrl))
+            {
+                basePath = $"/{networkConfiguration.BaseUrl.TrimStart('/').Trim()}";
+            }
+
+            if (!string.IsNullOrEmpty(basePath))
+            {
+                _basePath = basePath.ToString();
+                _logger.LogInformation($"BasePath is {_basePath}");
+            }
+        }
+        catch (Exception e)
+        {
+            _logger.LogError("Unable to get base path from config, using '/': {e}", e);
+        }
+
         // https://github.com/nicknsy/jellyscrub/blob/main/Nick.Plugin.Jellyscrub/JellyscrubPlugin.cs
         if (_config.DoScriptInject)
         {
@@ -67,26 +92,11 @@ public class StartupService : IScheduledTask
                 if (File.Exists(indexFile))
                 {
                     string indexContents = File.ReadAllText(indexFile);
-                    string basePath = "";
 
-                    // Get base path from network config
-                    try
-                    {
-                        var networkConfig = _configurationManager.GetConfiguration("network");
-                        var configType = networkConfig.GetType();
-                        var basePathField = configType.GetProperty("BaseUrl");
-                        var confBasePath = basePathField?.GetValue(networkConfig)?.ToString()?.Trim('/');
-
-                        if (!string.IsNullOrEmpty(confBasePath)) basePath = "/" + confBasePath.ToString();
-                    }
-                    catch (Exception e)
-                    {
-                        _logger.LogError("Unable to get base path from config, using '/': {e}", e);
-                    }
 
                     // Don't run if script already exists, unless it's a variation.
                     string scriptReplace = "<script plugin=\"EditorsChoice\".*?></script>(<style plugin=\"EditorsChoice\">.*?</style>)?";
-                    string scriptElement = string.Format("<script injection=\"true\" plugin=\"EditorsChoice\" defer=\"defer\" src=\"{0}/EditorsChoice/script\"></script>", basePath);
+                    string scriptElement = string.Format("<script injection=\"true\" plugin=\"EditorsChoice\" defer=\"defer\" src=\"{0}/EditorsChoice/script\"></script>", _basePath);
 
                     if (!indexContents.Contains(scriptElement))
                     {
@@ -144,10 +154,11 @@ public class StartupService : IScheduledTask
             {
                 { "id", "b3d45a0e-3dac-4413-97df-32a13316571e" },
                 { "fileNamePattern", "index.html" },
-                { "transformationEndpoint", "/editorschoice/transform" }
+                { "transformationEndpoint", _basePath + "/editorschoice/transform" }
             };
 
-            HttpResponseMessage resp = await client.PostAsync("/FileTransformation/RegisterTransformation", new StringContent(data.ToString(), MediaTypeHeaderValue.Parse(MediaTypeNames.Application.Json)));
+            HttpResponseMessage resp = await client.PostAsync(_basePath + "/FileTransformation/RegisterTransformation", new StringContent(data.ToString(), MediaTypeHeaderValue.Parse(MediaTypeNames.Application.Json)));
+            _logger.LogInformation(resp.RequestMessage!.RequestUri!.ToString());
             _logger.LogInformation(resp.ToString());
         }
         catch (Exception e)

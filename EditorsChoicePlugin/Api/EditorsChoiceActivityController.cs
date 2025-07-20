@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using EditorsChoicePlugin.Configuration;
 using Jellyfin.Data.Enums;
 using Jellyfin.Extensions;
+using MediaBrowser.Common.Net;
 using MediaBrowser.Controller.Entities;
 using MediaBrowser.Controller.Library;
 using Microsoft.AspNetCore.Authorization;
@@ -375,7 +376,15 @@ public class EditorsChoiceActivityController : ControllerBase
     [HttpPost("transform")]
     public ActionResult IndexTransformation([FromBody] PatchRequestPayload payload)
     {
-        string script = "<script FileTransformation=\"true\" plugin=\"EditorsChoice\" defer=\"defer\" src=\"../EditorsChoice/script\"></script>";
+        NetworkConfiguration networkConfiguration = Plugin.Instance!.ServerConfigurationManager.GetNetworkConfiguration();
+        
+        string basePath = "";
+        if (!string.IsNullOrWhiteSpace(networkConfiguration.BaseUrl))
+        {
+            basePath = $"/{networkConfiguration.BaseUrl.TrimStart('/').Trim()}";
+        }
+
+        string script = $"<script FileTransformation=\"true\" plugin=\"EditorsChoice\" defer=\"defer\" src=\"{basePath}/EditorsChoice/script\"></script>";
 
         string text = Regex.Replace(payload.Contents!, "(</body>)", $"{script}$1");
 

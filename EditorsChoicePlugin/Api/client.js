@@ -264,7 +264,7 @@ function setup() {
                         if (data.reduceImageSizes) {
                             logoImageSize = "?width=300";
                         }
-                        var editorsChoiceItemLogo = `<img class='editorsChoiceItemLogo' src='/Items/${favourite.id}/Images/Logo/0${logoImageSize}' alt='${favourite.name}'/>`;
+                        var editorsChoiceItemLogo = `<img class='editorsChoiceItemLogo' src='../Items/${favourite.id}/Images/Logo/0${logoImageSize}' alt='${favourite.name}'/>`;
                         if (!favourite.hasLogo) editorsChoiceItemLogo = `<h1 class="editorsChoiceItemTitle">${favourite.name}</h1>`;
 
                         // Process item description
@@ -287,7 +287,7 @@ function setup() {
                         if (data.reduceImageSizes) {
                             bannerImageSize = "?width=" + bannerImageWidth;
                         }
-                        let editorsChoiceItemBanner = `<a href='' onclick="Emby.Page.showItem('${favourite.id}'); return false;" class='editorsChoiceItemBanner splide__slide' style="background-image:url('/Items/${favourite.id}/Images/Backdrop/0${bannerImageSize}');"><div> ${editorsChoiceItemLogo} ${editorsChoiceItemRating} ${editorsChoiceItemOverview} ${editorsChoiceItemButton}</div></a>`;
+                        let editorsChoiceItemBanner = `<a href='' onclick="Emby.Page.showItem('${favourite.id}'); return false;" class='editorsChoiceItemBanner splide__slide' style="background-image:url('../Items/${favourite.id}/Images/Backdrop/0${bannerImageSize}');"><div> ${editorsChoiceItemLogo} ${editorsChoiceItemRating} ${editorsChoiceItemOverview} ${editorsChoiceItemButton}</div></a>`;
                         $('#' + containerId + ' .editorsChoiceItemsContainer').append(editorsChoiceItemBanner);
                         
                     });
