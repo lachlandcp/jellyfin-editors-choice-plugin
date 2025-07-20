@@ -33,12 +33,11 @@ const container = `<div class="verticalSection section-1 editorsChoiceContainer"
         padding-left: max(env(safe-area-inset-left), 3.3%);
         padding-right: 3.3%;
         padding-right: max(env(safe-area-inset-right), 3.3%);
-        border-radius: 0.2em;
         margin-bottom: 1.8em;
     }
 
     .editorsChoiceItemsContainer {
-        margin-bottom: 0.75em;
+        margin-bottom: 0.75em !important;
     }
 
     .editorsChoiceScrollButtonsContainer, .editorsChoicePlayPauseContainer {
@@ -64,6 +63,10 @@ const container = `<div class="verticalSection section-1 editorsChoiceContainer"
         .editorsChoiceScrollButtonsContainer, .editorsChoicePlayPauseContainer {
             display: none;
         }
+    }
+
+    .splide__track {
+        border-radius: 0.2em;
     }
 
     .splide__arrow, .splide__toggle {
@@ -249,7 +252,7 @@ function setup() {
 
                     // Add heading if exists
                     if ('heading' in data) {
-                        $(containerElem).prepend(`<h2 class="sectionTitle sectionTitle-cards padded-left">${data.heading}</h2>`);
+                        $(containerElem).prepend(`<h2 class="sectionTitle sectionTitle-cards">${data.heading}</h2>`);
                     }
 
                     favourites.forEach((favourite, i) => {
