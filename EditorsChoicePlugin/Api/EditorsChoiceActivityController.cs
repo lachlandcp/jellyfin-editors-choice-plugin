@@ -225,6 +225,12 @@ public class EditorsChoiceActivityController : ControllerBase
                     case "1year":
                         newPremiereDate = DateTime.Today.AddYears(-1);
                         break;
+                    case "2year":
+                        newPremiereDate = DateTime.Today.AddYears(-2);
+                        break;
+                    case "5year":
+                        newPremiereDate = DateTime.Today.AddYears(-5);
+                        break;
                 }
 
                 query = new InternalItemsQuery(activeUser)
