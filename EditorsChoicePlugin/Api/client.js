@@ -78,7 +78,6 @@ const container = `<div class="verticalSection section-1 editorsChoiceContainer"
         width: auto;
         height: auto;
         padding: .556em;
-        margin-top: .85em;
         background: transparent;
     }
 
