@@ -298,7 +298,7 @@ function setup() {
                         if (data.reduceImageSizes) {
                             bannerImageSize = "?width=" + bannerImageWidth;
                         }
-                        let editorsChoiceItemBanner = `<a href='' onclick="Emby.Page.showItem('${favourite.id}'); return false;" class='editorsChoiceItemBanner splide__slide' style="background-image:url('../Items/${favourite.id}/Images/Backdrop/0${bannerImageSize}');"><div> ${editorsChoiceItemLogo} ${editorsChoiceItemRating} ${editorsChoiceItemOverview} ${editorsChoiceItemButton}</div></a>`;
+                        let editorsChoiceItemBanner = `<a href='${baseUrl}#/details?id=${favourite.id}' onclick="Emby.Page.showItem('${favourite.id}'); return false;" class='editorsChoiceItemBanner splide__slide' style="background-image:url('../Items/${favourite.id}/Images/Backdrop/0${bannerImageSize}');"><div> ${editorsChoiceItemLogo} ${editorsChoiceItemRating} ${editorsChoiceItemOverview} ${editorsChoiceItemButton}</div></a>`;
                         $('#' + containerId + ' .editorsChoiceItemsContainer').append(editorsChoiceItemBanner);
                         
                     });
