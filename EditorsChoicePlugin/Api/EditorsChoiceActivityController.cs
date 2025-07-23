@@ -209,43 +209,60 @@ public class EditorsChoiceActivityController : ControllerBase
 
             if (_config.Mode == "NEW")
             {
-                DateTime newPremiereDate = DateTime.Today.AddMonths(-1);
+                DateTime newEndDate = DateTime.Today.AddMonths(-1);
 
                 switch (_config.NewTimeLimit)
                 {
                     case "1month":
-                        newPremiereDate = DateTime.Today.AddMonths(-1);
+                        newEndDate = DateTime.Today.AddMonths(-1);
                         break;
                     case "2month":
-                        newPremiereDate = DateTime.Today.AddMonths(-2);
+                        newEndDate = DateTime.Today.AddMonths(-2);
                         break;
                     case "6month":
-                        newPremiereDate = DateTime.Today.AddMonths(-6);
+                        newEndDate = DateTime.Today.AddMonths(-6);
                         break;
                     case "1year":
-                        newPremiereDate = DateTime.Today.AddYears(-1);
+                        newEndDate = DateTime.Today.AddYears(-1);
                         break;
                     case "2year":
-                        newPremiereDate = DateTime.Today.AddYears(-2);
+                        newEndDate = DateTime.Today.AddYears(-2);
                         break;
                     case "5year":
-                        newPremiereDate = DateTime.Today.AddYears(-5);
+                        newEndDate = DateTime.Today.AddYears(-5);
                         break;
                 }
 
-                query = new InternalItemsQuery(activeUser)
+                InternalItemsQuery queryItems = new InternalItemsQuery(activeUser)
                 {
-                    IncludeItemTypes = [BaseItemKind.Series, BaseItemKind.Movie],
+                    IncludeItemTypes = [BaseItemKind.Series],
                     MinCommunityRating = _config.MinimumRating,
                     MinCriticRating = _config.MinimumCriticRating,
                     MaxParentalRating = maximumParentRating,
                     HasParentalRating = mustHaveParentRating,
-                    MinPremiereDate = newPremiereDate,
+                    MinEndDate = newEndDate,
                     OrderBy = new[] { (ItemSortBy.Random, SortOrder.Ascending) },
                     IsPlayed = _config.ShowPlayed ? null : false
                 };
-                query.Limit = _config.RandomMediaCount * 2;
-                result = PrepareResult(query, activeUser);
+                queryItems.Limit = _config.RandomMediaCount;
+                List<BaseItem> resultItems = PrepareResult(queryItems, activeUser);
+
+                InternalItemsQuery queryMovies = new InternalItemsQuery(activeUser)
+                {
+                    IncludeItemTypes = [BaseItemKind.Movie],
+                    MinCommunityRating = _config.MinimumRating,
+                    MinCriticRating = _config.MinimumCriticRating,
+                    MaxParentalRating = maximumParentRating,
+                    HasParentalRating = mustHaveParentRating,
+                    MinPremiereDate = newEndDate,
+                    OrderBy = new[] { (ItemSortBy.Random, SortOrder.Ascending) },
+                    IsPlayed = _config.ShowPlayed ? null : false
+                };
+                queryMovies.Limit = _config.RandomMediaCount;
+                List<BaseItem> resultMovies = PrepareResult(queryMovies, activeUser);
+
+                result = resultItems.Concat(resultMovies).ToList();
+
                 resultsEmpty = result.Count == 0;
             }
 
@@ -384,7 +401,7 @@ public class EditorsChoiceActivityController : ControllerBase
     public ActionResult IndexTransformation([FromBody] PatchRequestPayload payload)
     {
         NetworkConfiguration networkConfiguration = Plugin.Instance!.ServerConfigurationManager.GetNetworkConfiguration();
-        
+
         string basePath = "";
         if (!string.IsNullOrWhiteSpace(networkConfiguration.BaseUrl))
         {
