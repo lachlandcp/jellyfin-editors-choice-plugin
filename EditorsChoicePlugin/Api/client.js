@@ -63,7 +63,6 @@ const container = `<div class="verticalSection section-1 editorsChoiceContainer"
 
     .splide__track {
         border-radius: 0.2em;
-        margin-bottom: 0.75em !important;
     }
 
     .splide__arrow, .splide__toggle {
