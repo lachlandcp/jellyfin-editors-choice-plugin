@@ -36,10 +36,6 @@ const container = `<div class="verticalSection section-1 editorsChoiceContainer"
         margin-bottom: 1.8em;
     }
 
-    .editorsChoiceItemsContainer {
-        margin-bottom: 0.75em !important;
-    }
-
     .editorsChoiceScrollButtonsContainer, .editorsChoicePlayPauseContainer {
         position: absolute;
         z-index: 99;
@@ -67,6 +63,7 @@ const container = `<div class="verticalSection section-1 editorsChoiceContainer"
 
     .splide__track {
         border-radius: 0.2em;
+        margin-bottom: 0.75em !important;
     }
 
     .splide__arrow, .splide__toggle {
@@ -292,6 +289,12 @@ function setup() {
                         // Process button
                         let editorsChoiceItemButton = `<button is='emby-button' class='editorsChoiceItemButton raised button-submit block emby-button'> <span>${getLocalizedString('watchButton')}</span> </button>`;
                         
+                        // Sometimes the path will be /web/index.html#/home.html, other times it will be /web/#/home.html
+                        var baseUrl = Emby.Page.baseUrl() + '/';
+                        if (window.location.href.includes('/index.html')) {
+                            baseUrl += 'index.html';
+                        }
+
                         // Process banner 
                         var bannerImageWidth = Math.max(window.screen.width, window.screen.height);
                         var bannerImageSize = "";
