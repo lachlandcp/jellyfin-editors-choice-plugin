@@ -13,14 +13,14 @@
                 margin: 0px;
                 position: relative;
             }
-    
+
             .radio-label-block {
                 align-items: center;
                 display: flex;
                 margin-bottom: 0.5em;
                 margin-top: 0.5em;
             }
-    
+
             .mdl-radio__button {
                 appearance: none;
                 border: none;
@@ -32,7 +32,7 @@
                 position: absolute;
                 width: 1px;
             }
-    
+
             .mdl-radio__circles {
                 border-radius: 50%;
                 cursor: pointer;
@@ -40,15 +40,15 @@
                 position: relative;
                 width: 1.08em;
             }
-    
+
             [dir="ltr"] .mdl-radio__circles {
                 margin-right: 0.54em;
             }
-    
+
             [dir="rtl"] .mdl-radio__circles {
                 margin-left: 0.54em;
             }
-    
+
             .mdl-radio__circles svg {
                 height: 100%;
                 overflow: visible;
@@ -57,46 +57,46 @@
                 width: 100%;
                 z-index: 1;
             }
-    
+
             [dir="ltr"] .mdl-radio__circles svg {
                 left: 0px;
             }
-    
+
             [dir="rtl"] .mdl-radio__circles svg {
                 right: 0px;
             }
-    
+
             .mdl-radio__button:disabled + .mdl-radio__circles {
                 cursor: auto;
             }
-    
+
             .mdl-radio__button:disabled + .mdl-radio__circles .mdl-radio__outer-circle {
                 color: rgba(0, 0, 0, 0.26);
             }
-    
+
             .mdl-radio.show-focus .mdl-radio__button:focus + .mdl-radio__circles .mdl-radio__outer-circle {
                 color: rgb(0, 164, 220);
             }
-    
+
             .mdl-radio__inner-circle {
                 transform: scale(0);
                 transform-origin: 50% 50%;
                 transition-duration: 0.2s;
                 transition-property: transform, -webkit-transform;
             }
-    
+
             .mdl-radio__button:checked + .mdl-radio__circles .mdl-radio__inner-circle {
                 transform: scale(1);
             }
-    
+
             .mdl-radio__button:disabled + .mdl-radio__circles .mdl-radio__inner-circle {
                 color: rgba(0, 0, 0, 0.26);
             }
-    
+
             .mdl-radio.show-focus .mdl-radio__button:focus + .mdl-radio__circles .mdl-radio__inner-circle {
                 color: rgb(0, 164, 220);
             }
-    
+
             .mdl-radio__focus-circle {
                 background: rgb(0, 164, 220);
                 border-radius: 50%;
@@ -112,15 +112,15 @@
                 transition-property: transform, -webkit-transform;
                 width: 100%;
             }
-    
+
             .mdl-radio.show-focus .mdl-radio__button:focus + .mdl-radio__circles .mdl-radio__focus-circle {
                 transform: scale(1.75);
             }
-    
+
             .mdl-radio__label {
                 cursor: pointer;
             }
-    
+
             .mdl-radio__button:disabled + .mdl-radio__label {
                 color: rgba(0, 0, 0, 0.26);
                 cursor: auto;
@@ -133,7 +133,7 @@
             .checkboxContainer .fieldDescription {
                 width: 100%;
             }
-    
+
         </style>
 
         <div data-role="content">
@@ -177,7 +177,7 @@
                             <option value="none">None</option>
                         </select>
                     </div>
-                    
+
                     <div id="NewTimeLimit-container" style="display: none;">
                         <h3 class="selectLabel">Show items released in the last:</h3>
                         <select is="emby-select" id="NewTimeLimitSelect" name="NewTimeLimit" class="emby-select-withcolor emby-select">
@@ -261,6 +261,13 @@
                             <span>Show description</span>
                         </label>
                     </div>
+                    <div class="checkboxContainer">
+                        <label>
+                            <input is="emby-checkbox"  type="checkbox" id="HideOnTvLayout" name="Hide on TV layout" label="Hide on TV layout">
+                            <span>Hide on TVs</span>
+                        </label>
+                        <div class="fieldDescription">When enabled, the Editors Choice banner will not be injected on TV interfaces.</div>
+                    </div>
                     <div id="BannerHeight-container" class="selectContainer">
                         <h3 class="selectLabel">Height of banner:</h3>
                         <select is="emby-select" id="BannerHeightSelect" name="BannerHeight" class="emby-select-withcolor emby-select">
@@ -311,7 +318,7 @@
         </div>
 
         <script type="text/javascript">
-           
+
             (function () {
 
                 var pluginId = "70bb2ec1-f19e-46b5-b49a-942e6b96ebae";
@@ -346,7 +353,8 @@
                         $('#ShowPlayed').first().prop('checked', config.ShowPlayed);
                         $("#Url").val(config.Url);
                         $("#Heading").val(config.Heading);
-                        
+                        $('#HideOnTvLayout').first().prop('checked', config.HideOnTvLayout);
+
                         if (config.Mode == 'FAVOURITES') {
                             $('#EditorUserId-container').show();
                         } else if (config.Mode == 'COLLECTIONS') {
@@ -354,7 +362,7 @@
                         } else if (config.Mode == "NEW") {
                             $('#NewTimeLimit-container').show();
                         }
-                        
+
                         // Only show interval selection if autoplay is enabled
                         if (config.EnableAutoplay) {
                             $('#AutoplayInterval-container').show();
@@ -395,7 +403,7 @@
 
                                 } else if (item.CollectionType == 'boxsets') {
                                     var collectionsParentId = item.Id;
-                                    
+
                                     // There may be a tidier way to fetch items with a query
                                     ApiClient.fetch({url: ApiClient.getUrl('/Items?parentId=' + collectionsParentId), type: 'GET'}).then(function(response) {
                                         response.json().then(function(data) {
@@ -416,7 +424,7 @@
                         ApiClient.getParentalRatings().then(function (allParentalRatings) {
                             var rating;
                             var ratings = [];
-                            
+
                             for (let i = 0, length = allParentalRatings.length; i < length; i++) {
                                 rating = allParentalRatings[i];
 
@@ -434,9 +442,9 @@
                                     Value: rating.Value
                                 });
                             }
-                            
+
                             for (var rating of ratings) {
-                                if (rating.Value != null) { // skip unrated 
+                                if (rating.Value != null) { // skip unrated
                                     $('#MaximumParentRating').first().append($('<option>', {
                                         value: rating.Value,
                                         text: rating.Name
@@ -459,13 +467,13 @@
 
 
                     ApiClient.getPluginConfiguration(pluginId).then(function (config) {
-                        
+
                         if ($('#EditorUserId').first().val() == "none") {
                             config.EditorUserId = null;
                         } else {
                             config.EditorUserId = $('#EditorUserId').first().val();
                         }
-                        
+
                         config.DoScriptInject = $('#DoScriptInject').first().is(':checked');
                         config.FileTransformation = $('#FileTransformation').first().is(':checked');
                         config.EnableAutoplay = $('#EnableAutoplay').first().is(':checked');
@@ -474,6 +482,7 @@
                         config.ShowDescription =  $('#ShowDesc').first().is(':checked');
                         config.ReduceImageSize = $('#ReduceImageSize').first().is(':checked');
                         config.ShowPlayed = $('#ShowPlayed').first().is(':checked');
+                        config.HideOnTvLayout = $('#HideOnTvLayout').first().is(':checked');
 
                         if ($('#FavouritesMode').first().is(':checked')) {
                             config.Mode = "FAVOURITES";
@@ -487,9 +496,9 @@
                         } else if ($('#NewMode').first().is(':checked')) {
                             config.Mode = "NEW";
                             config.ShowRandomMedia = false;
-                            
+
                         }
-                        
+
                         let randomMediaCount = $('#RandomMediaCount').first().val();
                         if (randomMediaCount < 1 || randomMediaCount == '') {
                             config.RandomMediaCount = 5;
@@ -524,7 +533,7 @@
                             selectedCollections.push($(this).attr('data-id'));
                         });
                         config.SelectedCollections = selectedCollections;
-                        
+
                         config.NewTimeLimit = $("#NewTimeLimitSelect").val();
                         config.BannerHeight = $("#BannerHeightSelect").val();
                         config.Url = $('#Url').first().val();

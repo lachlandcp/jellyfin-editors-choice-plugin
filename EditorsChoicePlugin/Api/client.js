@@ -43,7 +43,7 @@ const container = `<div class="verticalSection section-1 editorsChoiceContainer"
         mix-blend-mode: difference;
     }
 
-    .editorsChoiceScrollButtonsContainer
+    .editorsChoiceScrollButtonsContainer {
         width: 7em;
     }
 
@@ -219,7 +219,8 @@ function getLocalizedString(key) {
     };
 
     const userLanguage = navigator.language.slice(0, 2); // Retrieve the first two characters of the user's language
-    return localization[key]?.[userLanguage] || localization[key]?.['en']; // Fallback to English if the user's language is not available
+    return (localization[key] && localization[key][userLanguage]) ||
+       (localization[key] && localization[key]['en']); // Fallback to English if the user's language is not available
 }
 
 // Setup slider
@@ -230,8 +231,13 @@ function setup() {
             console.log("Fetching favourites data from API...");
             ApiClient.fetch({url: ApiClient.getUrl('/EditorsChoice/favourites'), type: 'GET'}).then(function(response) {
                 response.json().then(function(data) {
+                    // If configured to hide on TV layout, and the page has layout-tv, skip rendering
+                    if (data.hideOnTvLayout && document.documentElement.classList.contains('layout-tv')) {
+                        console.log('Editors Choice: hidden on TV layout by configuration.');
+                        return;
+                    }
                     var favourites = shuffle(data.favourites);
-                        
+
                     var containerElem = $(container);
                     var containerId = 'editorsChoice-' + Date.now();
                     containerElem.first().attr('id', containerId); // add unique id to container element to handle duplicate indexPages
@@ -251,10 +257,10 @@ function setup() {
                     }
 
                     favourites.forEach((favourite, i) => {
-                        
+
                         // Process star rating
                         var communityRating = 0;
-                        
+
                         if ('community_rating' in favourite) {
                             communityRating = favourite.community_rating.toFixed(1);
                         }
@@ -265,7 +271,7 @@ function setup() {
                         if (communityRating == 0) {
                             editorsChoiceItemRating = "";
                         }
-            
+
                         // Process logo
                         var logoImageSize = "";
                         if (data.reduceImageSizes) {
@@ -287,14 +293,14 @@ function setup() {
 
                         // Process button
                         let editorsChoiceItemButton = `<button is='emby-button' class='editorsChoiceItemButton raised button-submit block emby-button'> <span>${getLocalizedString('watchButton')}</span> </button>`;
-                        
+
                         // Sometimes the path will be /web/index.html#/home.html, other times it will be /web/#/home.html
                         var baseUrl = Emby.Page.baseUrl() + '/';
                         if (window.location.href.includes('/index.html')) {
                             baseUrl += 'index.html';
                         }
 
-                        // Process banner 
+                        // Process banner
                         var bannerImageWidth = Math.max(window.screen.width, window.screen.height);
                         var bannerImageSize = "";
                         if (data.reduceImageSizes) {
@@ -302,15 +308,15 @@ function setup() {
                         }
                         let editorsChoiceItemBanner = `<a href='${baseUrl}#/details?id=${favourite.id}' onclick="Emby.Page.showItem('${favourite.id}'); return false;" class='editorsChoiceItemBanner splide__slide' style="background-image:url('../Items/${favourite.id}/Images/Backdrop/0${bannerImageSize}');"><div> ${editorsChoiceItemLogo} ${editorsChoiceItemRating} ${editorsChoiceItemOverview} ${editorsChoiceItemButton}</div></a>`;
                         $('#' + containerId + ' .editorsChoiceItemsContainer').append(editorsChoiceItemBanner);
-                        
+
                     });
-                    
+
                     $(elem).addClass('editorsChoiceAdded');
-                    
+
                     if (data.autoplay) {
                         $('.editorsChoicePlayPauseContainer').show();
                     }
-                    
+
                     new Splide( '#' + containerId + ' .splide', {
                         type: 'loop',
                         autoplay: data.autoplay,
@@ -354,7 +360,7 @@ window.onload = function() {
                     }
                 });
             }
-        });    
+        });
     });
     observer.observe(target, {attributes: true, childList: true, characterData: true, subtree: true});
 
