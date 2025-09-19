@@ -324,6 +324,7 @@ public class EditorsChoiceActivityController : ControllerBase
             response.Add("autoplayInterval", _config.AutoplayInterval * 1000);
             response.Add("reduceImageSizes", _config.ReduceImageSize);
             response.Add("bannerHeight", _config.BannerHeight);
+            response.Add("hideOnTvLayout", _config.HideOnTvLayout);
             if (_config.Heading != null) response.Add("heading", _config.Heading);
 
             return Ok(response);

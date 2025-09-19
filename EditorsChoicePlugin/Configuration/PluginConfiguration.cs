@@ -38,6 +38,8 @@ public class PluginConfiguration : BasePluginConfiguration
 
     public bool ShowDescription { get; set; } = true;
 
+    public bool HideOnTvLayout { get; set; } = false;
+
     public bool ReduceImageSize { get; set; } = false;
 
     public int BannerHeight { get; set; } = 360;
