@@ -3,12 +3,13 @@ using MediaBrowser.Controller;
 using MediaBrowser.Controller.Library;
 using MediaBrowser.Model.Tasks;
 using Microsoft.Extensions.Logging;
-using System.Text.Json.Nodes;
 using MediaBrowser.Common.Configuration;
 using System.Text.RegularExpressions;
-using System.Net.Http.Headers;
-using System.Net.Mime;
 using MediaBrowser.Common.Net;
+using System.Reflection;
+using System.Runtime.Loader;
+using Newtonsoft.Json.Linq;
+using EditorsChoicePlugin.Helpers;
 
 namespace EditorsChoicePlugin;
 public class StartupService : IScheduledTask
@@ -141,32 +142,36 @@ public class StartupService : IScheduledTask
         return Task.CompletedTask;
     }
 
-    public async Task RegisterTransformation()
+    public Task RegisterTransformation()
     {
         try
         {
-            string publishedServerUrl = _config.Url ?? "";
-            if (publishedServerUrl == "") {
-                publishedServerUrl = $"http://localhost:{_applicationHost.HttpPort}";
-            }
-
-            HttpClient client = new HttpClient();
-            client.BaseAddress = new Uri(publishedServerUrl);
-
-            JsonObject data = new JsonObject
+            JObject data = new JObject
             {
                 { "id", "b3d45a0e-3dac-4413-97df-32a13316571e" },
                 { "fileNamePattern", "index.html" },
-                { "transformationEndpoint", _basePath + "/editorschoice/transform" }
+                { "callbackAssembly", GetType().Assembly.FullName },
+                { "callbackClass", typeof(Transformations).FullName },
+                { "callbackMethod", nameof(Transformations.IndexTransformation)}
             };
 
-            HttpResponseMessage resp = await client.PostAsync(_basePath + "/FileTransformation/RegisterTransformation", new StringContent(data.ToString(), MediaTypeHeaderValue.Parse(MediaTypeNames.Application.Json)));
-            _logger.LogInformation(resp.RequestMessage!.RequestUri!.ToString());
-            _logger.LogInformation(resp.ToString());
+            Assembly? fileTransformationAssembly = AssemblyLoadContext.All.SelectMany(x => x.Assemblies).FirstOrDefault(x => x.FullName?.Contains(".FileTransformation") ?? false);
+
+            if (fileTransformationAssembly != null)
+            {
+                Type? pluginInterfaceType = fileTransformationAssembly.GetType("Jellyfin.Plugin.FileTransformation.PluginInterface");
+                if (pluginInterfaceType != null)
+                {
+                    pluginInterfaceType.GetMethod("RegisterTransformation")?.Invoke(null, new object?[] { data });
+                }
+            }
+
+            return Task.CompletedTask;
         }
         catch (Exception e)
         {
             _logger.LogError(e.ToString());
+            return Task.CompletedTask;
         }
     }
 

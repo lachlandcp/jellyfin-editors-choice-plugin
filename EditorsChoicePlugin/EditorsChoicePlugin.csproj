@@ -13,6 +13,8 @@
     <PackageReference Include="Jellyfin.Controller" Version="10.10.6" />
     <PackageReference Include="Jellyfin.Model" Version="10.10.6" />
     <PackageReference Include="Jellyfin.Common" Version="10.10.6" />
+
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,11 +1,8 @@
 using System.Net.Mime;
 using System.Reflection;
-using System.Text.Json.Serialization;
-using System.Text.RegularExpressions;
 using EditorsChoicePlugin.Configuration;
 using Jellyfin.Data.Enums;
 using Jellyfin.Extensions;
-using MediaBrowser.Common.Net;
 using MediaBrowser.Controller.Entities;
 using MediaBrowser.Controller.Library;
 using Microsoft.AspNetCore.Authorization;
@@ -396,29 +393,4 @@ public class EditorsChoiceActivityController : ControllerBase
 
         return result;
     }
-
-
-    [HttpPost("transform")]
-    public ActionResult IndexTransformation([FromBody] PatchRequestPayload payload)
-    {
-        NetworkConfiguration networkConfiguration = Plugin.Instance!.ServerConfigurationManager.GetNetworkConfiguration();
-
-        string basePath = "";
-        if (!string.IsNullOrWhiteSpace(networkConfiguration.BaseUrl))
-        {
-            basePath = $"/{networkConfiguration.BaseUrl.TrimStart('/').Trim()}";
-        }
-
-        string script = $"<script FileTransformation=\"true\" plugin=\"EditorsChoice\" defer=\"defer\" src=\"{basePath}/EditorsChoice/script\"></script>";
-
-        string text = Regex.Replace(payload.Contents!, "(</body>)", $"{script}$1");
-
-        return Content(text, MediaTypeNames.Text.Html);
-    }
 }
-
-public class PatchRequestPayload
-    {
-        [JsonPropertyName("contents")]
-        public string? Contents { get; set; }
-    }
