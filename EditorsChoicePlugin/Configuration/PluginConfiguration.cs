@@ -46,7 +46,5 @@ public class PluginConfiguration : BasePluginConfiguration
 
     public bool ShowPlayed { get; set; } = true;
 
-    public string? Url { get; set; }
-
     public string? Heading { get; set; }
 }
