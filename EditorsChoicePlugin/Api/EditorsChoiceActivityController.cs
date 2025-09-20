@@ -72,6 +72,13 @@ public class EditorsChoiceActivityController : ControllerBase
             int? maximumParentRating = null;
             bool? mustHaveParentRating = null;
 
+            // Don't have any minimum rating set if config is set to 0
+            float? minimumRating = null;
+            int? minimumCriticRating = null;
+
+            if (_config.MinimumRating > 0) minimumRating = _config.MinimumRating;
+            if (_config.MinimumCriticRating > 0) minimumCriticRating = _config.MinimumCriticRating;
+
             // Get active user - haven't found a better way than this
             string name = "";
             if (User.Identity != null)
@@ -119,8 +126,8 @@ public class EditorsChoiceActivityController : ControllerBase
                         IsFavorite = true,
                         IncludeItemsByName = true,
                         IncludeItemTypes = [BaseItemKind.Series, BaseItemKind.Movie, BaseItemKind.Episode, BaseItemKind.Season], // Editor may have favourited individual episodes or seasons - we will handle this later
-                        MinCommunityRating = _config.MinimumRating,
-                        MinCriticRating = _config.MinimumCriticRating,
+                        MinCommunityRating = minimumRating,
+                        MinCriticRating = minimumCriticRating,
                         MaxParentalRating = maximumParentRating,
                         HasParentalRating = mustHaveParentRating,
                         OrderBy = new[] { (ItemSortBy.Random, SortOrder.Ascending) }
@@ -188,8 +195,8 @@ public class EditorsChoiceActivityController : ControllerBase
                         {
                             ItemIds = [.. itemIds],
                             IncludeItemTypes = [BaseItemKind.Series, BaseItemKind.Movie],
-                            MinCommunityRating = _config.MinimumRating,
-                            MinCriticRating = _config.MinimumCriticRating,
+                            MinCommunityRating = minimumRating,
+                            MinCriticRating = minimumCriticRating,
                             MaxParentalRating = maximumParentRating,
                             HasParentalRating = mustHaveParentRating,
                             OrderBy = new[] { (ItemSortBy.Random, SortOrder.Ascending) },
@@ -233,8 +240,8 @@ public class EditorsChoiceActivityController : ControllerBase
                 InternalItemsQuery queryItems = new InternalItemsQuery(activeUser)
                 {
                     IncludeItemTypes = [BaseItemKind.Series],
-                    MinCommunityRating = _config.MinimumRating,
-                    MinCriticRating = _config.MinimumCriticRating,
+                    MinCommunityRating = minimumRating,
+                    MinCriticRating = minimumCriticRating,
                     MaxParentalRating = maximumParentRating,
                     HasParentalRating = mustHaveParentRating,
                     MinEndDate = newEndDate,
@@ -247,8 +254,8 @@ public class EditorsChoiceActivityController : ControllerBase
                 InternalItemsQuery queryMovies = new InternalItemsQuery(activeUser)
                 {
                     IncludeItemTypes = [BaseItemKind.Movie],
-                    MinCommunityRating = _config.MinimumRating,
-                    MinCriticRating = _config.MinimumCriticRating,
+                    MinCommunityRating = minimumRating,
+                    MinCriticRating = minimumCriticRating,
                     MaxParentalRating = maximumParentRating,
                     HasParentalRating = mustHaveParentRating,
                     MinPremiereDate = newEndDate,
@@ -271,8 +278,8 @@ public class EditorsChoiceActivityController : ControllerBase
                 query = new InternalItemsQuery(activeUser)
                 {
                     IncludeItemTypes = [BaseItemKind.Series, BaseItemKind.Movie],
-                    MinCommunityRating = _config.MinimumRating,
-                    MinCriticRating = _config.MinimumCriticRating,
+                    MinCommunityRating = minimumRating,
+                    MinCriticRating = minimumCriticRating,
                     MaxParentalRating = maximumParentRating,
                     HasParentalRating = mustHaveParentRating,
                     OrderBy = new[] { (ItemSortBy.Random, SortOrder.Ascending) },
