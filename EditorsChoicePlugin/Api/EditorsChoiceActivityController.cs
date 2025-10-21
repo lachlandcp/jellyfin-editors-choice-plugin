@@ -2,6 +2,7 @@ using System.Net.Mime;
 using System.Reflection;
 using EditorsChoicePlugin.Configuration;
 using Jellyfin.Data.Enums;
+using Jellyfin.Database.Implementations.Enums;
 using Jellyfin.Extensions;
 using MediaBrowser.Controller.Entities;
 using MediaBrowser.Controller.Library;
@@ -89,13 +90,13 @@ public class EditorsChoiceActivityController : ControllerBase
                 }
             }
 
-            Jellyfin.Data.Entities.User? activeUser = _userManager.GetUserByName(name);
+            Jellyfin.Database.Implementations.Entities.User? activeUser = _userManager.GetUserByName(name);
             if (activeUser == null) return NotFound();
 
             // If the config is set to be user profile specific, then we need to set the rating to the user's max age rating.
             if (_config.MaximumParentRating == -2)
             {
-                maximumParentRating = activeUser.MaxParentalAgeRating;
+                maximumParentRating = activeUser.MaxParentalRatingScore;
                 if (maximumParentRating >= 0)
                 {
                     mustHaveParentRating = true; // we want to avoid showing unrated content when a user has a parental access limitation
@@ -118,7 +119,7 @@ public class EditorsChoiceActivityController : ControllerBase
                 }
                 else
                 {
-                    Jellyfin.Data.Entities.User? editorUser = _userManager.GetUserById(Guid.Parse(_config.EditorUserId));
+                    Jellyfin.Database.Implementations.Entities.User? editorUser = _userManager.GetUserById(Guid.Parse(_config.EditorUserId));
 
                     // Get the favourites list
                     query = new InternalItemsQuery(editorUser)
@@ -133,7 +134,7 @@ public class EditorsChoiceActivityController : ControllerBase
                         OrderBy = new[] { (ItemSortBy.Random, SortOrder.Ascending) }
                     };
                     query.Limit = _config.RandomMediaCount * 2;
-                    initialResult = _libraryManager.GetItemList(query);
+                    initialResult = (List<BaseItem>)_libraryManager.GetItemList(query);
 
                     // Get ids of items in the favourites list
                     List<Guid> itemIds = new List<Guid>();
@@ -179,7 +180,7 @@ public class EditorsChoiceActivityController : ControllerBase
                     if (collection is Folder)
                     {
                         Folder f = (Folder)collection;
-                        initialResult = f.GetChildren(activeUser, true);
+                        initialResult = (List<BaseItem>)f.GetChildren(activeUser, true);
 
                         // Get ids of items in the collection
                         List<Guid> itemIds = new List<Guid>();
@@ -342,9 +343,9 @@ public class EditorsChoiceActivityController : ControllerBase
 
     }
 
-    private List<BaseItem> PrepareResult(InternalItemsQuery query, Jellyfin.Data.Entities.User? activeUser)
+    private List<BaseItem> PrepareResult(InternalItemsQuery query, Jellyfin.Database.Implementations.Entities.User? activeUser)
     {
-        List<BaseItem> initialResult = _libraryManager.GetItemList(query);
+        List<BaseItem> initialResult = (List<BaseItem>)_libraryManager.GetItemList(query);
         List<BaseItem> result = [];
 
         // Randomly add items until we run out or reach the admin-set cap
