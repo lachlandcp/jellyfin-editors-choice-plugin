@@ -418,28 +418,32 @@
                             var rating;
                             var ratings = [];
 
+                            console.log(allParentalRatings);
+
                             for (let i = 0, length = allParentalRatings.length; i < length; i++) {
                                 rating = allParentalRatings[i];
 
                                 if (ratings.length) {
                                     var lastRating = ratings[ratings.length - 1];
 
-                                    if (lastRating.Value === rating.Value) {
-                                        lastRating.Name += '/' + rating.Name;
-                                        continue;
+                                    if (lastRating.RatingScore != null && rating.RatingScore != null) {
+                                        if (lastRating.RatingScore.score === rating.RatingScore.score && lastRating.RatingScore.subScore === rating.RatingScore.subScore) {
+                                            lastRating.Name += '/' + rating.Name;
+                                            continue;
+                                        }
                                     }
                                 }
 
                                 ratings.push({
                                     Name: rating.Name,
-                                    Value: rating.Value
+                                    RatingScore: rating.RatingScore
                                 });
                             }
 
                             for (var rating of ratings) {
-                                if (rating.Value != null) { // skip unrated
+                                if (rating.RatingScore != null) { // skip unrated
                                     $('#MaximumParentRating').first().append($('<option>', {
-                                        value: rating.Value,
+                                        value: rating.RatingScore.score + "," + rating.RatingScore.subScore,
                                         text: rating.Name
                                     }));
                                 }
@@ -513,7 +517,8 @@
                             config.MinimumCriticRating = minimumCriticRating;
                         }
 
-                        config.MaximumParentRating = $('#MaximumParentRating').first().val();
+                        config.MaximumParentRating = $('#MaximumParentRating').first().val().split(',')[0];
+                        config.MaximumParentRatingSubscore = $('#MaximumParentRating').first().val().split(',')[1];
 
                         var filteredLibraries = [];
                         $('#LibraryList input[is="emby-checkbox"]:checked').each(function () {

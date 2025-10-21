@@ -23,6 +23,7 @@ public class PluginConfiguration : BasePluginConfiguration
     public int MinimumCriticRating { get; set; } = 0;
 
     public int MaximumParentRating { get; set; } = -2;
+    public int MaximumParentRatingSubscore { get; set; } = 0;
 
     public string[] FilteredLibraries { get; set; } = [];
 

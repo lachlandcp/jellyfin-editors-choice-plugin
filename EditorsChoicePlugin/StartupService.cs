@@ -179,7 +179,7 @@ public class StartupService : IScheduledTask
     {
         yield return new TaskTriggerInfo()
         {
-            Type = TaskTriggerInfo.TriggerStartup
+            Type = TaskTriggerInfoType.StartupTrigger
         };
     }
 }

@@ -70,7 +70,8 @@ public class EditorsChoiceActivityController : ControllerBase
             List<BaseItem> initialResult = [];
             List<BaseItem> result = [];
             bool resultsEmpty = false;
-            int? maximumParentRating = null;
+            int? maximumParentRating = -2;
+            int maximumParentRatingSubscore = 0;
             bool? mustHaveParentRating = null;
 
             // Don't have any minimum rating set if config is set to 0
@@ -97,6 +98,7 @@ public class EditorsChoiceActivityController : ControllerBase
             if (_config.MaximumParentRating == -2)
             {
                 maximumParentRating = activeUser.MaxParentalRatingScore;
+                maximumParentRatingSubscore = 0;
                 if (maximumParentRating >= 0)
                 {
                     mustHaveParentRating = true; // we want to avoid showing unrated content when a user has a parental access limitation
@@ -105,7 +107,15 @@ public class EditorsChoiceActivityController : ControllerBase
             else
             {
                 maximumParentRating = _config.MaximumParentRating;
+                maximumParentRatingSubscore = _config.MaximumParentRatingSubscore;
                 mustHaveParentRating = true; // we want to avoid showing unrated content when a user has a parental access limitation
+            }
+
+            // Convert simple parental rating score to ParentalRatingScore with score and subscore.
+            MediaBrowser.Model.Entities.ParentalRatingScore? parentalRatingScore = null;
+            if (maximumParentRating != null)
+            {
+                parentalRatingScore = new MediaBrowser.Model.Entities.ParentalRatingScore((int)maximumParentRating, maximumParentRatingSubscore);
             }
 
             // If not showing random media, collect the editor user's favourited items
@@ -129,7 +139,7 @@ public class EditorsChoiceActivityController : ControllerBase
                         IncludeItemTypes = [BaseItemKind.Series, BaseItemKind.Movie, BaseItemKind.Episode, BaseItemKind.Season], // Editor may have favourited individual episodes or seasons - we will handle this later
                         MinCommunityRating = minimumRating,
                         MinCriticRating = minimumCriticRating,
-                        MaxParentalRating = maximumParentRating,
+                        MaxParentalRating = parentalRatingScore,
                         HasParentalRating = mustHaveParentRating,
                         OrderBy = new[] { (ItemSortBy.Random, SortOrder.Ascending) }
                     };
@@ -198,7 +208,7 @@ public class EditorsChoiceActivityController : ControllerBase
                             IncludeItemTypes = [BaseItemKind.Series, BaseItemKind.Movie],
                             MinCommunityRating = minimumRating,
                             MinCriticRating = minimumCriticRating,
-                            MaxParentalRating = maximumParentRating,
+                            MaxParentalRating = parentalRatingScore,
                             HasParentalRating = mustHaveParentRating,
                             OrderBy = new[] { (ItemSortBy.Random, SortOrder.Ascending) },
                             IsPlayed = _config.ShowPlayed ? null : false
@@ -243,7 +253,7 @@ public class EditorsChoiceActivityController : ControllerBase
                     IncludeItemTypes = [BaseItemKind.Series],
                     MinCommunityRating = minimumRating,
                     MinCriticRating = minimumCriticRating,
-                    MaxParentalRating = maximumParentRating,
+                    MaxParentalRating = parentalRatingScore,
                     HasParentalRating = mustHaveParentRating,
                     MinEndDate = newEndDate,
                     OrderBy = new[] { (ItemSortBy.Random, SortOrder.Ascending) },
@@ -257,7 +267,7 @@ public class EditorsChoiceActivityController : ControllerBase
                     IncludeItemTypes = [BaseItemKind.Movie],
                     MinCommunityRating = minimumRating,
                     MinCriticRating = minimumCriticRating,
-                    MaxParentalRating = maximumParentRating,
+                    MaxParentalRating = parentalRatingScore,
                     HasParentalRating = mustHaveParentRating,
                     MinPremiereDate = newEndDate,
                     OrderBy = new[] { (ItemSortBy.Random, SortOrder.Ascending) },
@@ -281,7 +291,7 @@ public class EditorsChoiceActivityController : ControllerBase
                     IncludeItemTypes = [BaseItemKind.Series, BaseItemKind.Movie],
                     MinCommunityRating = minimumRating,
                     MinCriticRating = minimumCriticRating,
-                    MaxParentalRating = maximumParentRating,
+                    MaxParentalRating = parentalRatingScore,
                     HasParentalRating = mustHaveParentRating,
                     OrderBy = new[] { (ItemSortBy.Random, SortOrder.Ascending) },
                     IsPlayed = _config.ShowPlayed ? null : false
@@ -387,7 +397,7 @@ public class EditorsChoiceActivityController : ControllerBase
             }
 
             // Only include if active user has parental access to this item, not already in the results, if only unplayed items should be shown & this is unplayed, and if has a backdrop image
-            if (shiftItem.IsVisible(activeUser) && !result.Contains(shiftItem) && inFilteredLibrary && !(shiftItem.IsPlayed(activeUser) && !_config.ShowPlayed) && shiftItem.HasImage(MediaBrowser.Model.Entities.ImageType.Backdrop))
+            if (shiftItem.IsVisible(activeUser) && !result.Contains(shiftItem) && inFilteredLibrary && !(shiftItem.IsPlayed(activeUser, null) && !_config.ShowPlayed) && shiftItem.HasImage(MediaBrowser.Model.Entities.ImageType.Backdrop))
             {
                 result.Add(shiftItem);
             }
