@@ -36,6 +36,10 @@ const container = `<div class="verticalSection section-1 editorsChoiceContainer"
         margin-bottom: 1.8em;
     }
 
+    .editorsChoiceItemsContainer {
+        column-gap: normal !important;
+    }
+
     .editorsChoiceScrollButtonsContainer, .editorsChoicePlayPauseContainer {
         position: absolute;
         z-index: 99;
