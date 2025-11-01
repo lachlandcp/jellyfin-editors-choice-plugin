@@ -177,7 +177,7 @@ public class EditorsChoiceActivityController : ControllerBase
 
             if (_config.Mode == "COLLECTIONS")
             {
-                List<String> remainingCollections = _config.SelectedCollections.ToList();
+                List<string> remainingCollections = _config.SelectedCollections.ToList();
 
                 while (result.Count == 0 && remainingCollections.Count > 0)
                 { // if a collection is totally inaccessible due to user visibility or excessive filters configured, we need to try another collection
@@ -190,7 +190,7 @@ public class EditorsChoiceActivityController : ControllerBase
                     if (collection is Folder)
                     {
                         Folder f = (Folder)collection;
-                        initialResult = (List<BaseItem>)f.GetChildren(activeUser, true);
+                        initialResult = f.GetChildren(activeUser, true).ToList();
 
                         // Get ids of items in the collection
                         List<Guid> itemIds = new List<Guid>();
