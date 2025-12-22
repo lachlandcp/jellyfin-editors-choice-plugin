@@ -104,11 +104,35 @@ const container = `<div class="verticalSection section-1 editorsChoiceContainer"
         flex: none;
         background-size: cover;
         background-position-x: center;
-        background-position-y: 15%;
         cursor: pointer;
         color: #ddd;
         color: rgba(255, 255, 255, 0.8);
         text-decoration: none;
+    }
+
+    @keyframes banner {
+        0% {background-position-y: 52%;}
+        100% {background-position-y: 48%;}
+    }
+
+    .editorsChoiceItemBanner {
+        background-position-y: 52%;
+    }
+
+    .editorsChoiceItemBanner:nth-child(odd) {
+        background-position-y: 48%;
+    }
+
+    .editorsChoiceItemBanner.is-visible {
+        animation-name: banner;
+        animation-duration: 10s;
+        animation-fill-mode: both;
+        animation-iteration-count: infinite;
+        animation-direction: alternate;
+    }
+
+    .editorsChoiceItemBanner:nth-child(odd).is-visible {
+        animation-direction: alternate-reverse;
     }
 
     .editorsChoiceItemBanner > div {
