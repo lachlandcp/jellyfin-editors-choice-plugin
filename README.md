@@ -17,13 +17,12 @@ The first step is to install this plugin by adding the repository:
 
 The next step is to follow one of the following three options.
 
-### Option 1: Install the File Transformation plugin
+### Option 1: Install the File Transformation plugin (recommended)
 The easiest way is to install the plugin is to use the [File Transformation plugin](https://github.com/IAmParadox27/jellyfin-plugin-file-transformation):
 
 3. Add `https://www.iamparadox.dev/jellyfin/plugins/manifest.json` as a plugin source repository on your Jellyfin server.
 4. Find "File Transformation" in the list and install it.
-5. In the **Editor's Choice** plugin settings, enable 'File Transformation' in the Technical Settings section, and put your server URL in the field below (e.g. `https://www.mymediaserver.com`).
-6. Restart server
+5. Restart server
 
 ### Option 2: Script injection
 The next best way is to have **Editor's Choice** installed is to enable the plugin to inject the necessary script into the main web file. This requires correct permissions.
