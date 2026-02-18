@@ -47,6 +47,8 @@ public class PluginConfiguration : BasePluginConfiguration
 
     public string TransitionEffect { get; set; } = "slide";
 
+    public string HeroBackdropPosition { get; set; } = "center";
+
     public bool ReduceImageSize { get; set; } = false;
 
     public int BannerHeight { get; set; } = 360;
