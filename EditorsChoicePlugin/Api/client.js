@@ -195,15 +195,26 @@ const container = `
   }
 
   .editorsChoiceHeroMode .editorsChoiceItemBanner { background-position-y: 15% !important; }
-  .editorsChoiceHeroMode .editorsChoiceItemBanner > div { padding-top: 120px; }
   .editorsChoiceHeroMode .editorsChoiceScrollButtonsContainer .emby-scrollbuttons { padding-top: 120px; }
+
+  .editorsChoiceHeroMode  .editorsChoiceBackdropCenter {
+      background-position: center;
+  }
+
+  .editorsChoiceHeroMode .editorsChoiceBackdropTop {
+      background-position: top;
+  }
+
+  .editorsChoiceHeroMode .editorsChoiceBackdropBottom {
+      background-position: bottom;
+  }
 
   .editorsChoiceHeroMode .editorsChoiceItemBanner .editorsChoiceBackdrop {
     position: absolute;
     inset: 0;
     z-index: 0;
     background-size: cover;
-    background-position: center 52%;
+
     background-repeat: no-repeat;
     mask-image: linear-gradient(
       to bottom,
@@ -364,12 +375,15 @@ function renderHeroSlide(item, data, baseUrl) {
 
     const backdropSize = buildBannerSizeParam(data.reduceImageSizes);
     const backdropUrl = `../Items/${item.id}/Images/Backdrop/0${backdropSize}`;
+    const extraClass = data.heroBackdropPosition === "center" ? "editorsChoiceBackdropCenter" :
+        data.heroBackdropPosition === "top" ? "editorsChoiceBackdropTop" :
+        data.heroBackdropPosition === "bottom" ? "editorsChoiceBackdropBottom" : "";
 
     return `
   <a href="${baseUrl}#/details?id=${item.id}"
      onclick="Emby.Page.showItem('${item.id}'); return false;"
      class="editorsChoiceItemBanner splide__slide">
-    <div class="editorsChoiceBackdrop" style="background-image:url('${backdropUrl}');"></div>
+    <div class="editorsChoiceBackdrop ${extraClass}" style="background-image:url('${backdropUrl}');"></div>
     <div class="editorsChoiceContent">
       ${logoOrTitle}
       ${rating}
