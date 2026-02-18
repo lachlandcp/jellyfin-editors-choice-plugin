@@ -41,6 +41,8 @@ public class PluginConfiguration : BasePluginConfiguration
 
     public bool HideOnTvLayout { get; set; } = false;
 
+    public bool UseHeroLayout { get; set; } = false;
+
     public bool ReduceImageSize { get; set; } = false;
 
     public int BannerHeight { get; set; } = 360;
