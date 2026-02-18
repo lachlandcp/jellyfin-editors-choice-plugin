@@ -184,7 +184,7 @@ const container = `
 
   /* ===== Hero mode ===== */
   .editorsChoiceHeroMode .editorsChoiceContainer { padding: 0 !important; }
-  .editorsChoiceHeroMode #indexPage { transform: translateY(-120px); }
+  .editorsChoiceHeroMode #homeTab { transform: translateY(-120px); }
 
   .editorsChoiceHeroMode .splide.cardScalable {
     border-radius: unset !important;
