@@ -33,6 +33,8 @@ public class PluginConfiguration : BasePluginConfiguration
 
     public int AutoplayInterval { get; set; } = 10;
 
+    public bool ShowPlayButton { get; set; } = true;
+
     public string NewTimeLimit { get; set; } = "1month";
 
     public bool ShowRating { get; set; } = true;
@@ -43,6 +45,8 @@ public class PluginConfiguration : BasePluginConfiguration
 
     public bool UseHeroLayout { get; set; } = false;
 
+    public string TransitionEffect { get; set; } = "slide";
+
     public bool ReduceImageSize { get; set; } = false;
 
     public int BannerHeight { get; set; } = 360;
@@ -50,4 +54,5 @@ public class PluginConfiguration : BasePluginConfiguration
     public bool ShowPlayed { get; set; } = true;
 
     public string? Heading { get; set; }
+    public string? PlayButtonText { get; set; }
 }
