@@ -268,6 +268,12 @@
                         </label>
                         <div class="fieldDescription">When enabled, the Editors Choice banner will not be injected on TV interfaces.</div>
                     </div>
+                    <div class="checkboxContainer">
+                        <label>
+                            <input is="emby-checkbox"  type="checkbox" id="UseHeroLayout" name="Use Hero Display Style" label="Use Hero Display Style">
+                            <span>Use Hero Display Style</span>
+                        </label>
+                    </div>
                     <div id="BannerHeight-container" class="selectContainer">
                         <h3 class="selectLabel">Height of banner:</h3>
                         <select is="emby-select" id="BannerHeightSelect" name="BannerHeight" class="emby-select-withcolor emby-select">
@@ -344,6 +350,7 @@
                         $('#ShowDesc').first().prop('checked', config.ShowDescription);
                         $('#ReduceImageSize').first().prop('checked', config.ReduceImageSize);
                         $("#BannerHeightSelect").val(config.BannerHeight);
+                        $("UseHeroLayout").first().prop('checked', config.UseHeroLayout);
                         $('#ShowPlayed').first().prop('checked', config.ShowPlayed);
                         $("#Heading").val(config.Heading);
                         $('#HideOnTvLayout').first().prop('checked', config.HideOnTvLayout);
@@ -480,6 +487,7 @@
                         config.ReduceImageSize = $('#ReduceImageSize').first().is(':checked');
                         config.ShowPlayed = $('#ShowPlayed').first().is(':checked');
                         config.HideOnTvLayout = $('#HideOnTvLayout').first().is(':checked');
+                        config.UseHeroLayout = $('#UseHeroLayout').first().is(':checked');
 
                         if ($('#FavouritesMode').first().is(':checked')) {
                             config.Mode = "FAVOURITES";
