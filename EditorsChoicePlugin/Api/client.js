@@ -157,7 +157,7 @@ const container = `
   }
 
   .editorsChoiceItemButton {
-    width: auto !important;
+    width: fit-content !important;
     display: inline-block !important;
     position: absolute;
     margin: 0 !important;
@@ -212,6 +212,14 @@ const container = `
       rgba(0,0,0,0.4) 70%,
       rgba(0,0,0,0) 100%
     );
+  }
+
+  .editorsChoiceHeroMode .editorsChoiceItemButton {
+    width: fit-content !important;
+    display: inline-flex !important;
+    position: relative;
+    margin: 0 !important;
+    bottom: unset !important;
   }
 
   .editorsChoiceHeroMode .editorsChoiceItemBanner .editorsChoiceBackdrop::after {
@@ -341,6 +349,19 @@ function renderHeroSlide(item, data, baseUrl) {
     const logoOrTitle = buildLogoOrTitle(item, data.reduceImageSizes);
     const overview = buildOverview(item);
 
+    let button = "";
+
+    if(data.showPlayButton) {
+        let buttonString = getLocalizedString("watchButton");
+        // Check if Custom Text is set.
+        if (data.playButtonText) {
+            buttonString = data.playButtonText;
+        }
+        button = `<button is="emby-button" class="editorsChoiceItemButton raised button-submit emby-button">
+                    <span>${buttonString}</span>
+                  </button>`;
+    }
+
     const backdropSize = buildBannerSizeParam(data.reduceImageSizes);
     const backdropUrl = `../Items/${item.id}/Images/Backdrop/0${backdropSize}`;
 
@@ -353,6 +374,7 @@ function renderHeroSlide(item, data, baseUrl) {
       ${logoOrTitle}
       ${rating}
       ${overview}
+      ${button}
     </div>
   </a>`;
 }
@@ -363,22 +385,29 @@ function renderNormalSlide(item, data, baseUrl) {
     const overview = buildOverview(item);
 
     const bannerSize = buildBannerSizeParam(data.reduceImageSizes);
-    const button = `<button is="emby-button" class="editorsChoiceItemButton raised button-submit block emby-button">
-                    <span>${getLocalizedString("watchButton")}</span>
+    let button = "";
+    if(data.showPlayButton) {
+        let buttonString = getLocalizedString("watchButton");
+        // Check if Custom Text is set.
+        if (data.playButtonText) {
+            buttonString = data.playButtonText;
+        }
+        button = `<button is="emby-button" class="editorsChoiceItemButton raised button-submit emby-button">
+                    <span>${buttonString}</span>
                   </button>`;
+    }
 
-    return `
-  <a href="${baseUrl}#/details?id=${item.id}"
-     onclick="Emby.Page.showItem('${item.id}'); return false;"
-     class="editorsChoiceItemBanner splide__slide"
-     style="background-image:url('../Items/${item.id}/Images/Backdrop/0${bannerSize}');">
-    <div>
-      ${logoOrTitle}
-      ${rating}
-      ${overview}
-      ${button}
-    </div>
-  </a>`;
+    return `<a href="${baseUrl}#/details?id=${item.id}"
+                 onclick="Emby.Page.showItem('${item.id}'); return false;"
+                 class="editorsChoiceItemBanner splide__slide"
+                 style="background-image:url('../Items/${item.id}/Images/Backdrop/0${bannerSize}');">
+                <div>
+                  ${logoOrTitle}
+                  ${rating}
+                  ${overview}
+                  ${button}
+                </div>
+              </a>`;
 }
 
 /* ===== Main setup ===== */
@@ -444,9 +473,11 @@ async function setup() {
                 const playPauseBtn = document.getElementById("editorsChoicePlayPause");
                 if (playPauseBtn) playPauseBtn.style.display = data.autoplay ? "" : "none";
 
+
                 new Splide(`#${containerId} .splide`, {
-                    type: "loop",
+                    type: data.transitionEffect ?? "slide",
                     autoplay: !!data.autoplay,
+                    rewind: true,
                     interval: data.autoplayInterval,
                     pagination: false,
                     keyboard: true,
