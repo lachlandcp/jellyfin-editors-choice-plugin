@@ -343,6 +343,7 @@ public class EditorsChoiceActivityController : ControllerBase
             response.Add("transitionEffect", _config.TransitionEffect);
             response.Add("showPlayButton", _config.ShowPlayButton);
             response.Add("hideOnTvLayout", _config.HideOnTvLayout);
+            response.Add("heroBackdropPosition", _config.HeroBackdropPosition);
             if (!string.IsNullOrEmpty(_config.Heading)) response.Add("heading", _config.Heading);
 
             // If ShowPlayButton is true and a PlayButtonText is set, include this in the response to allow custom play button text
