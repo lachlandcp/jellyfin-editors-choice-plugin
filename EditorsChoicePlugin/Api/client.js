@@ -466,7 +466,7 @@ async function setup() {
 
                 if (data.useHeroLayout) document.body.classList.add("editorsChoiceHeroMode");
 
-                if ("heading" in data && data.heading) {
+                if ("heading" in data && data.heading && !data.useHeroLayout) {
                     $($containerElem).prepend(`<h2 class="sectionTitle sectionTitle-cards">${data.heading}</h2>`);
                 }
 
