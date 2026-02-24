@@ -292,7 +292,7 @@ public class EditorsChoiceActivityController : ControllerBase
                     MinCriticRating = minimumCriticRating,
                     MaxParentalRating = parentalRatingScore,
                     HasParentalRating = mustHaveParentRating,
-                    MinPremiereDate = newEndDate,
+                    MinDateCreated = newEndDate,
                     OrderBy = new[] { (ItemSortBy.Random, SortOrder.Ascending) },
                     IsPlayed = _config.ShowPlayed ? null : false
                 };
