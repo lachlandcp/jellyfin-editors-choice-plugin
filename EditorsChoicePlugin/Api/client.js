@@ -253,7 +253,7 @@ const container = `
     position: relative;
     z-index: 2;
     height: 100%;
-    padding: 30px;
+    padding: 30px max(env(safe-area-inset-right), 3.3%);
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
