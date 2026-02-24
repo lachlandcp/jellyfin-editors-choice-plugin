@@ -255,9 +255,32 @@ public class EditorsChoiceActivityController : ControllerBase
                     MinCriticRating = minimumCriticRating,
                     MaxParentalRating = parentalRatingScore,
                     HasParentalRating = mustHaveParentRating,
-                    MinEndDate = newEndDate,
-                    OrderBy = new[] { (ItemSortBy.Random, SortOrder.Ascending) },
+                    OrderBy = new[] { (ItemSortBy.DateLastContentAdded, SortOrder.Descending) },
                     IsPlayed = _config.ShowPlayed ? null : false
+                };
+                initialResult = (List<BaseItem>)_libraryManager.GetItemList(queryItems);
+
+                // Of TV series that meet other criteria, loop through to find items that are recent enough. These are already ordered by recency, so can quit on first item that is too old.
+                List<Guid> itemIds = new List<Guid>();
+                foreach (var item in initialResult)
+                {
+                    if (item is Folder folder && folder.DateLastMediaAdded is not null)
+                    {
+                        DateTime dateLastMediaAdded = (DateTime)folder.DateLastMediaAdded;
+                        if (DateTime.Compare(dateLastMediaAdded, newEndDate) >= 0)
+                        {
+                            itemIds.Add(item.Id);
+                        } else
+                        {
+                            break;
+                        }
+                    }
+                }
+
+                queryItems = new InternalItemsQuery(activeUser)
+                {
+                    ItemIds = [.. itemIds],
+                    OrderBy = new[] { (ItemSortBy.Random, SortOrder.Ascending) }
                 };
                 queryItems.Limit = _config.RandomMediaCount;
                 List<BaseItem> resultItems = PrepareResult(queryItems, activeUser);
