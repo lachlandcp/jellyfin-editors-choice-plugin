@@ -267,7 +267,7 @@ const container = `
     position: relative;
     z-index: 2;
     height: 100%;
-    padding: 0 max(env(safe-area-inset-right), 3.3%);
+    padding: 90px max(env(safe-area-inset-right), 3.3%) 0;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
@@ -502,7 +502,6 @@ async function setup() {
                 const playPauseBtn = document.getElementById("editorsChoicePlayPause");
                 if (playPauseBtn) playPauseBtn.style.display = data.autoplay ? "" : "none";
 
-
                 new Splide(`#${containerId} .splide`, {
                     type: data.transitionEffect ?? "loop",
                     autoplay: !!data.autoplay,
@@ -510,7 +509,7 @@ async function setup() {
                     interval: data.autoplayInterval,
                     pagination: false,
                     keyboard: true,
-                    height: `${data.bannerHeight}px`,
+                    height: `${data.bannerHeight + (data.useHeroLayout ? 80 : 0)}px`, // Add 80px to the banner image height in hero mode to compensate for navbar overlay
                 }).mount();
             })
             .catch((e) => console.warn("Editors Choice: failed to fetch/render.", e));
