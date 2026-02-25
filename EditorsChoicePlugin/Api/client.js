@@ -208,6 +208,7 @@ const container = `
 
 
   .editorsChoiceHeroMode .editorsChoiceItemBanner { background-position-y: 15% !important; }
+  .editorsChoiceHeroMode .editorsChoiceScrollButtonsContainer { margin-right: max(env(safe-area-inset-left), 3.3%); }
   .editorsChoiceHeroMode .editorsChoiceScrollButtonsContainer .emby-scrollbuttons { padding-top: 120px; }
 
   .editorsChoiceHeroMode  .editorsChoiceBackdropCenter {
