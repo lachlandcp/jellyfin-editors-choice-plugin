@@ -194,6 +194,19 @@ const container = `
     margin-bottom: -120px;
   }
 
+  .editorsChoiceHeroMode .editorsChoiceHeight-360 .splide.cardScalable {
+    margin-bottom: -70px;
+  }
+
+  .editorsChoiceHeroMode .editorsChoiceHeight-400 .splide.cardScalable {
+    margin-bottom: -80px;
+  }
+
+  .editorsChoiceHeroMode .editorsChoiceHeight-500 .splide.cardScalable {
+    margin-bottom: -100px;
+  }
+
+
   .editorsChoiceHeroMode .editorsChoiceItemBanner { background-position-y: 15% !important; }
   .editorsChoiceHeroMode .editorsChoiceScrollButtonsContainer .emby-scrollbuttons { padding-top: 20px; }
 
