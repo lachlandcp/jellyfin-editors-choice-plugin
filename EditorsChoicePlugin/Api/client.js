@@ -183,8 +183,8 @@ const container = `
   }
 
   /* ===== Hero mode ===== */
-  .editorsChoiceHeroMode #indexPage { padding-top: 4.3em !important; }
   .editorsChoiceHeroMode .editorsChoiceContainer { padding: 0 !important; }
+  .editorsChoiceHeroMode #homeTab { transform: translateY(-120px); }
 
   .editorsChoiceHeroMode .splide.cardScalable {
     border-radius: unset !important;
@@ -208,7 +208,7 @@ const container = `
 
 
   .editorsChoiceHeroMode .editorsChoiceItemBanner { background-position-y: 15% !important; }
-  .editorsChoiceHeroMode .editorsChoiceScrollButtonsContainer .emby-scrollbuttons { padding-top: 20px; }
+  .editorsChoiceHeroMode .editorsChoiceScrollButtonsContainer .emby-scrollbuttons { padding-top: 120px; }
 
   .editorsChoiceHeroMode  .editorsChoiceBackdropCenter {
       background-position: center;
