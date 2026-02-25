@@ -199,7 +199,7 @@ const container = `
   }
 
   .editorsChoiceHeroMode .editorsChoiceHeight-400 .splide.cardScalable {
-    margin-bottom: -80px;
+    margin-bottom: -55px;
   }
 
   .editorsChoiceHeroMode .editorsChoiceHeight-500 .splide.cardScalable {
