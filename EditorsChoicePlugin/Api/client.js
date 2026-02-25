@@ -471,7 +471,7 @@ async function setup() {
                 }
 
                 const baseUrl = getBaseUrl();
-                const $list = $(`#${containerId} .editorsChoiceItemsContainer`);
+                const $list = $(`#${containerId} .editorsChoiceItemsContainer .editorsChoiceHeight-${data.height}`);
 
                 for (const item of favourites) {
                     const html = data.useHeroLayout
