@@ -183,8 +183,8 @@ const container = `
   }
 
   /* ===== Hero mode ===== */
+  .editorsChoiceHeroMode #indexPage { padding-top: 4.3em !important; }
   .editorsChoiceHeroMode .editorsChoiceContainer { padding: 0 !important; }
-  .editorsChoiceHeroMode #homeTab { transform: translateY(-120px); }
 
   .editorsChoiceHeroMode .splide.cardScalable {
     border-radius: unset !important;
@@ -195,7 +195,7 @@ const container = `
   }
 
   .editorsChoiceHeroMode .editorsChoiceItemBanner { background-position-y: 15% !important; }
-  .editorsChoiceHeroMode .editorsChoiceScrollButtonsContainer .emby-scrollbuttons { padding-top: 120px; }
+  .editorsChoiceHeroMode .editorsChoiceScrollButtonsContainer .emby-scrollbuttons { padding-top: 20px; }
 
   .editorsChoiceHeroMode  .editorsChoiceBackdropCenter {
       background-position: center;
@@ -253,7 +253,7 @@ const container = `
     position: relative;
     z-index: 2;
     height: 100%;
-    padding: 30px max(env(safe-area-inset-right), 3.3%);
+    padding: 0 max(env(safe-area-inset-right), 3.3%);
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
