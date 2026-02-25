@@ -503,7 +503,7 @@ async function setup() {
 
 
                 new Splide(`#${containerId} .splide`, {
-                    type: data.transitionEffect ?? "slide",
+                    type: data.transitionEffect ?? "loop",
                     autoplay: !!data.autoplay,
                     rewind: true,
                     interval: data.autoplayInterval,
