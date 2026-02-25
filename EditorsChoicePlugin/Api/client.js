@@ -467,6 +467,7 @@ async function setup() {
                 const containerId = `editorsChoice-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
 
                 $containerElem.first().attr("id", containerId);
+                $containerElem.first().addClass(`editorsChoiceHeight-${data.bannerHeight}`);
                 $(elem).prepend($containerElem);
 
                 // TV focus workaround
@@ -484,7 +485,7 @@ async function setup() {
                 }
 
                 const baseUrl = getBaseUrl();
-                const $list = $(`#${containerId} .editorsChoiceItemsContainer .editorsChoiceHeight-${data.height}`);
+                const $list = $(`#${containerId} .editorsChoiceItemsContainer`);
 
                 for (const item of favourites) {
                     const html = data.useHeroLayout
