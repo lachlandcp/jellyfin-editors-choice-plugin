@@ -191,19 +191,19 @@ const container = `
     border: 0 !important;
     background: transparent;
     box-shadow: none !important;
-    margin-bottom: -120px;
+    margin-bottom: -170px;
   }
 
   .editorsChoiceHeroMode .editorsChoiceHeight-360 .splide.cardScalable {
-    margin-bottom: -25px;
+    margin-bottom: -75px;
   }
 
   .editorsChoiceHeroMode .editorsChoiceHeight-400 .splide.cardScalable {
-    margin-bottom: -55px;
+    margin-bottom: -105px;
   }
 
   .editorsChoiceHeroMode .editorsChoiceHeight-500 .splide.cardScalable {
-    margin-bottom: -100px;
+    margin-bottom: -150px;
   }
 
 
@@ -509,7 +509,7 @@ async function setup() {
                     interval: data.autoplayInterval,
                     pagination: false,
                     keyboard: true,
-                    height: `${data.bannerHeight + (data.useHeroLayout ? 80 : 0)}px`, // Add 80px to the banner image height in hero mode to compensate for navbar overlay
+                    height: `${data.bannerHeight + (data.useHeroLayout ? 180 : 0)}px`, // Add 80px to the banner image height in hero mode to compensate for navbar overlay
                 }).mount();
             })
             .catch((e) => console.warn("Editors Choice: failed to fetch/render.", e));
