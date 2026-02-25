@@ -195,7 +195,7 @@ const container = `
   }
 
   .editorsChoiceHeroMode .editorsChoiceHeight-360 .splide.cardScalable {
-    margin-bottom: -70px;
+    margin-bottom: -50px;
   }
 
   .editorsChoiceHeroMode .editorsChoiceHeight-400 .splide.cardScalable {
