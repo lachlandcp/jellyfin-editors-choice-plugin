@@ -6,7 +6,6 @@ using Jellyfin.Database.Implementations.Enums;
 using Jellyfin.Extensions;
 using MediaBrowser.Controller.Entities;
 using MediaBrowser.Controller.Library;
-using MediaBrowser.Controller.LibraryTaskScheduler;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -249,6 +248,7 @@ public class EditorsChoiceActivityController : ControllerBase
                         break;
                 }
 
+                // Query all series that meet user criteria
                 InternalItemsQuery queryItems = new InternalItemsQuery(activeUser)
                 {
                     IncludeItemTypes = [BaseItemKind.Series],
@@ -256,36 +256,52 @@ public class EditorsChoiceActivityController : ControllerBase
                     MinCriticRating = minimumCriticRating,
                     MaxParentalRating = parentalRatingScore,
                     HasParentalRating = mustHaveParentRating,
-                    OrderBy = new[] { (ItemSortBy.DateLastContentAdded, SortOrder.Descending) },
+                    OrderBy = new[] { (ItemSortBy.Random, SortOrder.Descending) },
                     IsPlayed = _config.ShowPlayed ? null : false
                 };
                 initialResult = (List<BaseItem>)_libraryManager.GetItemList(queryItems);
 
-                // Of TV series that meet other criteria, loop through to find items that are recent enough. These are already ordered by recency, so can quit on first item that is too old.
+                // Of TV series that meet those criteria, loop through to find items that are recent enough. These are already ordered by recency, so can quit on first item that is too old.
                 List<Guid> itemIds = new List<Guid>();
                 foreach (var item in initialResult)
                 {
-                    if (item is Folder folder && folder.DateLastMediaAdded is not null)
+                    // Get the latest season of the TV show
+                    InternalItemsQuery querySeasons = new InternalItemsQuery(activeUser)
                     {
-                        DateTime dateLastMediaAdded = (DateTime)folder.DateLastMediaAdded;
-                        if (DateTime.Compare(dateLastMediaAdded, newEndDate) >= 0)
+                        IncludeItemTypes = [BaseItemKind.Season],
+                        ParentId = item.Id,
+                        OrderBy = new[] { (ItemSortBy.IndexNumber, SortOrder.Descending )}
+                    };
+                    List<BaseItem> seasons = (List<BaseItem>) _libraryManager.GetItemList(querySeasons);
+
+                    Guid latestSeasonId = seasons[0].Id;
+                    _logger.LogInformation(latestSeasonId.ToString());
+
+                    // Get the latest episode of the latest season
+                    InternalItemsQuery queryEpisodes = new InternalItemsQuery(activeUser)
+                    {
+                        IncludeItemTypes = [BaseItemKind.Episode],
+                        ParentId = latestSeasonId, // CHECK THIS
+                        OrderBy = new[] { (ItemSortBy.IndexNumber, SortOrder.Descending) }
+                    };
+                    List<BaseItem> episodes = (List<BaseItem>) _libraryManager.GetItemList(queryEpisodes);
+
+                    // Check if the most recent episode was released within the user's time period
+                    BaseItem episode = episodes[0];
+                    _logger.LogInformation(episode.Name);
+                    if (episode.PremiereDate is not null) {
+                        DateTime episodePremiere = (DateTime) episode.PremiereDate;
+                        if (DateTime.Compare(episodePremiere, newEndDate) >= 0 )
                         {
                             itemIds.Add(item.Id);
-                        } else
-                        {
-                            break;
                         }
                     }
+
+                    if (itemIds.Count == _config.RandomMediaCount ) break; // Stop looking once we have enough episodes
+
                 }
 
-                queryItems = new InternalItemsQuery(activeUser)
-                {
-                    ItemIds = [.. itemIds],
-                    OrderBy = new[] { (ItemSortBy.Random, SortOrder.Ascending) }
-                };
-                queryItems.Limit = _config.RandomMediaCount;
-                List<BaseItem> resultItems = PrepareResult(queryItems, activeUser);
-
+                // Query movies that premiered within the user's time period
                 InternalItemsQuery queryMovies = new InternalItemsQuery(activeUser)
                 {
                     IncludeItemTypes = [BaseItemKind.Movie],
@@ -293,19 +309,19 @@ public class EditorsChoiceActivityController : ControllerBase
                     MinCriticRating = minimumCriticRating,
                     MaxParentalRating = parentalRatingScore,
                     HasParentalRating = mustHaveParentRating,
-                    MinDateCreated = newEndDate,
+                    MinPremiereDate = newEndDate,
                     OrderBy = new[] { (ItemSortBy.Random, SortOrder.Ascending) },
                     IsPlayed = _config.ShowPlayed ? null : false
                 };
                 queryMovies.Limit = _config.RandomMediaCount;
-                List<BaseItem> resultMovies = PrepareResult(queryMovies, activeUser);
+                List<BaseItem> resultMovies = (List<BaseItem>) _libraryManager.GetItemList(queryMovies);
 
-                List<Guid> combinedIds = new List<Guid>();
-                foreach (BaseItem item in resultItems.Concat(resultMovies)) combinedIds.Add(item.Id);
+                // Join the lists of recent films and recent series
+                foreach (BaseItem item in resultMovies) itemIds.Add(item.Id);
 
                 InternalItemsQuery finalQuery = new InternalItemsQuery(activeUser)
                 {
-                    ItemIds = [.. combinedIds],
+                    ItemIds = [.. itemIds],
                     OrderBy = new[] { (ItemSortBy.Random, SortOrder.Ascending) }
                 };
                 finalQuery.Limit = _config.RandomMediaCount;
