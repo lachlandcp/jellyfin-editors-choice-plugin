@@ -275,7 +275,6 @@ public class EditorsChoiceActivityController : ControllerBase
                     List<BaseItem> seasons = (List<BaseItem>) _libraryManager.GetItemList(querySeasons);
 
                     Guid latestSeasonId = seasons[0].Id;
-                    _logger.LogInformation(latestSeasonId.ToString());
 
                     // Get the latest episode of the latest season
                     InternalItemsQuery queryEpisodes = new InternalItemsQuery(activeUser)
@@ -288,7 +287,6 @@ public class EditorsChoiceActivityController : ControllerBase
 
                     // Check if the most recent episode was released within the user's time period
                     BaseItem episode = episodes[0];
-                    _logger.LogInformation(episode.Name);
                     if (episode.PremiereDate is not null) {
                         DateTime episodePremiere = (DateTime) episode.PremiereDate;
                         if (DateTime.Compare(episodePremiere, newEndDate) >= 0 )
