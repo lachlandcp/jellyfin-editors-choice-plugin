@@ -45,7 +45,7 @@ public class PluginConfiguration : BasePluginConfiguration
 
     public bool UseHeroLayout { get; set; } = false;
 
-    public string TransitionEffect { get; set; } = "slide";
+    public string TransitionEffect { get; set; } = "loop";
 
     public string HeroBackdropPosition { get; set; } = "center";
 
