@@ -274,24 +274,31 @@ public class EditorsChoiceActivityController : ControllerBase
                     };
                     List<BaseItem> seasons = (List<BaseItem>) _libraryManager.GetItemList(querySeasons);
 
-                    Guid latestSeasonId = seasons[0].Id;
+                    if (seasons.Count > 0) {
+                        Guid latestSeasonId = seasons[0].Id;
+                        //_logger.LogInformation("Season of {0}: {1}", item.Name, latestSeasonId);
 
-                    // Get the latest episode of the latest season
-                    InternalItemsQuery queryEpisodes = new InternalItemsQuery(activeUser)
-                    {
-                        IncludeItemTypes = [BaseItemKind.Episode],
-                        ParentId = latestSeasonId, // CHECK THIS
-                        OrderBy = new[] { (ItemSortBy.IndexNumber, SortOrder.Descending) }
-                    };
-                    List<BaseItem> episodes = (List<BaseItem>) _libraryManager.GetItemList(queryEpisodes);
-
-                    // Check if the most recent episode was released within the user's time period
-                    BaseItem episode = episodes[0];
-                    if (episode.PremiereDate is not null) {
-                        DateTime episodePremiere = (DateTime) episode.PremiereDate;
-                        if (DateTime.Compare(episodePremiere, newEndDate) >= 0 )
+                        // Get the latest episode of the latest season
+                        InternalItemsQuery queryEpisodes = new InternalItemsQuery(activeUser)
                         {
-                            itemIds.Add(item.Id);
+                            IncludeItemTypes = [BaseItemKind.Episode],
+                            ParentId = latestSeasonId,
+                            OrderBy = new[] { (ItemSortBy.IndexNumber, SortOrder.Descending) }
+                        };
+                        List<BaseItem> episodes = (List<BaseItem>) _libraryManager.GetItemList(queryEpisodes);
+                        
+                        //_logger.LogInformation("Contains {0} episodes.", episodes.Count);
+
+                        // Check if the most recent episode was released within the user's time period
+                        if (episodes.Count > 0) { // TODO: for some reason, some seasons come up with no episodes...
+                            BaseItem episode = episodes[0];
+                            if (episode.PremiereDate is not null) {
+                                DateTime episodePremiere = (DateTime) episode.PremiereDate;
+                                if (DateTime.Compare(episodePremiere, newEndDate) >= 0 )
+                                {
+                                    itemIds.Add(item.Id);
+                                }
+                            }
                         }
                     }
 
