@@ -6,6 +6,7 @@ using Jellyfin.Database.Implementations.Enums;
 using Jellyfin.Extensions;
 using MediaBrowser.Controller.Entities;
 using MediaBrowser.Controller.Library;
+using MediaBrowser.Controller.LibraryTaskScheduler;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -299,7 +300,17 @@ public class EditorsChoiceActivityController : ControllerBase
                 queryMovies.Limit = _config.RandomMediaCount;
                 List<BaseItem> resultMovies = PrepareResult(queryMovies, activeUser);
 
-                result = resultItems.Concat(resultMovies).ToList();
+                List<Guid> combinedIds = new List<Guid>();
+                foreach (BaseItem item in resultItems.Concat(resultMovies)) combinedIds.Add(item.Id);
+
+                InternalItemsQuery finalQuery = new InternalItemsQuery(activeUser)
+                {
+                    ItemIds = [.. combinedIds],
+                    OrderBy = new[] { (ItemSortBy.Random, SortOrder.Ascending) }
+                };
+                finalQuery.Limit = _config.RandomMediaCount;
+
+                result = PrepareResult(finalQuery, activeUser);
 
                 resultsEmpty = result.Count == 0;
             }
