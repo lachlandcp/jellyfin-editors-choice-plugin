@@ -3,7 +3,13 @@ Editor's Choice is a plugin for the Jellyfin web UI that adds a full-width slide
 
 The featured content list is drawn from a specified user's favourited items, or a totally random selection of shows and films. The selection can also be filtered by minimum community or critic rating.
 
+**Default mode**
+
 ![Screenshot of Jellyfin with Editor's Choice banner slider](https://github.com/lachlandcp/jellyfin-editors-choice-plugin/blob/main/example.png?raw=true)
+
+**Hero mode**
+
+![Screenshot of Jellyfin with Editor's Choice in hero mode](https://github.com/lachlandcp/jellyfin-editors-choice-plugin/blob/main/example-hero.png?raw=true)
 
 Note that the plugin only works for the web UI (and therefore also the mobile app), but does not and can not work for the Android TV app or other apps due to limitations of those platforms.
 
