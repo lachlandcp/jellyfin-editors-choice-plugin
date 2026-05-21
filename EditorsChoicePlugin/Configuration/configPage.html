@@ -138,6 +138,10 @@
                 border-color: #292929c2;
             }
 
+            fieldset {
+                margin-bottom: 2em;
+            }
+
         </style>
 
         <div data-role="content">
@@ -146,122 +150,164 @@
                     <h1>EditorsChoice settings</h1>
 
                     <hr />
-                    <h2>Mode</h2>
-                    <div class="inputContainer">
-                        <label class="radio-label-block mdl-radio show-focus">
-                            <input type="radio" is="emby-radio" id="FavouritesMode" name="mode" value="FavouritesMode" class="mdl-radio__button" />
-                            <div class="mdl-radio__circles">
-                                <svg>
-                                    <defs>
-                                        <clipPath id="cutoff-fav"><circle cx="50%" cy="50%" r="50%"></circle></clipPath>
-                                    </defs>
-                                    <circle class="mdl-radio__outer-circle" cx="50%" cy="50%" r="50%" fill="none" stroke="currentcolor" stroke-width="0.26em" clip-path="url(#cutoff-fav)"></circle>
-                                    <circle class="mdl-radio__inner-circle" cx="50%" cy="50%" r="25%" fill="currentcolor"></circle>
-                                </svg>
-                                <div class="mdl-radio__focus-circle"></div>
-                            </div>
-                            <span class="radioButtonLabel mdl-radio__label">Favourites</span>
-                            <div class="fieldDescription">Shows items from the specified user's favourites</div>
-                        </label>
 
-                        <label class="radio-label-block mdl-radio show-focus">
-                            <input type="radio" is="emby-radio" id="RandomMode" name="mode" value="RandomMode" class="mdl-radio__button" />
-                            <div class="mdl-radio__circles">
-                                <svg>
-                                    <defs>
-                                        <clipPath id="cutoff-rand"><circle cx="50%" cy="50%" r="50%"></circle></clipPath>
-                                    </defs>
-                                    <circle class="mdl-radio__outer-circle" cx="50%" cy="50%" r="50%" fill="none" stroke="currentcolor" stroke-width="0.26em" clip-path="url(#cutoff-rand)"></circle>
-                                    <circle class="mdl-radio__inner-circle" cx="50%" cy="50%" r="25%" fill="currentcolor"></circle>
-                                </svg>
-                                <div class="mdl-radio__focus-circle"></div>
-                            </div>
-                            <span class="radioButtonLabel mdl-radio__label">Random</span>
-                            <div class="fieldDescription">Shows a random selection of items from your library</div>
-                        </label>
+                    <!-- FILTERING SETTINGS -->
+                    <h2>Filtering</h2>
+                    <fieldset>
+                        <legend>Filter by catalog</legend>
 
-                        <label class="radio-label-block mdl-radio show-focus">
-                            <input type="radio" is="emby-radio" id="CollectionsMode" name="mode" value="CollectionsMode" class="mdl-radio__button" />
-                            <div class="mdl-radio__circles">
-                                <svg>
-                                    <defs>
-                                        <clipPath id="cutoff-col"><circle cx="50%" cy="50%" r="50%"></circle></clipPath>
-                                    </defs>
-                                    <circle class="mdl-radio__outer-circle" cx="50%" cy="50%" r="50%" fill="none" stroke="currentcolor" stroke-width="0.26em" clip-path="url(#cutoff-col)"></circle>
-                                    <circle class="mdl-radio__inner-circle" cx="50%" cy="50%" r="25%" fill="currentcolor"></circle>
-                                </svg>
-                                <div class="mdl-radio__focus-circle"></div>
-                            </div>
-                            <span class="radioButtonLabel mdl-radio__label">Collections</span>
-                            <div class="fieldDescription">Shows items from the specified collections</div>
-                        </label>
+                        <div class="checkboxContainer">
+                            <label class="emby-checkbox-label">
+                                <input type="checkbox" is="emby-checkbox" id="FilterByLibrary" class="emby-checkbox" data-embycheckbox="true" >
+                                <span class="checkboxLabel">Filter by library</span>
+                                <span class="checkboxOutline">
+                                    <span class="material-icons checkboxIcon checkboxIcon-checked check"></span>
+                                    <span class="material-icons checkboxIcon checkboxIcon-unchecked"></span>
+                                </span>
+                            </label>
+                        </div>
 
-                        <label class="radio-label-block mdl-radio show-focus">
-                            <input type="radio" is="emby-radio" id="NewMode" name="mode" value="NewMode" class="mdl-radio__button" />
-                            <div class="mdl-radio__circles">
-                                <svg>
-                                    <defs>
-                                        <clipPath id="cutoff-new"><circle cx="50%" cy="50%" r="50%"></circle></clipPath>
-                                    </defs>
-                                    <circle class="mdl-radio__outer-circle" cx="50%" cy="50%" r="50%" fill="none" stroke="currentcolor" stroke-width="0.26em" clip-path="url(#cutoff-new)"></circle>
-                                    <circle class="mdl-radio__inner-circle" cx="50%" cy="50%" r="25%" fill="currentcolor"></circle>
-                                </svg>
-                                <div class="mdl-radio__focus-circle"></div>
-                            </div>
-                            <span class="radioButtonLabel mdl-radio__label">New</span>
-                            <div class="fieldDescription">Shows only movies and shows with episodes that premiered recently</div>
-                        </label>
-                    </div>
+                        <div id="FilterLibraryList-container" style="display:none;">
+                            <h4 class="checkboxListLabel">Show items from these libraries:</h4>
+                            <div id="FilterLibraryList" class="checkboxList"></div>
+                        </div>
 
-                    <div id="EditorUserId-container" class="selectContainer" style="display:none;">
-                        <label class="selectLabel" for="EditorUserId">User's favourites list</label>
-                        <select is="emby-select" id="EditorUserId" name="EditorUserId" class="emby-select-withcolor emby-select">
-                            <option value="none">None</option>
-                        </select>
-                    </div>
+                        <div class="checkboxContainer">
+                            <label class="emby-checkbox-label">
+                                <input type="checkbox" is="emby-checkbox" id="FilterByCollection" class="emby-checkbox" data-embycheckbox="true">
+                                <span class="checkboxLabel">Filter by collection</span>
+                                <span class="checkboxOutline">
+                                    <span class="material-icons checkboxIcon checkboxIcon-checked check"></span>
+                                    <span class="material-icons checkboxIcon checkboxIcon-unchecked "></span>
+                                </span>
+                            </label>
+                        </div>
 
-                    <div id="NewTimeLimit-container" class="selectContainer" style="display:none;">
-                        <label class="selectLabel" for="NewTimeLimitSelect">Show items released in the last:</label>
-                        <select is="emby-select" id="NewTimeLimitSelect" name="NewTimeLimit" class="emby-select-withcolor emby-select">
-                            <option value="1month">1 month</option>
-                            <option value="2month">2 months</option>
-                            <option value="6month">6 months</option>
-                            <option value="1year">1 year</option>
-                            <option value="2year">2 years</option>
-                            <option value="5year">5 years</option>
-                        </select>
-                    </div>
 
-                    <div id="CollectionsList-container" style="display:none;">
-                        <h3 class="checkboxListLabel">Show items from these collections:</h3>
-                        <div id="CollectionsList" class="checkboxList"></div>
-                        <p>One collection will be shown at a time across the slider. If multiple are checked below, one of them will be randomly chosen each time it loads.</p>
-                    </div>
+                        <div id="FilterCollectionsList-container" style="display:none;">
+                            <h4 class="checkboxListLabel">Show items from these collections:</h4>
+                            <div id="FilterCollectionsList" class="checkboxList"></div>
+                        </div>
+                    </fieldset>
+
+                    <fieldset>
+                        <legend><h3>Filter by date</h3></legend>
+                        <div class="inputContainer">
+                            <label class="inputLabel inputLabelUnfocused" for="FilterByRecency">Show items released in the last _ months:</label>
+                            <input is="emby-input" type="number" id="FilterByRecency" name="FilterByRecency" min="0" step="1" />
+                        </div>
+                    </fieldset>
+
+
+                    <fieldset>
+                        <legend><h3>Filter by rating</h3></legend>
+                        <div class="inputContainer">
+                            <label class="inputLabel inputLabelUnfocused" for="FilterByMinimumRating">Minimum community rating</label>
+                            <input is="emby-input" type="number" id="FilterByMinimumRating" name="FilterByMinimumRating" min="0" max="10" step="0.1" />
+                            <div class="fieldDescription">Only show shows or films that have a community rating at least this number (0.0 to 10.0). Set to 0 to ignore rating.</div>
+                        </div>
+
+                        <div class="inputContainer">
+                            <label class="inputLabel inputLabelUnfocused" for="FilterByMinimumCriticRating">Minimum critic rating</label>
+                            <input is="emby-input" type="number" id="FilterByMinimumCriticRating" name="FilterByMinimumCriticRating" min="0" max="100" step="1" />
+                            <div class="fieldDescription">Only show shows or films that have a critic rating at least this number (0 to 100). Set to 0 to ignore rating.</div>
+                        </div>
+                    </fieldset>
+
+
+                    <!-- DISPLAY SETTINGS -->
+                    <h2>Display</h2>
+                    <fieldset>
+                        <legend><h3>Interface</h3></legend>
+
+                        <div class="inputContainer">
+                            <label class="inputLabel inputLabelUnfocused" for="InterfaceItemCount">Maximum items shown</label>
+                            <input is="emby-input" type="number" id="InterfaceItemCount" name="InterfaceItemCount" min="1" />
+                            <div class="fieldDescription">This sets how many items to show in the banner.</div>
+                        </div>
+
+                        <div class="inputContainer">
+                            <label class="inputLabel inputLabelUnfocused" for="InterfaceHeadingText">Banner heading</label>
+                            <input is="emby-input" type="text" id="InterfaceHeadingText" name="InterfaceHeadingText" />
+                            <div class="fieldDescription">Add a heading above the banner. Leave empty for no heading.</div>
+                        </div>
+
+                        <div class="checkboxContainer checkboxContainer-withDescription">
+                            <label class="emby-checkbox-label">
+                                <input is="emby-checkbox" type="checkbox" id="InterfaceShowPlayButton" name="InterfaceShowPlayButton" />
+                                <span class="checkboxLabel">Show Play Button</span>
+                            </label>
+                        </div>
+
+                        <div class="inputContainer">
+                            <label class="inputLabel inputLabelUnfocused" for="InterfacePlayButtonText">Custom Play Button Text</label>
+                            <input is="emby-input" type="text" id="InterfacePlayButtonText" name="InterfacePlayButtonText" />
+                            <div class="fieldDescription">Change the default Play Button Text. Leave empty for default.</div>
+                        </div>
+
+                        <div class="checkboxContainer checkboxContainer-withDescription">
+                            <label class="emby-checkbox-label">
+                                <input is="emby-checkbox" type="checkbox" id="InterfaceShowRating" name="InterfaceShowRating" />
+                                <span class="checkboxLabel">Show community rating</span>
+                            </label>
+                        </div>
+
+                        <div class="checkboxContainer checkboxContainer-withDescription">
+                            <label class="emby-checkbox-label">
+                                <input is="emby-checkbox" type="checkbox" id="InterfaceShowDescription" name="InterfaceShowDescription" />
+                                <span class="checkboxLabel">Show description</span>
+                            </label>
+                        </div>
+
+                        <div class="checkboxContainer checkboxContainer-withDescription">
+                            <label class="emby-checkbox-label">
+                                <input is="emby-checkbox" type="checkbox" id="InterfaceHideOnTvLayout" name="InterfaceHideOnTvLayout" />
+                                <span class="checkboxLabel">Hide on TVs</span>
+                            </label>
+                            <div class="fieldDescription">When enabled, the Editors Choice banner will not be injected on TV interfaces.</div>
+                        </div>
+
+                        <div id="InterfaceTransitionEffectContainer" class="selectContainer">
+                            <label class="selectLabel" for="InterfaceTransitionEffect">Transition Effect:</label>
+                            <select is="emby-select" id="InterfaceTransitionEffect" name="InterfaceTransitionEffect" class="emby-select-withcolor emby-select">
+                                <option value="loop">Slide (Default)</option>
+                                <option value="fade">Fade</option>
+                            </select>
+                        </div>
+
+
+                    </fieldset>
+
+                    <fieldset>
+                        <legend>Autoplay</legend>
+                        <div class="checkboxContainer checkboxContainer-withDescription">
+                            <label class="emby-checkbox-label">
+                                <input is="emby-checkbox" type="checkbox" id="AutoplayEnabled" name="AutoplayEnabled" />
+                                <span class="checkboxLabel">Enable autoplay</span>
+                            </label>
+                        </div>
+
+                        <div id="AutoplayInterval-container" class="inputContainer" style="display:none;">
+                            <label class="inputLabel inputLabelUnfocused" for="AutoplayInterval">Autoplay interval</label>
+                            <input is="emby-input" type="number" id="AutoplayInterval" name="AutoplayInterval" min="1" step="1" />
+                            <div class="fieldDescription">How often, in seconds, the slider moves to the next item. Default is 10 seconds.</div>
+                        </div>
+                    </fieldset>
+
+                    
+
+                    
 
                     <hr />
-                    <h2>Autoplay</h2>
 
-                    <div class="checkboxContainer checkboxContainer-withDescription">
-                        <label class="emby-checkbox-label">
-                            <input is="emby-checkbox" type="checkbox" id="EnableAutoplay" name="EnableAutoplay" />
-                            <span class="checkboxLabel">Enable autoplay</span>
-                        </label>
-                    </div>
+                    
 
-                    <div id="AutoplayInterval-container" class="inputContainer" style="display:none;">
-                        <label class="inputLabel inputLabelUnfocused" for="AutoplayInterval">Autoplay interval</label>
-                        <input is="emby-input" type="number" id="AutoplayInterval" name="AutoplayInterval" min="1" step="1" />
-                        <div class="fieldDescription">How often, in seconds, the slider moves to the next item. Default is 10 seconds.</div>
-                    </div>
+                    
 
                     <hr />
                     <h2>Filtering</h2>
 
-                    <div class="inputContainer">
-                        <label class="inputLabel inputLabelUnfocused" for="RandomMediaCount">Maximum items shown</label>
-                        <input is="emby-input" type="number" id="RandomMediaCount" name="RandomMediaCount" min="1" />
-                        <div class="fieldDescription">This sets how many items to show in the banner, whether random or from the favourites list. Set to a massive number if you want to show all of your favourited items.</div>
-                    </div>
+                    
 
                     <div class="inputContainer">
                         <label class="inputLabel inputLabelUnfocused" for="MinimumRating">Minimum community rating</label>
@@ -293,46 +339,7 @@
                     <hr />
                     <h2>Display</h2>
 
-                    <div class="inputContainer">
-                        <label class="inputLabel inputLabelUnfocused" for="Heading">Banner heading</label>
-                        <input is="emby-input" type="text" id="Heading" name="Heading" />
-                        <div class="fieldDescription">Add a heading above the banner. Leave empty for no heading.</div>
-                    </div>
-
-                    <div class="checkboxContainer checkboxContainer-withDescription">
-                        <label class="emby-checkbox-label">
-                            <input is="emby-checkbox" type="checkbox" id="ShowPlayButton" name="ShowPlayButton" />
-                            <span class="checkboxLabel">Show Play Button</span>
-                        </label>
-                    </div>
-
-                    <div class="inputContainer">
-                        <label class="inputLabel inputLabelUnfocused" for="PlayButtonText">Custom Play Button Text</label>
-                        <input is="emby-input" type="text" id="PlayButtonText" name="PlayButtonText" />
-                        <div class="fieldDescription">Change the default Play Button Text. Leave empty for default.</div>
-                    </div>
-
-                    <div class="checkboxContainer checkboxContainer-withDescription">
-                        <label class="emby-checkbox-label">
-                            <input is="emby-checkbox" type="checkbox" id="ShowRating" name="ShowRating" />
-                            <span class="checkboxLabel">Show community rating</span>
-                        </label>
-                    </div>
-
-                    <div class="checkboxContainer checkboxContainer-withDescription">
-                        <label class="emby-checkbox-label">
-                            <input is="emby-checkbox" type="checkbox" id="ShowDesc" name="ShowDesc" />
-                            <span class="checkboxLabel">Show description</span>
-                        </label>
-                    </div>
-
-                    <div class="checkboxContainer checkboxContainer-withDescription">
-                        <label class="emby-checkbox-label">
-                            <input is="emby-checkbox" type="checkbox" id="HideOnTvLayout" name="HideOnTvLayout" />
-                            <span class="checkboxLabel">Hide on TVs</span>
-                        </label>
-                        <div class="fieldDescription">When enabled, the Editors Choice banner will not be injected on TV interfaces.</div>
-                    </div>
+                    
 
                     <div class="checkboxContainer checkboxContainer-withDescription">
                         <label class="emby-checkbox-label">
@@ -351,13 +358,7 @@
                         </select>
                     </div>
 
-                    <div id="effect-container" class="selectContainer">
-                        <label class="selectLabel" for="TransitionEffectSelect">Transition Effect:</label>
-                        <select is="emby-select" id="TransitionEffectSelect" name="TransitionEffectSelect" class="emby-select-withcolor emby-select">
-                            <option value="loop">Slide (Default)</option>
-                            <option value="fade">Fade</option>
-                        </select>
-                    </div>
+                    
 
                     <div id="BannerHeight-container" class="selectContainer">
                         <label class="selectLabel" for="BannerHeightSelect">Height of banner:</label>
@@ -369,35 +370,7 @@
                         </select>
                     </div>
 
-                    <hr />
-                    <h2>Technical settings</h2>
 
-                    <div class="checkboxContainer checkboxContainer-withDescription">
-                        <label class="emby-checkbox-label">
-                            <input is="emby-checkbox" type="checkbox" id="DoScriptInject" name="DoScriptInject" />
-                            <span class="checkboxLabel">Enable client script injection</span>
-                        </label>
-                        <div class="fieldDescription">This will depend on permissions for the jellyfin-web index.html file. Toggling this mode will take effect after the next restart.</div>
-                    </div>
-
-                    <div class="checkboxContainer checkboxContainer-withDescription">
-                        <label class="emby-checkbox-label">
-                            <input is="emby-checkbox" type="checkbox" id="FileTransformation" name="FileTransformation" />
-                            <span class="checkboxLabel">Use FileTransformation plugin (recommended)</span>
-                        </label>
-                        <div class="fieldDescription">
-                            Using <a href="https://github.com/IAmParadox27/jellyfin-plugin-file-transformation" target="_blank" rel="noopener noreferrer">the FileTransformation plugin</a>
-                            is the easiest way to inject the required script to the Jellyfin homepage. Toggling this mode will take effect after the next restart.
-                        </div>
-                    </div>
-
-                    <div class="checkboxContainer checkboxContainer-withDescription">
-                        <label class="emby-checkbox-label">
-                            <input is="emby-checkbox" type="checkbox" id="ReduceImageSize" name="ReduceImageSize" />
-                            <span class="checkboxLabel">Reduce image sizes</span>
-                        </label>
-                        <div class="fieldDescription">This will make banner and logo images load faster for users and reduce network usage, but increase processing demand on your media server. Turn off if plugin is having a significant performance impact.</div>
-                    </div>
 
                     <hr />
                     <div>
@@ -662,18 +635,6 @@
                 });
 
 
-                // If user chooses scriptinject or filetransformation, disable the other.
-                $('#DoScriptInject').on('change', function () {
-                    if ($(this).is(':checked')) {
-                        $('#FileTransformation').first().prop('checked', false);
-                    }
-                })
-
-                $('#FileTransformation').on('change', function () {
-                    if ($(this).is(':checked')) {
-                        $('#DoScriptInject').first().prop('checked', false);
-                    }
-                })
 
             })();
 
