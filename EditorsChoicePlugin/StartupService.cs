@@ -47,21 +47,6 @@ public class StartupService : IScheduledTask
     {
         _logger.LogInformation($"EditorsChoice Startup. Registering file transformations.");
 
-        
-        
-        // Convert configuration mode boolean variable
-        if (_config.Mode == "")
-        {
-            if (_config.ShowRandomMedia)
-            {
-                _config.Mode = "RANDOM";
-            }
-            else
-            {
-                _config.Mode = "FAVOURITES";
-            }
-        }
-
         // Get base path from network config
         try
         {
