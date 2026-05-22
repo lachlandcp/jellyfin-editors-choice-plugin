@@ -390,6 +390,8 @@
 
                 var pluginId = "70bb2ec1-f19e-46b5-b49a-942e6b96ebae";
 
+                /* POPULATE FIELDS ON LOAD */
+
                 $('.editorsChoiceConfigurationPage').on('pageshow', function (event) {
 
                     var page = this;
@@ -537,10 +539,11 @@
                     });
                 });
 
+                /* PROCESS FORM DATA ON SUBMIT */
+
                 $('.editorsChoiceConfigurationForm').off('submit.plugin').on('submit.plugin', function (e) {
 
                     Dashboard.showLoadingMsg();
-
 
                     ApiClient.getPluginConfiguration(pluginId).then(function (config) {
 
