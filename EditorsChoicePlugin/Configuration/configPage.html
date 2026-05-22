@@ -213,6 +213,13 @@
                             <input is="emby-input" type="number" id="FilterByMinimumCriticRating" name="FilterByMinimumCriticRating" min="0" max="100" step="1" />
                             <div class="fieldDescription">Only show shows or films that have a critic rating at least this number (0 to 100). Set to 0 to ignore rating.</div>
                         </div>
+                        <div class="selectContainer">
+                            <label class="selectLabel" for="FilterByMaximumParentRating">Maximum parental rating</label>
+                            <select is="emby-select" id="FilterByMaximumParentRating" name="FilterByMaximumParentRating" class="emby-select-withcolor emby-select">
+                                <option value="-2">User profile</option>
+                            </select>
+                            <div class="fieldDescription">Items with a parental rating higher than this will not be shown. Set to 'User profile' to limit to a user's specific parental access controls (default).</div>
+                        </div>
                     </fieldset>
 
 
@@ -262,6 +269,13 @@
 
                         <div class="checkboxContainer checkboxContainer-withDescription">
                             <label class="emby-checkbox-label">
+                                <input is="emby-checkbox" type="checkbox" id="InterfaceShowArrows" name="InterfaceShowArrows" />
+                                <span class="checkboxLabel">Show navigation arrows and play/pause button</span>
+                            </label>
+                        </div>
+
+                        <div class="checkboxContainer checkboxContainer-withDescription">
+                            <label class="emby-checkbox-label">
                                 <input is="emby-checkbox" type="checkbox" id="InterfaceHideOnTvLayout" name="InterfaceHideOnTvLayout" />
                                 <span class="checkboxLabel">Hide on TVs</span>
                             </label>
@@ -276,6 +290,32 @@
                             </select>
                         </div>
 
+                        <div class="checkboxContainer checkboxContainer-withDescription">
+                            <label class="emby-checkbox-label">
+                                <input is="emby-checkbox" type="checkbox" id="InterfaceUseClassicLayout" name="InterfaceUseClassicLayout" />
+                                <span class="checkboxLabel">Use Classic Display Style</span>
+                            </label>
+                            <div class="fieldDescription">Changes the banner layout to a classic style display.</div>
+                        </div>
+
+                        <div id="InterfaceHeroBannerPosition-container" class="selectContainer">
+                            <label class="selectLabel" for="InterfaceHeroBannerPosition">Image Position (Hero Style):</label>
+                            <select is="emby-select" id="InterfaceHeroBannerPosition" name="InterfaceHeroBannerPosition" class="emby-select-withcolor emby-select">
+                                <option value="center">Center (Default)</option>
+                                <option value="top">Top</option>
+                                <option value="bottom">Bottom</option>
+                            </select>
+                        </div>
+
+                        <div id="InterfaceBannerHeight-container" class="selectContainer">
+                            <label class="selectLabel" for="InterfaceBannerHeight">Height of banner:</label>
+                            <select is="emby-select" id="InterfaceBannerHeight" name="InterfaceBannerHeight" class="emby-select-withcolor emby-select">
+                                <option value="360">Slim (Default)</option>
+                                <option value="400">Thick</option>
+                                <option value="500">Large</option>
+                                <option value="600">Huge</option>
+                            </select>
+                        </div>
 
                     </fieldset>
 
@@ -322,17 +362,11 @@
                         <div class="fieldDescription">Only show shows or films that have a critic rating at least this number (0 to 100). Set to 0 to ignore rating.</div>
                     </div>
 
-                    <div id="MaximumParentRating-container" class="selectContainer">
-                        <label class="selectLabel" for="MaximumParentRating">Maximum parental rating</label>
-                        <select is="emby-select" id="MaximumParentRating" name="MaximumParentRating" class="emby-select-withcolor emby-select">
-                            <option value="-2">User profile</option>
-                        </select>
-                        <div class="fieldDescription">Items with a parental rating higher than this will not be shown. Set to 'User profile' to limit to a user's specific parental access controls (default).</div>
-                    </div>
+                    
 
                     <div class="checkboxContainer checkboxContainer-withDescription">
                         <label class="emby-checkbox-label">
-                            <input is="emby-checkbox" type="checkbox" id="ShowPlayed" name="ShowPlayed" />
+                            <input is="emby-checkbox" type="checkbox" id="FilterByPlayed" name="FilterByPlayed" />
                             <span class="checkboxLabel">Show played items</span>
                         </label>
                     </div>
@@ -342,34 +376,7 @@
 
                     
 
-                    <div class="checkboxContainer checkboxContainer-withDescription">
-                        <label class="emby-checkbox-label">
-                            <input is="emby-checkbox" type="checkbox" id="UseHeroLayout" name="UseHeroLayout" />
-                            <span class="checkboxLabel">Use Hero Display Style</span>
-                        </label>
-                        <div class="fieldDescription">Changes the banner layout to a hero-style display. Recommended banner height: Large or higher.</div>
-                    </div>
-
-                    <div id="HeroBackdropPosition-container" class="selectContainer">
-                        <label class="selectLabel" for="HeroBackdropPositionSelect">Image Position (Hero Style):</label>
-                        <select is="emby-select" id="HeroBackdropPositionSelect" name="HeroBackdropPositionSelect" class="emby-select-withcolor emby-select">
-                            <option value="center">Center (Default)</option>
-                            <option value="top">Top</option>
-                            <option value="bottom">Bottom</option>
-                        </select>
-                    </div>
-
                     
-
-                    <div id="BannerHeight-container" class="selectContainer">
-                        <label class="selectLabel" for="BannerHeightSelect">Height of banner:</label>
-                        <select is="emby-select" id="BannerHeightSelect" name="BannerHeight" class="emby-select-withcolor emby-select">
-                            <option value="360">Slim (Default)</option>
-                            <option value="400">Thick</option>
-                            <option value="500">Large</option>
-                            <option value="600">Huge</option>
-                        </select>
-                    </div>
 
 
 
@@ -401,48 +408,35 @@
 
                     ApiClient.getPluginConfiguration(pluginId).then(function (config) {
                         selectedUserId = config.EditorUserId;
-                        //$('#EditorUserId').first().val(config.EditorUserId);
-                        $('#DoScriptInject').first().prop('checked', config.DoScriptInject);
-                        $('#FileTransformation').first().prop('checked', config.FileTransformation);
-                        $('#ShowRandomMedia').first().prop('checked', config.ShowRandomMedia);
-                        $('#FavouritesMode').first().prop('checked', config.Mode == 'FAVOURITES');
-                        $('#RandomMode').first().prop('checked', config.Mode == 'RANDOM');
-                        $('#CollectionsMode').first().prop('checked', config.Mode == 'COLLECTIONS');
-                        $('#NewMode').first().prop('checked', config.Mode == 'NEW');
-                        $('#RandomMediaCount').val(config.RandomMediaCount);
-                        $('#MinimumRating').val(config.MinimumRating);
-                        $('#MinimumCriticRating').val(config.MinimumCriticRating);
-                        $('#EnableAutoplay').first().prop('checked', config.EnableAutoplay);
+                        
+                        
+                        $('#FilterByMinimumRating').val(config.FilterByMinimumRating);
+                        $('#FilterByMinimumCriticRating').val(config.FilterByMinimumCriticRating);
+                        $('#FilterByPlayed').first().prop('checked', config.FilterByPlayed);
+                        $("#FilterByRecency").val(config.FilterByRecency);
+
+                        $('#AutoplayEnabled').first().prop('checked', config.AutoplayEnabled);
                         $('#AutoplayInterval').first().val(config.AutoplayInterval);
-                        $("#NewTimeLimitSelect").val(config.NewTimeLimit);
-                        $('#ShowRating').first().prop('checked', config.ShowRating);
-                        $('#ShowDesc').first().prop('checked', config.ShowDescription);
-                        $('#ShowPlayButton').first().prop('checked', config.ShowPlayButton);
-                        $('#ReduceImageSize').first().prop('checked', config.ReduceImageSize);
-                        $("#BannerHeightSelect").val(config.BannerHeight);
-                        $("#TransitionEffectSelect").val(config.TransitionEffect);
-                        $("#HeroBackdropPositionSelect").val(config.HeroBackdropPosition);
-                        $("#UseHeroLayout").first().prop('checked', config.UseHeroLayout);
 
-                        $('#ShowPlayed').first().prop('checked', config.ShowPlayed);
-                        $("#Heading").val(config.Heading);
-                        $("#PlayButtonText").val(config.PlayButtonText);
-                        $('#HideOnTvLayout').first().prop('checked', config.HideOnTvLayout);
-
-                        if (config.Mode == 'FAVOURITES') {
-                            $('#EditorUserId-container').show();
-                        } else if (config.Mode == 'COLLECTIONS') {
-                            $('#CollectionsList-container').show();
-                        } else if (config.Mode == "NEW") {
-                            $('#NewTimeLimit-container').show();
-                        }
+                        $('#InterfaceItemCount').val(config.InterfaceItemCount);
+                        $('#InterfaceShowRating').first().prop('checked', config.InterfaceShowRating);
+                        $('#InterfaceShowDesc').first().prop('checked', config.InterfaceShowDesc);
+                        $('#InterfaceShowNavigationArrows').first().prop('checked', config.InterfaceShowNavigationArrows);
+                        $('#InterfaceShowPlayButton').first().prop('checked', config.InterfaceShowPlayButton);
+                        $("#InterfacePlayButtonText").val(config.InterfacePlayButtonText);
+                        $("#InterfaceHeadingText").val(config.InterfaceHeadingText);
+                        $('#InterfaceHideOnTvLayout').first().prop('checked', config.InterfaceHideOnTvLayout);
+                        $("#InterfaceTransitionEffect").val(config.InterfaceTransitionEffect);
+                        $("#InterfaceBannerHeight").val(config.InterfaceBannerHeight);
+                        $("#InterfaceHeroBannerPosition").val(config.InterfaceHeroBannerPosition);
+                        $("#InterfaceUseClassicLayout").first().prop('checked', config.InterfaceUseClassicLayout);                      
 
                         // Only show interval selection if autoplay is enabled
-                        if (config.EnableAutoplay) {
+                        if (config.AutoplayEnabled) {
                             $('#AutoplayInterval-container').show();
                         }
 
-                        Dashboard.hideLoadingMsg();
+                        
 
                         // populate users drop down
                         ApiClient.getUsers().then(function (users) {
@@ -495,6 +489,7 @@
                             }
                         });
 
+                        // Populate parental ratings drop down
                         ApiClient.getParentalRatings().then(function (allParentalRatings) {
                             var rating;
                             var ratings = [];
@@ -523,7 +518,7 @@
 
                             for (var rating of ratings) {
                                 if (rating.RatingScore != null) { // skip unrated
-                                    $('#MaximumParentRating').first().append($('<option>', {
+                                    $('#FilterByMaximumParentRating').first().append($('<option>', {
                                         value: rating.RatingScore.score + "," + rating.RatingScore.subScore,
                                         text: rating.Name
                                     }));
@@ -531,12 +526,14 @@
                             }
 
                             if (config.MaximumParentRating) {
-                                $('#MaximumParentRating').val(config.MaximumParentRating);
+                                $('#FilterByMaximumParentRating').val(config.MaximumParentRating);
                             } else {
                                 $('#MaximumParentRating').val(-2);
                             }
                         });
                     });
+
+                    Dashboard.hideLoadingMsg();
                 });
 
                 /* PROCESS FORM DATA ON SUBMIT */

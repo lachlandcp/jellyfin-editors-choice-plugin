@@ -8,15 +8,7 @@ public class PluginConfiguration : BasePluginConfiguration
 
     public string EditorUserId { get; set; } = "";
 
-    public bool DoScriptInject { get; set; } = true;
-
-    public bool FileTransformation { get; set; } = false;
-
-    public bool ShowRandomMedia { get; set; } = true;
-
-    public string Mode { get; set; } = "";
-
-    public int RandomMediaCount { get; set; } = 5;
+    public int InterfaceItemCount { get; set; } = 5;
 
     public float MinimumRating { get; set; } = 0.0f;
 
