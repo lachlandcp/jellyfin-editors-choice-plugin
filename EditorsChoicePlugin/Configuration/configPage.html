@@ -628,11 +628,9 @@
                     return false;
                 });
 
-                $('input[name="mode"], #EnableAutoplay').on('change', function() {
-                    $('#EditorUserId-container').toggle($('#FavouritesMode').is(':checked'));
-                    $('#CollectionsList-container').toggle($('#CollectionsMode').is(':checked'));
-                    $('#NewTimeLimit-container').toggle($('#NewMode').is(':checked'));
-                    $('#AutoplayInterval-container').toggle($('#EnableAutoplay').is(':checked'));
+                // Hide autoplay interval selection unless autoplay is enabled
+                $('#AutoplayEnabled').on('change', function() {
+                    $('#AutoplayInterval-container').toggle($('#AutoplayEnabled').is(':checked'));
                 });
 
 
