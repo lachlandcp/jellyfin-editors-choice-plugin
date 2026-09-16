@@ -144,7 +144,7 @@ public class EditorsChoiceActivityController : ControllerBase
                         OrderBy = new[] { (ItemSortBy.Random, SortOrder.Ascending) }
                     };
                     query.Limit = _config.RandomMediaCount * 2;
-                    initialResult = (List<BaseItem>)_libraryManager.GetItemList(query);
+                    initialResult = _libraryManager.GetItemList(query).ToList();
 
                     // Get ids of items in the favourites list
                     List<Guid> itemIds = new List<Guid>();
@@ -259,7 +259,7 @@ public class EditorsChoiceActivityController : ControllerBase
                     OrderBy = new[] { (ItemSortBy.Random, SortOrder.Descending) },
                     IsPlayed = _config.ShowPlayed ? null : false
                 };
-                initialResult = (List<BaseItem>)_libraryManager.GetItemList(queryItems);
+                initialResult = _libraryManager.GetItemList(queryItems).ToList();
 
                 // Of TV series that meet those criteria, loop through to find items that are recent enough. These are already ordered by recency, so can quit on first item that is too old.
                 List<Guid> itemIds = new List<Guid>();
@@ -272,7 +272,7 @@ public class EditorsChoiceActivityController : ControllerBase
                         ParentId = item.Id,
                         OrderBy = new[] { (ItemSortBy.IndexNumber, SortOrder.Descending )}
                     };
-                    List<BaseItem> seasons = (List<BaseItem>) _libraryManager.GetItemList(querySeasons);
+                    List<BaseItem> seasons = _libraryManager.GetItemList(querySeasons).ToList();
 
                     if (seasons.Count > 0) {
                         Guid latestSeasonId = seasons[0].Id;
@@ -285,7 +285,7 @@ public class EditorsChoiceActivityController : ControllerBase
                             ParentId = latestSeasonId,
                             OrderBy = new[] { (ItemSortBy.IndexNumber, SortOrder.Descending) }
                         };
-                        List<BaseItem> episodes = (List<BaseItem>) _libraryManager.GetItemList(queryEpisodes);
+                        List<BaseItem> episodes = _libraryManager.GetItemList(queryEpisodes).ToList();
                         
                         //_logger.LogInformation("Contains {0} episodes.", episodes.Count);
 
@@ -319,7 +319,7 @@ public class EditorsChoiceActivityController : ControllerBase
                     IsPlayed = _config.ShowPlayed ? null : false
                 };
                 queryMovies.Limit = _config.RandomMediaCount;
-                List<BaseItem> resultMovies = (List<BaseItem>) _libraryManager.GetItemList(queryMovies);
+                List<BaseItem> resultMovies = _libraryManager.GetItemList(queryMovies).ToList();
 
                 // Join the lists of recent films and recent series
                 foreach (BaseItem item in resultMovies) itemIds.Add(item.Id);
@@ -411,15 +411,15 @@ public class EditorsChoiceActivityController : ControllerBase
         }
         catch (Exception e)
         {
-            _logger.LogError(e.ToString());
-            return StatusCode(503);
+            _logger.LogError(e, "Failed to build the Editors Choice response.");
+            return StatusCode(StatusCodes.Status500InternalServerError);
         }
 
     }
 
     private List<BaseItem> PrepareResult(InternalItemsQuery query, Jellyfin.Database.Implementations.Entities.User? activeUser)
     {
-        List<BaseItem> initialResult = (List<BaseItem>)_libraryManager.GetItemList(query);
+        List<BaseItem> initialResult = _libraryManager.GetItemList(query).ToList();
         List<BaseItem> result = [];
 
         // Randomly add items until we run out or reach the admin-set cap

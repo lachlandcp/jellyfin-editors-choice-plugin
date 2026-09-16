@@ -8,7 +8,7 @@ const container = `
           <span class="material-icons chevron_left" aria-hidden="true"></span>
         </button>
 
-        <button class="splide__toggle emby-scrollbuttons-button paper-icon-button-light" type="button" id="editorsChoicePlayPause">
+        <button class="editorsChoicePlayPause splide__toggle emby-scrollbuttons-button paper-icon-button-light" type="button">
           <span class="splide__toggle__play material-icons play_arrow" aria-hidden="true"></span>
           <span class="splide__toggle__pause material-icons pause" aria-hidden="true"></span>
         </button>
@@ -184,7 +184,7 @@ const container = `
 
   /* ===== Hero mode ===== */
   .editorsChoiceHeroMode .editorsChoiceContainer { padding: 0 !important; }
-  .editorsChoiceHeroMode #homeTab { transform: translateY(-120px); }
+  #homeTab.editorsChoiceHeroMode { transform: translateY(-120px); }
 
   .editorsChoiceHeroMode .splide.cardScalable {
     border-radius: unset !important;
@@ -278,6 +278,11 @@ const container = `
 `;
 
 const GUID = "70bb2ec1-f19e-46b5-b49a-942e6b96ebae";
+const HOME_CONTAINER_SELECTOR = "#indexPage:not(.hide) #homeTab.is-active .homeSectionsContainer";
+const EDITORS_CHOICE_ADDED_CLASS = "editorsChoiceAdded";
+const EDITORS_CHOICE_LOADING_CLASS = "editorsChoiceLoading";
+const initializingContainers = new WeakSet();
+const initializedContainers = new WeakSet();
 
 /* ===== Utils ===== */
 function shuffle(input) {
@@ -442,67 +447,109 @@ function renderNormalSlide(item, data, baseUrl) {
 async function setup() {
     console.log("Attempting creation of editors choice slider.");
 
-    const $containers = $(".homeSectionsContainer").filter((_, el) => !$(el).hasClass("editorsChoiceAdded"));
-    if (!$containers.length) return;
+    // Claim each container synchronously. setup() can be scheduled again while
+    // Splide is loading, so waiting before setting this marker can render the
+    // same slider multiple times.
+    const containers = Array.from(document.querySelectorAll(HOME_CONTAINER_SELECTOR)).filter((element) => {
+        if (element.querySelector(":scope > .editorsChoiceContainer")) {
+            initializedContainers.add(element);
+            element.classList.add(EDITORS_CHOICE_ADDED_CLASS);
+            return false;
+        }
+
+        if (initializingContainers.has(element) || initializedContainers.has(element)) return false;
+        if (element.classList.contains(EDITORS_CHOICE_LOADING_CLASS)) return false;
+
+        initializingContainers.add(element);
+        element.classList.add(EDITORS_CHOICE_LOADING_CLASS);
+        return true;
+    });
+    if (!containers.length) return;
 
     try {
         await ensureSplideLoaded();
     } catch (e) {
+        for (const elem of containers) {
+            initializingContainers.delete(elem);
+            elem.classList.remove(EDITORS_CHOICE_LOADING_CLASS);
+        }
         console.warn("Editors Choice: Splide failed to load.", e);
         return;
     }
 
-    $containers.each((_, elem) => {
+    for (const elem of containers) {
+        if (!elem.isConnected || !elem.matches(HOME_CONTAINER_SELECTOR)) {
+            initializingContainers.delete(elem);
+            elem.classList.remove(EDITORS_CHOICE_LOADING_CLASS);
+            continue;
+        }
+
         console.log("Fetching favourites data from API...");
+        let containerElem;
 
         ApiClient.fetch({ url: ApiClient.getUrl("/EditorsChoice/favourites"), type: "GET" })
             .then((response) => response.json())
             .then((data) => {
+                if (!elem.isConnected || !elem.matches(HOME_CONTAINER_SELECTOR)) return;
+
+                const existingContainer = elem.querySelector(":scope > .editorsChoiceContainer");
+                if (existingContainer) {
+                    initializedContainers.add(elem);
+                    elem.classList.add(EDITORS_CHOICE_ADDED_CLASS);
+                    return;
+                }
+
                 if (data.hideOnTvLayout && document.documentElement.classList.contains("layout-tv")) {
                     console.log("Editors Choice: hidden on TV layout by configuration.");
+                    initializedContainers.add(elem);
+                    elem.classList.add(EDITORS_CHOICE_ADDED_CLASS);
                     return;
                 }
 
                 const favourites = shuffle(data.favourites || []);
-                const $containerElem = $(container);
+                const template = document.createElement("template");
+                template.innerHTML = container.trim();
+                const content = template.content.cloneNode(true);
+                containerElem = content.querySelector(".editorsChoiceContainer");
                 const containerId = `editorsChoice-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
 
-                $containerElem.first().attr("id", containerId);
-                $containerElem.first().addClass(`editorsChoiceHeight-${data.bannerHeight}`);
-                $(elem).prepend($containerElem);
+                containerElem.id = containerId;
+                containerElem.classList.add(`editorsChoiceHeight-${data.bannerHeight}`);
+                elem.prepend(content);
 
                 // TV focus workaround
                 let focusResolved = false;
-                $(`.layout-tv #${containerId} .emby-scrollbuttons button`).on("focus", function () {
-                    if (focusResolved) return;
-                    $('[is="emby-tabs"] .emby-button').first().trigger("focus");
-                    focusResolved = true;
+                containerElem.querySelectorAll(".emby-scrollbuttons button").forEach((button) => {
+                    button.addEventListener("focus", () => {
+                        if (focusResolved || !document.documentElement.classList.contains("layout-tv")) return;
+                        document.querySelector('[is="emby-tabs"] .emby-button')?.focus();
+                        focusResolved = true;
+                    });
                 });
 
-                if (data.useHeroLayout) document.body.classList.add("editorsChoiceHeroMode");
+                const homeTab = elem.closest("#homeTab");
+                if (homeTab) homeTab.classList.toggle("editorsChoiceHeroMode", !!data.useHeroLayout);
 
                 if ("heading" in data && data.heading && !data.useHeroLayout) {
-                    $($containerElem).prepend(`<h2 class="sectionTitle sectionTitle-cards">${data.heading}</h2>`);
+                    containerElem.insertAdjacentHTML("afterbegin", `<h2 class="sectionTitle sectionTitle-cards">${data.heading}</h2>`);
                 }
 
                 const baseUrl = getBaseUrl();
-                const $list = $(`#${containerId} .editorsChoiceItemsContainer`);
+                const list = containerElem.querySelector(".editorsChoiceItemsContainer");
 
                 for (const item of favourites) {
                     const html = data.useHeroLayout
                         ? renderHeroSlide(item, data, baseUrl)
                         : renderNormalSlide(item, data, baseUrl);
 
-                    $list.append(html);
+                    list.insertAdjacentHTML("beforeend", html);
                 }
 
-                $(elem).addClass("editorsChoiceAdded");
-
-                // Toggle autoplay control visibility (button exists: #editorsChoicePlayPause)
-                const playPauseBtn = document.getElementById("editorsChoicePlayPause");
+                // Toggle autoplay control visibility.
+                const playPauseBtn = containerElem.querySelector(".editorsChoicePlayPause");
                 if (playPauseBtn) playPauseBtn.style.display = data.autoplay ? "" : "none";
 
-                new Splide(`#${containerId} .splide`, {
+                new Splide(containerElem.querySelector(".splide"), {
                     type: data.transitionEffect ?? "loop",
                     autoplay: !!data.autoplay,
                     rewind: true,
@@ -511,38 +558,85 @@ async function setup() {
                     keyboard: true,
                     height: `${data.bannerHeight + (data.useHeroLayout ? 180 : 0)}px`, // Add 80px to the banner image height in hero mode to compensate for navbar overlay
                 }).mount();
+
+                initializedContainers.add(elem);
+                elem.classList.add(EDITORS_CHOICE_ADDED_CLASS);
             })
-            .catch((e) => console.warn("Editors Choice: failed to fetch/render.", e));
+            .catch((e) => {
+                containerElem?.remove();
+                initializedContainers.delete(elem);
+                elem.classList.remove(EDITORS_CHOICE_ADDED_CLASS);
+                console.warn("Editors Choice: failed to fetch/render.", e);
+            })
+            .finally(() => {
+                initializingContainers.delete(elem);
+                elem.classList.remove(EDITORS_CHOICE_LOADING_CLASS);
+            });
+    }
+}
+
+let setupScheduled = false;
+
+function scheduleSetup() {
+    if (setupScheduled) return;
+
+    setupScheduled = true;
+    window.requestAnimationFrame(() => {
+        setupScheduled = false;
+        setup();
     });
 }
 
-window.onload = function () {
-    // Detect if container is ready to setup slider
-    const target = document.getElementById("reactRoot");
+function nodeContainsHomeContainer(node) {
+    if (!(node instanceof Element)) return false;
+
+    return node.matches(HOME_CONTAINER_SELECTOR)
+        || !!node.querySelector(HOME_CONTAINER_SELECTOR)
+        || !!node.closest(HOME_CONTAINER_SELECTOR);
+}
+
+function initializeEditorsChoice() {
+    // Jellyfin 12 mounts the legacy home tab as a nested React subtree. Observe
+    // the React root when available and fall back to body for older web clients.
+    const target = document.getElementById("reactRoot") || document.body;
     if (!target) {
-        console.warn("Editors Choice: reactRoot not found.");
+        console.warn("Editors Choice: page root not found.");
         return;
     }
 
     const observer = new MutationObserver((mutations) => {
         for (const mutation of mutations) {
-            const newNodes = mutation.addedNodes;
-            if (!newNodes || !newNodes.length) continue;
-
-            $(newNodes).each(function () {
-                const $node = $(this);
-                if ($node.hasClass("section0") && !$node.hasClass("editorsChoiceAdded")) {
-                    setup();
+            if (mutation.type === "attributes") {
+                const element = mutation.target;
+                if (element instanceof Element && element.matches("#indexPage, #homeTab")) {
+                    scheduleSetup();
+                    return;
                 }
-            });
+            }
+
+            for (const node of mutation.addedNodes) {
+                if (nodeContainsHomeContainer(node)) {
+                    scheduleSetup();
+                    return;
+                }
+            }
         }
     });
 
-    observer.observe(target, { attributes: true, childList: true, characterData: true, subtree: true });
+    observer.observe(target, {
+        attributes: true,
+        attributeFilter: ["class"],
+        childList: true,
+        subtree: true,
+    });
+
+    // The script can be loaded after the home tab has already mounted.
+    scheduleSetup();
 
     // Remind user that their favourites will be public when they add a new favourite.
-    $("body").on("click", '[is="emby-ratingbutton"]', function () {
-        if ($(this).hasClass("ratingbutton-withrating")) return;
+    document.body.addEventListener("click", (event) => {
+        const ratingButton = event.target.closest?.('[is="emby-ratingbutton"]');
+        if (!ratingButton || ratingButton.classList.contains("ratingbutton-withrating")) return;
 
         ApiClient.getPluginConfiguration(GUID).then((data) => {
             if (ApiClient.getCurrentUserId() === data.EditorUserId) {
@@ -550,4 +644,10 @@ window.onload = function () {
             }
         });
     });
-};
+}
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initializeEditorsChoice, { once: true });
+} else {
+    initializeEditorsChoice();
+}
