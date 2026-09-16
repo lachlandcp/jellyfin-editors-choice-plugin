@@ -1,5 +1,4 @@
 using System.Text.Json.Serialization;
-using System.Text.RegularExpressions;
 using MediaBrowser.Common.Net;
 
 namespace EditorsChoicePlugin.Helpers;
@@ -16,11 +15,11 @@ public static class Transformations
             basePath = $"/{networkConfiguration.BaseUrl.TrimStart('/').Trim()}";
         }
 
-        string script = $"<script FileTransformation=\"true\" plugin=\"EditorsChoice\" defer=\"defer\" src=\"{basePath}/EditorsChoice/script\"></script>";
+        string contents = ScriptMarkup.RemoveExisting(payload.Contents ?? string.Empty);
+        string script = ScriptMarkup.Build(basePath, "FileTransformation=\"true\"");
+        int bodyClosing = contents.LastIndexOf("</body>", StringComparison.OrdinalIgnoreCase);
 
-        string text = Regex.Replace(payload.Contents!, "(</body>)", $"{script}$1");
-
-        return text;
+        return bodyClosing < 0 ? contents : contents.Insert(bodyClosing, script);
     }
 }
 

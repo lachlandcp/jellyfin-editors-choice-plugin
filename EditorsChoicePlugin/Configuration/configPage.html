@@ -387,22 +387,17 @@
                     <hr />
                     <h2>Technical settings</h2>
 
-                    <div class="checkboxContainer checkboxContainer-withDescription">
-                        <label class="emby-checkbox-label">
-                            <input is="emby-checkbox" type="checkbox" id="DoScriptInject" name="DoScriptInject" />
-                            <span class="checkboxLabel">Enable client script injection</span>
-                        </label>
-                        <div class="fieldDescription">This will depend on permissions for the jellyfin-web index.html file. Toggling this mode will take effect after the next restart.</div>
-                    </div>
-
-                    <div class="checkboxContainer checkboxContainer-withDescription">
-                        <label class="emby-checkbox-label">
-                            <input is="emby-checkbox" type="checkbox" id="FileTransformation" name="FileTransformation" />
-                            <span class="checkboxLabel">Use FileTransformation plugin (recommended)</span>
-                        </label>
+                    <div class="selectContainer">
+                        <label class="selectLabel" for="FrontendInjectionMethod">Frontend injection method:</label>
+                        <select is="emby-select" id="FrontendInjectionMethod" name="FrontendInjectionMethod" class="emby-select-withcolor emby-select">
+                            <option value="automatic">Automatic (recommended)</option>
+                            <option value="file-transformation">File Transformation only</option>
+                            <option value="javascript-injector">JavaScript Injector only</option>
+                            <option value="direct">Direct index.html injection only</option>
+                            <option value="disabled">Disabled / manual injection</option>
+                        </select>
                         <div class="fieldDescription">
-                            Using <a href="https://github.com/IAmParadox27/jellyfin-plugin-file-transformation" target="_blank" rel="noopener noreferrer">the FileTransformation plugin</a>
-                            is the easiest way to inject the required script to the Jellyfin homepage. Toggling this mode will take effect after the next restart.
+                            Automatic prefers File Transformation, then JavaScript Injector, and only writes directly to jellyfin-web/index.html as a final fallback. Changes take effect after the next restart.
                         </div>
                     </div>
 
@@ -441,8 +436,7 @@
                     ApiClient.getPluginConfiguration(pluginId).then(function (config) {
                         selectedUserId = config.EditorUserId;
                         //$('#EditorUserId').first().val(config.EditorUserId);
-                        $('#DoScriptInject').first().prop('checked', config.DoScriptInject);
-                        $('#FileTransformation').first().prop('checked', config.FileTransformation);
+                        $('#FrontendInjectionMethod').val(config.FrontendInjectionMethod || 'automatic');
                         $('#ShowRandomMedia').first().prop('checked', config.ShowRandomMedia);
                         $('#FavouritesMode').first().prop('checked', config.Mode == 'FAVOURITES');
                         $('#RandomMode').first().prop('checked', config.Mode == 'RANDOM');
@@ -593,8 +587,10 @@
                             config.EditorUserId = $('#EditorUserId').first().val();
                         }
 
-                        config.DoScriptInject = $('#DoScriptInject').first().is(':checked');
-                        config.FileTransformation = $('#FileTransformation').first().is(':checked');
+                        config.FrontendInjectionMethod = $('#FrontendInjectionMethod').val();
+                        // Keep legacy settings useful if an older Editors Choice build is restored.
+                        config.DoScriptInject = config.FrontendInjectionMethod == 'automatic' || config.FrontendInjectionMethod == 'direct';
+                        config.FileTransformation = config.FrontendInjectionMethod == 'file-transformation';
                         config.EnableAutoplay = $('#EnableAutoplay').first().is(':checked');
                         config.ShowAutoplayButton = $('#ShowAutoplayButton').first().is(':checked');
                         config.AutoplayInterval = $('#AutoplayInterval').first().val();
@@ -679,20 +675,6 @@
                     $('#NewTimeLimit-container').toggle($('#NewMode').is(':checked'));
                     $('#AutoplayInterval-container').toggle($('#EnableAutoplay').is(':checked'));
                 });
-
-
-                // If user chooses scriptinject or filetransformation, disable the other.
-                $('#DoScriptInject').on('change', function () {
-                    if ($(this).is(':checked')) {
-                        $('#FileTransformation').first().prop('checked', false);
-                    }
-                })
-
-                $('#FileTransformation').on('change', function () {
-                    if ($(this).is(':checked')) {
-                        $('#DoScriptInject').first().prop('checked', false);
-                    }
-                })
 
             })();
 

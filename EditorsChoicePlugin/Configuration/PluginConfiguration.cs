@@ -8,8 +8,12 @@ public class PluginConfiguration : BasePluginConfiguration
 
     public string EditorUserId { get; set; } = "";
 
+    public string FrontendInjectionMethod { get; set; } = FrontendInjectionMethods.Automatic;
+
+    // Retained for configuration compatibility with older plugin releases.
     public bool DoScriptInject { get; set; } = true;
 
+    // Retained for configuration compatibility with older plugin releases.
     public bool FileTransformation { get; set; } = false;
 
     public bool ShowRandomMedia { get; set; } = true;
