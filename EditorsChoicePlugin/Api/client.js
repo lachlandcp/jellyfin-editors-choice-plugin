@@ -545,9 +545,12 @@ async function setup() {
                     list.insertAdjacentHTML("beforeend", html);
                 }
 
-                // Toggle autoplay control visibility.
+                // Toggle slider controls independently from their behaviour.
                 const playPauseBtn = containerElem.querySelector(".editorsChoicePlayPause");
-                if (playPauseBtn) playPauseBtn.style.display = data.autoplay ? "" : "none";
+                if (playPauseBtn) playPauseBtn.style.display = data.autoplay && data.showAutoplayButton ? "" : "none";
+                containerElem.querySelectorAll(".splide__arrow").forEach((arrow) => {
+                    arrow.style.display = data.showNavigationArrows ? "" : "none";
+                });
 
                 new Splide(containerElem.querySelector(".splide"), {
                     type: data.transitionEffect ?? "loop",
@@ -555,6 +558,7 @@ async function setup() {
                     rewind: true,
                     interval: data.autoplayInterval,
                     pagination: false,
+                    arrows: !!data.showNavigationArrows,
                     keyboard: true,
                     height: `${data.bannerHeight + (data.useHeroLayout ? 180 : 0)}px`, // Add 80px to the banner image height in hero mode to compensate for navbar overlay
                 }).mount();

@@ -248,6 +248,14 @@
                         </label>
                     </div>
 
+                    <div class="checkboxContainer checkboxContainer-withDescription">
+                        <label class="emby-checkbox-label">
+                            <input is="emby-checkbox" type="checkbox" id="ShowAutoplayButton" name="ShowAutoplayButton" />
+                            <span class="checkboxLabel">Show autoplay button</span>
+                        </label>
+                        <div class="fieldDescription">Show the play/pause control when autoplay is enabled.</div>
+                    </div>
+
                     <div id="AutoplayInterval-container" class="inputContainer" style="display:none;">
                         <label class="inputLabel inputLabelUnfocused" for="AutoplayInterval">Autoplay interval</label>
                         <input is="emby-input" type="number" id="AutoplayInterval" name="AutoplayInterval" min="1" step="1" />
@@ -292,6 +300,13 @@
 
                     <hr />
                     <h2>Display</h2>
+
+                    <div class="checkboxContainer checkboxContainer-withDescription">
+                        <label class="emby-checkbox-label">
+                            <input is="emby-checkbox" type="checkbox" id="ShowNavigationArrows" name="ShowNavigationArrows" />
+                            <span class="checkboxLabel">Show navigation arrows</span>
+                        </label>
+                    </div>
 
                     <div class="inputContainer">
                         <label class="inputLabel inputLabelUnfocused" for="Heading">Banner heading</label>
@@ -437,11 +452,13 @@
                         $('#MinimumRating').val(config.MinimumRating);
                         $('#MinimumCriticRating').val(config.MinimumCriticRating);
                         $('#EnableAutoplay').first().prop('checked', config.EnableAutoplay);
+                        $('#ShowAutoplayButton').first().prop('checked', config.ShowAutoplayButton);
                         $('#AutoplayInterval').first().val(config.AutoplayInterval);
                         $("#NewTimeLimitSelect").val(config.NewTimeLimit);
                         $('#ShowRating').first().prop('checked', config.ShowRating);
                         $('#ShowDesc').first().prop('checked', config.ShowDescription);
                         $('#ShowPlayButton').first().prop('checked', config.ShowPlayButton);
+                        $('#ShowNavigationArrows').first().prop('checked', config.ShowNavigationArrows);
                         $('#ReduceImageSize').first().prop('checked', config.ReduceImageSize);
                         $("#BannerHeightSelect").val(config.BannerHeight);
                         $("#TransitionEffectSelect").val(config.TransitionEffect);
@@ -579,10 +596,12 @@
                         config.DoScriptInject = $('#DoScriptInject').first().is(':checked');
                         config.FileTransformation = $('#FileTransformation').first().is(':checked');
                         config.EnableAutoplay = $('#EnableAutoplay').first().is(':checked');
+                        config.ShowAutoplayButton = $('#ShowAutoplayButton').first().is(':checked');
                         config.AutoplayInterval = $('#AutoplayInterval').first().val();
                         config.ShowRating = $('#ShowRating').first().is(':checked');
                         config.ShowDescription =  $('#ShowDesc').first().is(':checked');
                         config.ShowPlayButton = $('#ShowPlayButton').first().is(':checked');
+                        config.ShowNavigationArrows = $('#ShowNavigationArrows').first().is(':checked');
                         config.ReduceImageSize = $('#ReduceImageSize').first().is(':checked');
                         config.ShowPlayed = $('#ShowPlayed').first().is(':checked');
                         config.HideOnTvLayout = $('#HideOnTvLayout').first().is(':checked');
