@@ -176,9 +176,11 @@ const container = `
   @media screen and (max-width: 500px) {
     .editorsChoiceItemLogo {
       max-width: 100%;
-      max-height: 100px;
+      max-height: 120px;
       height: auto;
       filter: drop-shadow(3px 3px 15px black);
+      object-fit: contain;
+      object-position: left;
     }
   }
 
