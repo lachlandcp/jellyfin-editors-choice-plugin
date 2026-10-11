@@ -30,7 +30,7 @@ const container = `
   /* ===== Layout / spacing ===== */
   .homeSectionsContainer.editorsChoiceAdded { padding-top: 0 !important; }
 
-  .homeSectionsContainer.editorsChoiceAdded .editorsChoiceContainer {
+  .homeSectionsContainer .editorsChoiceContainer {
     padding-left: max(env(safe-area-inset-left), 3.3%);
     padding-right: max(env(safe-area-inset-right), 3.3%);
     margin-bottom: 1.8em;
