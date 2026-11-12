@@ -282,7 +282,7 @@ const HOME_CONTAINER_SELECTOR = "#indexPage:not(.hide) #homeTab.is-active .homeS
 const EDITORS_CHOICE_ADDED_CLASS = "editorsChoiceAdded";
 const EDITORS_CHOICE_LOADING_CLASS = "editorsChoiceLoading";
 const initializingContainers = new WeakSet();
-const initializedContainers = new WeakSet();
+const hiddenOnTvContainers = new WeakSet();
 
 /* ===== Utils ===== */
 function shuffle(input) {
@@ -344,33 +344,50 @@ function buildBannerSizeParam(reduceImageSizes) {
     return `?width=${w}`;
 }
 
+let splideLoadPromise = null;
+
 function ensureSplideLoaded() {
-    return new Promise((resolve, reject) => {
-        if (window.Splide) return resolve();
+    if (!document.querySelector('link[data-editorschoice-splide="1"]')) {
+        const link = document.createElement("link");
+        link.rel = "stylesheet";
+        link.href = "https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css";
+        link.setAttribute("data-editorschoice-splide", "1");
+        link.addEventListener("error", () => link.remove(), { once: true });
+        document.head.appendChild(link);
+    }
 
-        const existing = document.querySelector('script[data-editorschoice-splide="1"]');
-        if (existing) {
-            existing.addEventListener("load", resolve, { once: true });
-            existing.addEventListener("error", reject, { once: true });
-            return;
-        }
+    if (window.Splide) return Promise.resolve();
+    if (splideLoadPromise) return splideLoadPromise;
 
-        const s = document.createElement("script");
-        s.type = "text/javascript";
-        s.src = "https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js";
-        s.setAttribute("data-editorschoice-splide", "1");
-        s.addEventListener("load", resolve, { once: true });
-        s.addEventListener("error", reject, { once: true });
-        document.head.appendChild(s);
-
-        if (!document.querySelector('link[data-editorschoice-splide="1"]')) {
-            const l = document.createElement("link");
-            l.rel = "stylesheet";
-            l.href = "https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css";
-            l.setAttribute("data-editorschoice-splide", "1");
-            document.head.appendChild(l);
-        }
+    // An element without an in-flight promise may have already failed. Its
+    // load/error event will not fire again, so replace it instead of waiting.
+    document.querySelector('script[data-editorschoice-splide="1"]')?.remove();
+    splideLoadPromise = new Promise((resolve, reject) => {
+        const script = document.createElement("script");
+        script.src = "https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js";
+        script.setAttribute("data-editorschoice-splide", "1");
+        const finish = (error) => {
+            clearTimeout(timeout);
+            script.removeEventListener("load", loaded);
+            script.removeEventListener("error", failed);
+            if (error) {
+                script.remove();
+                reject(error);
+            } else {
+                resolve();
+            }
+        };
+        const loaded = () => finish(window.Splide ? null : new Error("Splide did not initialize."));
+        const failed = () => finish(new Error("Splide download failed."));
+        const timeout = setTimeout(() => finish(new Error("Splide download timed out.")), 15000);
+        script.addEventListener("load", loaded);
+        script.addEventListener("error", failed);
+        document.head.appendChild(script);
+    }).catch((error) => {
+        splideLoadPromise = null;
+        throw error;
     });
+    return splideLoadPromise;
 }
 
 /* ===== Render ===== */
@@ -447,18 +464,25 @@ function renderNormalSlide(item, data, baseUrl) {
 async function setup() {
     console.log("Attempting creation of editors choice slider.");
 
+    // The web app can mount its home page before its API client is available.
+    if (typeof ApiClient === "undefined" || !ApiClient || typeof ApiClient.fetch !== "function") {
+        scheduleSetupRetry();
+        return;
+    }
+
     // Claim each container synchronously. setup() can be scheduled again while
     // Splide is loading, so waiting before setting this marker can render the
     // same slider multiple times.
     const containers = Array.from(document.querySelectorAll(HOME_CONTAINER_SELECTOR)).filter((element) => {
         if (element.querySelector(":scope > .editorsChoiceContainer")) {
-            initializedContainers.add(element);
             element.classList.add(EDITORS_CHOICE_ADDED_CLASS);
             return false;
         }
 
-        if (initializingContainers.has(element) || initializedContainers.has(element)) return false;
-        if (element.classList.contains(EDITORS_CHOICE_LOADING_CLASS)) return false;
+        if (initializingContainers.has(element)) return false;
+        if (hiddenOnTvContainers.has(element) && document.documentElement.classList.contains("layout-tv")) return false;
+        hiddenOnTvContainers.delete(element);
+        element.classList.remove(EDITORS_CHOICE_ADDED_CLASS);
 
         initializingContainers.add(element);
         element.classList.add(EDITORS_CHOICE_LOADING_CLASS);
@@ -474,6 +498,7 @@ async function setup() {
             elem.classList.remove(EDITORS_CHOICE_LOADING_CLASS);
         }
         console.warn("Editors Choice: Splide failed to load.", e);
+        scheduleSetupRetry();
         return;
     }
 
@@ -487,21 +512,21 @@ async function setup() {
         console.log("Fetching favourites data from API...");
         let containerElem;
 
-        ApiClient.fetch({ url: ApiClient.getUrl("/EditorsChoice/favourites"), type: "GET" })
+        Promise.resolve()
+            .then(() => ApiClient.fetch({ url: ApiClient.getUrl("/EditorsChoice/favourites"), type: "GET" }))
             .then((response) => response.json())
             .then((data) => {
                 if (!elem.isConnected || !elem.matches(HOME_CONTAINER_SELECTOR)) return;
 
                 const existingContainer = elem.querySelector(":scope > .editorsChoiceContainer");
                 if (existingContainer) {
-                    initializedContainers.add(elem);
                     elem.classList.add(EDITORS_CHOICE_ADDED_CLASS);
                     return;
                 }
 
                 if (data.hideOnTvLayout && document.documentElement.classList.contains("layout-tv")) {
                     console.log("Editors Choice: hidden on TV layout by configuration.");
-                    initializedContainers.add(elem);
+                    hiddenOnTvContainers.add(elem);
                     elem.classList.add(EDITORS_CHOICE_ADDED_CLASS);
                     return;
                 }
@@ -563,14 +588,14 @@ async function setup() {
                     height: `${data.bannerHeight + (data.useHeroLayout ? 180 : 0)}px`, // Add 80px to the banner image height in hero mode to compensate for navbar overlay
                 }).mount();
 
-                initializedContainers.add(elem);
                 elem.classList.add(EDITORS_CHOICE_ADDED_CLASS);
             })
             .catch((e) => {
                 containerElem?.remove();
-                initializedContainers.delete(elem);
+                hiddenOnTvContainers.delete(elem);
                 elem.classList.remove(EDITORS_CHOICE_ADDED_CLASS);
                 console.warn("Editors Choice: failed to fetch/render.", e);
+                scheduleSetupRetry();
             })
             .finally(() => {
                 initializingContainers.delete(elem);
@@ -580,6 +605,19 @@ async function setup() {
 }
 
 let setupScheduled = false;
+let setupRetryTimer = null;
+let setupRetryCount = 0;
+
+function scheduleSetupRetry() {
+    // Recover from transient startup/network failures without hammering an
+    // unavailable server. DOM changes can still trigger setup after this limit.
+    if (setupRetryTimer !== null || setupRetryCount >= 5) return;
+    const delay = 1000 * (2 ** setupRetryCount++);
+    setupRetryTimer = setTimeout(() => {
+        setupRetryTimer = null;
+        scheduleSetup();
+    }, delay);
+}
 
 function scheduleSetup() {
     if (setupScheduled) return;
@@ -616,6 +654,12 @@ function initializeEditorsChoice() {
                     scheduleSetup();
                     return;
                 }
+            }
+
+            // React may remove the banner while keeping its home container. Reconcile removals as well as inserted content.
+            if (mutation.removedNodes.length && nodeContainsHomeContainer(mutation.target)) {
+                scheduleSetup();
+                return;
             }
 
             for (const node of mutation.addedNodes) {

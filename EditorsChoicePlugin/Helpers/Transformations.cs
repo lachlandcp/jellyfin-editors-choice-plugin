@@ -9,10 +9,10 @@ public static class Transformations
     {
         NetworkConfiguration networkConfiguration = Plugin.Instance!.ServerConfigurationManager.GetNetworkConfiguration();
 
-        string basePath = "";
-        if (!string.IsNullOrWhiteSpace(networkConfiguration.BaseUrl))
+        string basePath = networkConfiguration.BaseUrl?.Trim().Trim('/') ?? string.Empty;
+        if (basePath.Length > 0)
         {
-            basePath = $"/{networkConfiguration.BaseUrl.TrimStart('/').Trim()}";
+            basePath = $"/{basePath}";
         }
 
         string contents = ScriptMarkup.RemoveExisting(payload.Contents ?? string.Empty);
